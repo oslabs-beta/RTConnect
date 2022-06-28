@@ -4,7 +4,16 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=production node server/server.js",
+    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "concurrently \"NODE_ENV=development nodemon Example/server/servertest.js\" \"NODE_ENV=development webpack serve --hot --open\""
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "build",
+      "client"
+    ]
   },
   "repository": {
     "type": "git",
@@ -16,5 +25,29 @@
   "bugs": {
     "url": "https://github.com/oslabs-beta/rtez/issues"
   },
-  "homepage": "https://github.com/oslabs-beta/rtez#readme"
+  "homepage": "https://github.com/oslabs-beta/rtez#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "webpack": "^5.73.0",
+    "ws": "^8.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "@babel/preset-react": "^7.18.6",
+    "babel-loader": "^8.2.5",
+    "concurrently": "^7.2.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "node-sass": "^7.0.1",
+    "nodemon": "^2.0.18",
+    "sass-loader": "^13.0.2",
+    "style-loader": "^3.3.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.2"
+  }
 }
