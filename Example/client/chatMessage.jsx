@@ -2,13 +2,14 @@ import React from "react";
 import { useState } from "react";
 
 
-function chatMessage(message) {
-    console.log(`%c ${message}`, 'color: green')
+function ChatMessage(message) {
+    // console.log('Message in ChatMessage ', message)
     return (
         <>
-        <p>{message}</p>
+        <p>heyyyy ChatMessage.jsx</p>
+        {/* <p>{message.data}</p> */}
         </>
     )
 }
 
-export default chatMessage
+export default ChatMessage;

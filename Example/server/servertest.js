@@ -29,19 +29,24 @@ app.get('/', (req, res) => {
 
 const server = app.listen(PORT, () => {
     const WebSocketServer = new WebSocket.Server({server: server, path: "/"})
-    WebSocketServer.on("connection", function(event) {
-        event.id = Math.floor(Math.random() * 100); //testing for 'unique' id
+    WebSocketServer.on("connection", function(ws) {
+        ws.id = Math.floor(Math.random() * 100); //testing for 'unique' id, //WebSocketServer.id
 
         // console.log("event start", event, 'event end')
-        console.log('Server: someone has connected')
+        console.log('Server: Someone has connected')
         console.log('Currently serving:', WebSocketServer.clients.size, 'people websockets')
         WebSocketServer.clients.forEach(client => console.log('client.id', client.id));
 
-        //User.find({}).then(data => )
+        ws.on("message", function(event, message){
+            console.log("event, message:", event, message);
+            console.log("parsed buffer event:", event.toString('utf-8'))
+            ws.send(event.toString(), 'Yep, we\'re able to see it are you?')
+         });
+        
+         
+        //ws.data
+
     });
-     
-     // WebSocketServer.on("message", function(event, message){
-     //     console.send(message);
-     //  });
+
     console.log('listening on port:', PORT, process.env.NODE_ENV);
 });
