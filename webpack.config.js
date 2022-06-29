@@ -34,6 +34,12 @@ module.exports =  {
     },
     plugins: [new HtmlWebpackPlugin({template: './Example/client/index.html'})],
     devServer: {
+        proxy: {
+            '/test': {
+                target: 'ws://localhost:3001',
+                ws: true
+        }
+    },
         static: {
         directory: path.resolve(__dirname, 'build'), 
         publicPath: '/build'
