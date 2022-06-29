@@ -1,24 +1,30 @@
 import React from "react";
 import { useState } from "react";
-import chatMessage from "./chatMessage.jsx";
-import { WebSocket } from "ws";
+import ChatMessage from "./chatMessage.jsx";
 
 
+const ws = new WebSocket('ws://localhost:3001');
+
+// whenever client connects to homepage,
+    ws.addEventListener('open', () => {
+    console.log('Websocket connection has opened.');
+    // ws.send('open');
+})
 
 const App = () => {
 
-    const ws = new WebSocket('ws://localhost:3001');
+//     const ws = new WebSocket('ws://localhost:3001');
 
-// whenever client connects to homepage,
-    ws.onopen = () => {
-    console.log('ws open');
-    ws.send('open');
-}
+// // whenever client connects to homepage,
+//     ws.addEventListener('open', () => {
+//     console.log('Websocket connection has opened.');
+//     // ws.send('open');
+// })
 
 // // whenever client leaves the homepage
 // ws.on('close', function close(){
 //     ws.send('close')
-// })
+// }) ws.onopen
 // ws.on('message', function message(data){
 //     ws.send('recieved ', data)
 // })
@@ -31,23 +37,26 @@ const App = () => {
         
     function handleInputChange(e) {
         setMessage(e.target.value);
-        
     }
-    console.log(`%c ${message}`, 'color: red')
+    console.log(`%c ${message}`, 'color: green')
     function handleSubmit(e){
         e.preventDefault()
         setMessageBoard([...messageBoard, message]);
-        console.log(`%c ${messageBoard}`, 'color: blue');
-        setMessage('');
         
+        setMessage('');
     }
+    
+    console.log(`%c ${messageBoard}`, 'color: blue')
+    const messageDisplay = []
 
-    const messageDisplay = messageBoard.map((el, i) => {
-        <chatMessage message={el} key = {el}/>
+    messageBoard.map((el, i) => {
+        messageDisplay.push(<ChatMessage message={el.key} key = {i}/>)
+       
     })
+    console.log(messageDisplay)
     return(
         <>
-        <form>
+        
             
             <input
             name='newMessage'
@@ -56,8 +65,8 @@ const App = () => {
             onChange={handleInputChange}
             >
             </input>
-            <button type="submit" onClick={() => handleSubmit}>Send Message</button>
-        </form>
+            <button type="submit" onClick={handleSubmit}>Send Message</button>
+        
        <div>
         {messageDisplay}
        </div>
