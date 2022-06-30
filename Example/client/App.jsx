@@ -1,15 +1,16 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+// import { useEffect } from "react/cjs/react.production.min";
 import ChatMessage from "./chatMessage.jsx";
 
 
 const ws = new WebSocket('ws://localhost:3001');
 
 // whenever client connects to homepage,
-    ws.addEventListener('open', () => {
-    console.log('Websocket connection has opened.');
+    // ws.addEventListener('open', () => {
+    // console.log('Websocket connection has opened.');
     // ws.send('open');
-})
+// })
 
 const App = () => {
 
@@ -39,13 +40,24 @@ const App = () => {
         setMessage(e.target.value);
     }
     console.log(`%c ${message}`, 'color: green')
+
+
     function handleSubmit(e){
-        e.preventDefault()
-        setMessageBoard([...messageBoard, message]);
+        ws.send('send message', { message })
+        // e.preventDefault()
+        // setMessageBoard([...messageBoard, message]);
         
-        setMessage('');
+        // setMessage('');
     }
     
+    useEffect(() => {
+        ws.addEventListener('receive message', (message) => {
+
+        })
+    }, [ws])
+   
+
+
     console.log(`%c ${messageBoard}`, 'color: blue')
     const messageDisplay = []
 

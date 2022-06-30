@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 //    console.log('someone has connected')
 // });
 
+
 // WebSocketServer.on("message", function(event, message){
 //     console.send(message);
 //  });
@@ -30,6 +31,11 @@ app.get('/', (req, res) => {
 const server = app.listen(PORT, () => {
     const WebSocketServer = new WebSocket.Server({server: server, path: "/"})
     WebSocketServer.on("connection", function(event) {
+
+        event.on("send message", (message) => {
+            WebsocketServer.send("received message", message)
+        })
+
         event.id = Math.floor(Math.random() * 100); //testing for 'unique' id
 
         // console.log("event start", event, 'event end')
