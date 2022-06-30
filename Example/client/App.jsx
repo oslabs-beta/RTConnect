@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
-
+import VideoComponent from '../../client/components/VideoComponent';
 
 const ws = new WebSocket('ws://localhost:3001');
 
@@ -45,6 +45,7 @@ const App = () => {
     const [messageBoard, setMessageBoard] = useState([]);
     const [message, setMessage] = useState('');
     const [backMessage, setBackMessage] = useState('');
+
 
     function handleInputChange(e) {
         setMessage(e.target.value);
@@ -92,6 +93,8 @@ const App = () => {
                 messageChat={backMessage}
             />
        <div>
+
+        <VideoComponent/>
        </div>
         </>
     )
