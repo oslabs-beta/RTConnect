@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
 
 
@@ -42,17 +41,21 @@ const App = () => {
 // ws.on('error', function error(){
 //     ws.send('error')
 // })
+
     const [messageBoard, setMessageBoard] = useState([]);
     const [message, setMessage] = useState('');
-        
+    const [backMessage, setBackMessage] = useState('');
+
     function handleInputChange(e) {
         setMessage(e.target.value);
     }
     // console.log(`%c ${message}`, 'color: green')
-    function handleSubmit(e){
-        e.preventDefault()
-        setMessageBoard([...messageBoard, message]);
+    function handleSubmit(){
+        console.log('button clicked');
         
+        // setMessageBoard([...messageBoard, message]);
+        // console.log('message', message)
+        ws.send(message)
         setMessage('');
     }
     
@@ -62,13 +65,19 @@ const App = () => {
     // messageBoard.map((el, i) => {
     //     messageDisplay.push(<ChatMessage message={el} key={i}/>)
     // })
-    ws.onmessage = (messageBack) => {
-        console.log('line 15: onmessage in front end')
-        console.log("messageFromBack:", messageBackBack.data);
-        console.log(messageBack);
-        // setMessage(messageBack.data)
+    ws.onmessage = (messageBack) => { 
+        // console.log('line 15: onmessage in front end')
+        console.log("messageFromBack:", messageBack.data);
+        // console.log(messageBack);
+        setBackMessage(JSON.parse(messageBack.data));
     }
+
+    // useEffect(() => {
+    //     console.log('Effect used')
+    // }, [backMessage])   
+
     // console.log('message Display: ', messageDisplay)
+    // console.log('backMessage: ', backMessage);
     return(
         <>
             <input
@@ -78,13 +87,11 @@ const App = () => {
                 onChange={handleInputChange}
             >
             </input>
-            <button type="submit" onClick={handleSubmit}>Send Message</button>
+            <button type='submit' onClick={() => handleSubmit()}>Send Message</button>
             <ChatMessage
-                message={message}
+                messageChat={backMessage}
             />
        <div>
-        {/* {messageDisplay} */}
-        {/* <ChatMessage/> */}
        </div>
         </>
     )

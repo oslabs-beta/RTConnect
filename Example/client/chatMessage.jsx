@@ -2,12 +2,11 @@ import React from "react";
 import { useState } from "react";
 
 
-function ChatMessage(message) {
+function ChatMessage({ messageChat }) { //use destructuring
     // console.log('Message in ChatMessage ', message)
     return (
         <>
-        <p>heyyyy ChatMessage.jsx</p>
-        {/* <p>{message.data}</p> */}
+        <p>{`ID: ${messageChat.id} ${messageChat.message}`}</p>
         </>
     )
 }
