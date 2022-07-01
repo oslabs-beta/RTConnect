@@ -18,11 +18,6 @@ ws.onmessage = (message) => {
 //     console.log("message.data:", message.data)
 // })
 
-
-const App = () => {
-
-//     const ws = new WebSocket('ws://localhost:3001');
-
 // // whenever client connects to homepage,
 //     ws.addEventListener('open', () => {
 //     console.log('Websocket connection has opened.');
@@ -40,6 +35,8 @@ const App = () => {
 //     ws.send('error')
 // })
 
+const App = () => {
+
     const [messageBoard, setMessageBoard] = useState([]);
     const [message, setMessage] = useState('');
     const [backMessage, setBackMessage] = useState('');
@@ -47,35 +44,19 @@ const App = () => {
     function handleInputChange(e) {
         setMessage(e.target.value);
     }
+
     // console.log(`%c ${message}`, 'color: green')
     function handleSubmit(){
-        console.log('button clicked');
-        
-        // setMessageBoard([...messageBoard, message]);
-        // console.log('message', message)
+        console.log(`%c line 50 - handleSubmit button clicked: App.jsx, handleSubmit(), message: ${message}`, 'color: green');
         ws.send(message)
         setMessage('');
     }
     
-    // console.log(`%c Message Board: ${messageBoard}`, 'color: blue')
-    const messageDisplay = []
-
-    // messageBoard.map((el, i) => {
-    //     messageDisplay.push(<ChatMessage message={el} key={i}/>)
-    // })
+    // Sending message in input form and sending it to backend when Send Message Button clicked 
     ws.onmessage = (messageBack) => { 
-        // console.log('line 15: onmessage in front end')
-        console.log("messageFromBack:", messageBack.data);
-        // console.log(messageBack);
+        console.log("line 67:  App.jsx, ws.onmessage, messageBack.data:", messageBack.data);
         setBackMessage(JSON.parse(messageBack.data));
     }
-
-    // useEffect(() => {
-    //     console.log('Effect used')
-    // }, [backMessage])   
-
-    // console.log('message Display: ', messageDisplay)
-    // console.log('backMessage: ', backMessage);
 
     const handleCreateRoomClick = async () => {
         try {
@@ -86,6 +67,7 @@ const App = () => {
           myWebcam.getTracks().forEach((track) => console.log(track))
     
           // set video source to the local stream (myWebCam)
+          document.querySelector('.createRoomText').innerHTML = 'hashed room key'
           const videoElement = document.querySelector('.localVideo');
           videoElement.srcObject = myWebcam;
     

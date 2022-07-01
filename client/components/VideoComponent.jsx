@@ -20,17 +20,15 @@ const VideoComponent = ({handleCreateRoomClick}) => {
 
   return (
     <div>
-      <div>
-        Video Component
+      <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
+        <button onClick={handleCreateRoomClick}>Create Room</button>
+        <p className='createRoomText'></p>
       </div>
-      
-      <button onClick={handleCreateRoomClick}>Create Room</button>
-      <input type='text'></input>
 
       {/* <button onClick={handleClick}>Join Room</button>
       <input type='text'></input> */}
 
-      <video className="localVideo" autoPlay playsInline controls={false}/>
+      <video className="localVideo" autoPlay playsInline controls={true}/>
 
     </div>
   )
