@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
-import VideoComponent from '../../client/components/VideoComponent';
+import VideoComponent from '../../client/components/VideoComponent.jsx';
 
 const ws = new WebSocket('ws://localhost:3001');
 
@@ -10,11 +10,9 @@ ws.addEventListener('open', () => {
     ws.send('I connected! Is the back-end able to see this?');
 })
 
-// ws.onmessage = (message) => {
-//     console.log('line 15: onmessage in front end')
-//     console.log("messageFromBack:", message.data);
-//     console.log(message);
-// }
+ws.onmessage = (message) => {
+    console.log("line 15: message.data, ws.onmessage, App.jsx ", message.data);
+}
 
 // ws.addEventListener('message', (message) => {
 //     console.log("message.data:", message.data)
@@ -45,7 +43,6 @@ const App = () => {
     const [messageBoard, setMessageBoard] = useState([]);
     const [message, setMessage] = useState('');
     const [backMessage, setBackMessage] = useState('');
-
 
     function handleInputChange(e) {
         setMessage(e.target.value);
@@ -79,6 +76,23 @@ const App = () => {
 
     // console.log('message Display: ', messageDisplay)
     // console.log('backMessage: ', backMessage);
+
+    const handleCreateRoomClick = async () => {
+        try {
+          // get local webcam permissions
+          const myWebcam = await navigator.mediaDevices.getUserMedia({'video': true, 'audio': true});
+          console.log('Got MediaStream:', myWebcam);
+
+          myWebcam.getTracks().forEach((track) => console.log(track))
+    
+          // set video source to the local stream (myWebCam)
+          const videoElement = document.querySelector('.localVideo');
+          videoElement.srcObject = myWebcam;
+    
+        } catch (error) {
+          console.error('Error accessing media devices.', error);
+        }
+    }
     return(
         <>
             <input
@@ -92,10 +106,14 @@ const App = () => {
             <ChatMessage
                 messageChat={backMessage}
             />
-       <div>
+            <div>
+                <input type='text' placeholder="Enter your name"></input>
+                <button>Submit</button>
 
-        <VideoComponent/>
-       </div>
+                <VideoComponent
+                    handleCreateRoomClick={handleCreateRoomClick}
+                />
+            </div>
         </>
     )
 }
