@@ -27,8 +27,11 @@ const VideoComponent = ({handleCreateRoomClick}) => {
 
       {/* <button onClick={handleClick}>Join Room</button>
       <input type='text'></input> */}
-
+    <div style={{display: 'flex', justifyContent: 'center'}}>
       <video className="localVideo" autoPlay playsInline controls={true}/>
+      <video className="remoteVideo" autoPlay playsInline controls={true}/>
+    </div>
+
 
     </div>
   )

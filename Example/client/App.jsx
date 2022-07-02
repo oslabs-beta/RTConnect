@@ -18,9 +18,9 @@ ws.addEventListener('error', (e) => {
     console.log('Websocket error:', e);
 })
 
-ws.onmessage = (message) => {
-    console.log("line 15: message.data, ws.onmessage, App.jsx ", message.data);
-}
+// ws.addEventListener('message', (message) => {
+//     console.log("line 15: message.data, ws.onmessage, App.jsx ", message.data);
+// })
 
 // ws.addEventListener('message', (message) => {
 //     console.log("message.data:", message.data)
@@ -71,43 +71,63 @@ const App = () => {
             // used this: https://www.youtube.com/watch?v=woXCVJyi_IY&list=PL34gl7XmgyxT4p6-nMgddxdl18S1Xpczr&index=19
             // 3:00
             // After creating room button is clicked, create RTCPeerConnection object
-            const peerConnection = new RTCPeerConnection();
-            // User will create RTC Data channel for data transfer
-            // User will create WebRTC Offer
-            // User will create WebRTC Answer
-            // Each user has to send ICE candidate
-            // All offer, answer and ICE sent through server (server maintains user session)
+            const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
+
+            const peerConnection = new RTCPeerConnection(configuration); //config -- ice: stun server
 
             // generate a room key and render on frontend
             document.querySelector('.createRoomText').innerHTML = 'hashed room key';
 
             // get local webcam permissions
             const myWebcam = await navigator.mediaDevices.getUserMedia({'video': true, 'audio': true});
-            
-            // console.log('Got MediaStream:', myWebcam);
-            // myWebcam.getTracks().forEach((track) => console.log(track));
 
             const videoElement = document.querySelector('.localVideo'); // grab video player
             
             // set video source to the local stream (myWebCam)
             videoElement.srcObject = myWebcam;
 
+            // Set up SDP Answer
+
+            // User will create RTC Data channel for data transfer
+            // User will create WebRTC Offer
+            // User will create WebRTC Answer
+            // Each user has to send ICE candidate
+            // All offer, answer and ICE sent through server (server maintains user session)
+
+            // only triggered if answer is sent back
+            ws.addEventListener('message', async message => {
+
+                switch(message.action_type){
+                    case "ANSWER":
+                        const answerDesc = new RTCSessionDescription(message.answer);
+                        await peerConnection.setRemoteDescription(answerDesc);
+
+                    case "OFFER":
+                        const offerDesc = new RTCSessionDescription(message.offer);
+                        peerConnection.setRemoteDescription(offerDesc)
+                        const answer = await peerConnection.createAnswer()
+                        await peerConnection.setLocalDescription(answer)
+                        ws.send({'answer': answer})
+                }
+            });
 
             // call createOffer() to create a RTCSessionDescription object
             const RTCSessionDescriptionOffer = await peerConnection.createOffer();
-
             // This session description is set as the local description using setLocalDescription()
             await peerConnection.setLocalDescription(RTCSessionDescriptionOffer);
+            console.log('RTCSessionDescriptionOffer:', RTCSessionDescriptionOffer);
 
             // sending this offer via websocket to the backend. 
             const payload = {
                 action_type: 'OFFER',
-                offer: RTCSessionDescriptionOffer
-            } 
+                offer: RTCSessionDescriptionOffer, // RTCSessionDescriptionOffer[sdp]
+            }
 
             // This session description is then sent over our signaling channel to the receiving side
             // send offer
-            ws.send(JSON.stringify(payload));
+            ws.send(JSON.stringify(payload)); // payload
+            // ws.send(payload);
+
             // ws.send({'offer': RTCSessionDescriptionOffer});
     
         
@@ -134,6 +154,7 @@ const App = () => {
 
                 <VideoComponent
                     handleCreateRoomClick={handleCreateRoomClick}
+                    autoplay
                 />
             </div>
         </>
