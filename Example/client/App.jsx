@@ -22,27 +22,6 @@ ws.addEventListener('error', (e) => {
 //     console.log("line 15: message.data, ws.onmessage, App.jsx ", message.data);
 // })
 
-// ws.addEventListener('message', (message) => {
-//     console.log("message.data:", message.data)
-// })
-
-// // whenever client connects to homepage,
-//     ws.addEventListener('open', () => {
-//     console.log('Websocket connection has opened.');
-//     // ws.send('open');
-// })
-
-// // whenever client leaves the homepage
-// ws.on('close', function close(){
-//     ws.send('close')
-// }) ws.onopen
-// ws.on('message', function message(data){
-//     ws.send('recieved ', data)
-// })
-// ws.on('error', function error(){
-//     ws.send('error')
-// })
-
 const App = () => {
 
     const [messageBoard, setMessageBoard] = useState([]);
@@ -69,7 +48,6 @@ const App = () => {
     const handleCreateRoomClick = async () => {
         try {
             // used this: https://www.youtube.com/watch?v=woXCVJyi_IY&list=PL34gl7XmgyxT4p6-nMgddxdl18S1Xpczr&index=19
-            // 3:00
             // After creating room button is clicked, create RTCPeerConnection object
             const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
 
@@ -94,7 +72,6 @@ const App = () => {
             // Each user has to send ICE candidate
             // All offer, answer and ICE sent through server (server maintains user session)
 
-            // only triggered if answer is sent back
             ws.addEventListener('message', async message => {
 
                 switch(message.action_type){
@@ -113,6 +90,7 @@ const App = () => {
 
             // call createOffer() to create a RTCSessionDescription object
             const RTCSessionDescriptionOffer = await peerConnection.createOffer();
+
             // This session description is set as the local description using setLocalDescription()
             await peerConnection.setLocalDescription(RTCSessionDescriptionOffer);
             console.log('RTCSessionDescriptionOffer:', RTCSessionDescriptionOffer);
@@ -126,11 +104,7 @@ const App = () => {
             // This session description is then sent over our signaling channel to the receiving side
             // send offer
             ws.send(JSON.stringify(payload)); // payload
-            // ws.send(payload);
-
-            // ws.send({'offer': RTCSessionDescriptionOffer});
-    
-        
+            
         } catch (error) {
           console.error('Error accessing media devices.', error);
         }
