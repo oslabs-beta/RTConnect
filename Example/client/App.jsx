@@ -76,24 +76,28 @@ const App = () => {
             // Each user has to send ICE candidate
             // All offer, answer and ICE sent through server (server maintains user session)
 
+            // generate a room key and render on frontend
+            document.querySelector('.createRoomText').innerHTML = 'hashed room key';
+
             // get local webcam permissions
             const myWebcam = await navigator.mediaDevices.getUserMedia({'video': true, 'audio': true});
-            console.log('Got MediaStream:', myWebcam);
+            
+            // console.log('Got MediaStream:', myWebcam);
+            // myWebcam.getTracks().forEach((track) => console.log(track));
 
-            myWebcam.getTracks().forEach((track) => console.log(track))
-        
-            document.querySelector('.createRoomText').innerHTML = 'hashed room key'
-
+            const videoElement = document.querySelector('.localVideo'); // grab video player
+            
             // set video source to the local stream (myWebCam)
-            const videoElement = document.querySelector('.localVideo');
             videoElement.srcObject = myWebcam;
 
-            // we call createOffer() to create a RTCSessionDescription object
+
+            // call createOffer() to create a RTCSessionDescription object
             const RTCSessionDescriptionOffer = await peerConnection.createOffer();
 
             // This session description is set as the local description using setLocalDescription()
             await peerConnection.setLocalDescription(RTCSessionDescriptionOffer);
-    
+
+            // sending this offer via websocket to the backend. 
             const payload = {
                 action_type: 'OFFER',
                 offer: RTCSessionDescriptionOffer
