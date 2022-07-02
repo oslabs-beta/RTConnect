@@ -62,23 +62,49 @@ const App = () => {
     
     // Sending message in input form and sending it to backend when Send Message Button clicked 
     ws.onmessage = (messageBack) => { 
-        console.log("line 67:  App.jsx, ws.onmessage, messageBack.data:", messageBack.data);
+        console.log("line 65:  App.jsx, ws.onmessage, messageBack.data:", messageBack.data);
         setBackMessage(JSON.parse(messageBack.data));
     }
 
     const handleCreateRoomClick = async () => {
         try {
-          // get local webcam permissions
-          const myWebcam = await navigator.mediaDevices.getUserMedia({'video': true, 'audio': true});
-          console.log('Got MediaStream:', myWebcam);
+            // After creating room button is clicked, create RTCPeerConnection object
+            const peerConnection = new RTCPeerConnection();
+            // User will create RTC Data channel for data transfer
+            // User will create WebRTC Offer
+            // User will create WebRTC Answer
+            // Each user has to send ICE candidate
+            // All offer, answer and ICE sent through server (server maintains user session)
 
-          myWebcam.getTracks().forEach((track) => console.log(track))
+            // get local webcam permissions
+            const myWebcam = await navigator.mediaDevices.getUserMedia({'video': true, 'audio': true});
+            console.log('Got MediaStream:', myWebcam);
+
+            myWebcam.getTracks().forEach((track) => console.log(track))
+        
+            document.querySelector('.createRoomText').innerHTML = 'hashed room key'
+
+            // set video source to the local stream (myWebCam)
+            const videoElement = document.querySelector('.localVideo');
+            videoElement.srcObject = myWebcam;
+
+            // we call createOffer() to create a RTCSessionDescription object
+            const RTCSessionDescriptionOffer = await peerConnection.createOffer();
+
+            // This session description is set as the local description using setLocalDescription()
+            await peerConnection.setLocalDescription(RTCSessionDescriptionOffer);
     
-          // set video source to the local stream (myWebCam)
-          document.querySelector('.createRoomText').innerHTML = 'hashed room key'
-          const videoElement = document.querySelector('.localVideo');
-          videoElement.srcObject = myWebcam;
+            const payload = {
+                action_type: 'OFFER',
+                offer: RTCSessionDescriptionOffer
+            } 
+
+            // This session description is then sent over our signaling channel to the receiving side
+            // send offer
+            ws.send(JSON.stringify(payload));
+            // ws.send({'offer': RTCSessionDescriptionOffer});
     
+        
         } catch (error) {
           console.error('Error accessing media devices.', error);
         }
