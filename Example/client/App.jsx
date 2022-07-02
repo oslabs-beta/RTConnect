@@ -68,6 +68,8 @@ const App = () => {
 
     const handleCreateRoomClick = async () => {
         try {
+            // used this: https://www.youtube.com/watch?v=woXCVJyi_IY&list=PL34gl7XmgyxT4p6-nMgddxdl18S1Xpczr&index=19
+            // 3:00
             // After creating room button is clicked, create RTCPeerConnection object
             const peerConnection = new RTCPeerConnection();
             // User will create RTC Data channel for data transfer
