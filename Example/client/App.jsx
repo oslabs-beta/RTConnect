@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
-import VideoComponent from '../../client/components/VideoComponent.jsx';
+import VideoComponent from '../../client/src/components/VideoComponent.jsx';
 
 const ws = new WebSocket('ws://localhost:3001');
 
