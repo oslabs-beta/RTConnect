@@ -10,6 +10,14 @@ ws.addEventListener('open', () => {
     ws.send('I connected! Is the back-end able to see this?');
 })
 
+ws.addEventListener('close', () => {
+    console.log('Websocket connection closed.');
+})
+
+ws.addEventListener('error', (e) => {
+    console.log('Websocket error:', e);
+})
+
 ws.onmessage = (message) => {
     console.log("line 15: message.data, ws.onmessage, App.jsx ", message.data);
 }
