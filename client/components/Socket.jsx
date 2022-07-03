@@ -1,29 +1,39 @@
 import React, { Component } from 'react';
+import { OFFER, ANSWER, ICECANDIDATE} from '../../actions';
 
 /**
  * will be imported
  *  needs to be passed url e.g. 'wss://localhost:8080'
  */
 export default Socket = props => {
-    //list of actions to be checked with switch/cases
 
-    const action = {
-        CONNECTION: 'CONNECTION',
-        OFFER: 'OFFER',
-        ANSWER: 'ANSWER',
-        CANDIDATE: 'CANDIDATE',
-        CREATE_ROOM: 'CREATE_ROOM',
-        JOIN_ROOM: 'JOIN_ROOM'
-    }
-    const initializeConnection = () => {
+    //potentially use immediately invoked function expression
+    
+    const initalizeConnection = () => {
         const { URL } = this.props;
         const ws = new WebSocket(URL);
 
         ws.onopen = () => {
-
+            console.log('You\'ve connected to the websocket server!')
         }
-        ws.onmessage = (message) => {
 
+        //
+        // const peerConnection = new RTCPeerConnection();
+        // peerConnection.createOffer()
+        //data = {action_type, payload}
+        ws.onmessage = (data) => {
+            data = JSON.parse(data);
+            switch (data.ACTION_TYPE) {
+                case OFFER:
+                    break;
+                    //handle offer
+                case ANSWER:
+                    //handle answer
+                    break;
+                case ICECANDIDATE:
+                    //handle ice candidates
+                    break;
+            }
         }
 
         ws.onclose = (event) => {
@@ -33,12 +43,11 @@ export default Socket = props => {
         ws.onerror = (error) => {
 
         }
-
-    const handleRooms = () => {
-
     }
-    
-   
-}
 
+    // functional component, does componentDidMount work, or how does the set up work for useEffect for a one time invoke of initialize connection
+    return (
+        <>
+        </>
+    )
 }
