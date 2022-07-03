@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
 import VideoComponent from '../../client/src/components/VideoComponent.jsx';
+import actions from '../../actions.js';
+import Socket from '../../client/src/components/Socket.jsx'
 
+const {OFFER, ANSWER, ICECANDIDATE} = actions
 const ws = new WebSocket('ws://localhost:3001');
 
 // whenever client connects to homepage,
@@ -27,6 +30,7 @@ const App = () => {
     const [messageBoard, setMessageBoard] = useState([]);
     const [message, setMessage] = useState('');
     const [backMessage, setBackMessage] = useState('');
+    
 
     function handleInputChange(e) {
         setMessage(e.target.value);
@@ -64,6 +68,10 @@ const App = () => {
             // set video source to the local stream (myWebCam)
             videoElement.srcObject = myWebcam;
 
+            const videoElement2 = document.querySelector('.remoteVideo'); // grab video player
+            videoElement2.srcObject = myWebcam;
+
+
             // Set up SDP Answer
 
             // User will create RTC Data channel for data transfer
@@ -74,17 +82,56 @@ const App = () => {
 
             ws.addEventListener('message', async message => {
 
-                switch(message.action_type){
-                    case "ANSWER":
-                        const answerDesc = new RTCSessionDescription(message.answer);
-                        await peerConnection.setRemoteDescription(answerDesc);
+                // switch(data.action_type){
+                //     case 'ANSWER':
+                //         const answerDesc = new RTCSessionDescription(message.answer);
+                //         await peerConnection.setRemoteDescription(answerDesc);
 
-                    case "OFFER":
-                        const offerDesc = new RTCSessionDescription(message.offer);
+                //     case 'OFFER':
+                //         const offerDesc = new RTCSessionDescription(message.offer);
+                //         peerConnection.setRemoteDescription(offerDesc)
+                //         const answer = await peerConnection.createAnswer()
+                //         await peerConnection.setLocalDescription(answer)
+                //         ws.send({'answer': answer})
+                // }
+
+                // console.dir(message)
+                // data = message
+                // console.log("message.data")
+                // console.dir(message.data)
+                // console.dir(message)
+                const data = JSON.parse(message.data);
+                const parsedMessage = JSON.parse(data.message)
+                // console.dir(data)
+                console.dir(parsedMessage)
+                // console.dir(data)
+                switch (parsedMessage.ACTION_TYPE) {
+                    case 'OFFER':
+                        // data = {
+                        //     action_type: OFFER,
+                        //     payload: 'adskfjasdlkfjasdflkjasdfk asdfjsa'
+                        // }
+                        // const { payload } = data
+                        const offerPayload = parsedMessage.payload;
+                        const offerDesc = new RTCSessionDescription(offerPayload);
                         peerConnection.setRemoteDescription(offerDesc)
                         const answer = await peerConnection.createAnswer()
                         await peerConnection.setLocalDescription(answer)
                         ws.send({'answer': answer})
+                        break;
+                        //handle offer
+                    case 'ANSWER':
+                        // ({ payload } = data)
+                        const answerPayload = parsedMessage.payload;
+                        const answerDesc = new RTCSessionDescription(answerPayload);
+                        await peerConnection.setRemoteDescription(answerDesc);
+                        break;
+                    case 'ICECANDIDATE':
+                        //handle ice candidates
+                        // ({payload} = data)
+                        const answerIceCandidate = parsedMessage.payload;
+                        peerConnection.addIceCandidate(answerIceCandidate)
+                        break;
                 }
             });
 
@@ -109,6 +156,7 @@ const App = () => {
           console.error('Error accessing media devices.', error);
         }
     }
+
     return(
         <>
             <input

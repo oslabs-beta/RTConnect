@@ -45,6 +45,7 @@ const server = app.listen(PORT, () => {
             WebSocketServer.clients.forEach(client => client.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')}))); 
             // ws.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')})) //was this
         });
+
         
         //client id + message sent back to front 
         //ws.data
@@ -58,6 +59,7 @@ const server = app.listen(PORT, () => {
     //         ws.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')}))
     //     })
     // })
+
 
     console.log('listening on port:', PORT, process.env.NODE_ENV);
 });
