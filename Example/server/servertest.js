@@ -39,6 +39,8 @@ const server = app.listen(PORT, () => {
         WebSocketServer.clients.forEach(client => console.log('client.id', client.id, client.RawData));
 
         ws.on("message", function(event, message){
+            console.log("ws.roomOffer", ws.roomOffer)
+
             console.log("event, message:", event, message);
             console.log("parsed buffer event:", event.toString('utf-8'))
             // console.log("WebSocketServer.clients", WebSocketServer.clients)

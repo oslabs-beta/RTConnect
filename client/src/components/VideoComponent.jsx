@@ -2,8 +2,8 @@ import React from 'react'
 import { useState } from 'react'
 
 
-const VideoComponent = ({handleCreateRoomClick}) => {
-  const [hasJoined, setHasJoined] = useState(true)
+const VideoComponent = ({ handleCreateRoomClick, hasJoined, handleJoinRoomClick, joinRoom }) => {
+  // const [hasJoined, setHasJoined] = useState(true)
   // const handleClick = async () => {
   //   try {
   //     // get local webcam permissions
@@ -20,44 +20,57 @@ const VideoComponent = ({handleCreateRoomClick}) => {
   //   }
   // }
 
-  return (!hasJoined ? 
-
-    <div>
-      <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
-        <button onClick={handleCreateRoomClick}>Create Room</button>
-        
-        <button>Join Room</button>
-        <p className='createRoomText'></p>
-      </div>
-
-
-    <div style={{display: 'flex', justifyContent: 'center'}}>
-      <video className="localVideo" autoPlay playsInline controls={true}/>
-      
+return (
+  <div>
+    <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
+      <button onClick={handleCreateRoomClick}>Create Room</button>
+      <p className='createRoomText'></p>
+      <button onClick={joinRoom}>Join Room</button>
+      <input type='text'></input>
     </div>
-
-
-    </div>
-    /********************TENERARY********************/ 
-    :
-    <div>
-      <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
-        <button onClick={handleCreateRoomClick}>Create Room</button>
-        <p className='createRoomText'></p>
-      </div>
-
-      {/* <button onClick={handleClick}>Join Room</button>
-      <input type='text'></input> */}
     <div style={{display: 'flex', justifyContent: 'center'}}>
       <video className="localVideo" autoPlay playsInline controls={true}/>
       <video className="remoteVideo" autoPlay playsInline controls={true}/>
+    </div>
+  </div>
+)
+  // return (
+
+  //   !hasJoined ? 
+
+  //   <div>
+  //     <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
+  //       <button onClick={handleCreateRoomClick}>Create Room</button>
+  //       <p className='createRoomText'></p>
+
+  //       <button onClick={() => {hasJoined = !hasJoined}}>Join Room</button>
+  //     </div>
+
+
+  //   <div style={{display: 'flex', justifyContent: 'center'}}>
+  //     <video className="localVideo" autoPlay playsInline controls={true} width='80%'/>
       
-    </div>
+  //   </div>
 
 
-    </div>
+  //   </div>
+  //   /********************TENERARY********************/ 
+  //   :
+  //   <div>
+  //     <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
+  //       <button onClick={handleCreateRoomClick}>Create Room</button>
+  //       <p className='createRoomText'></p>
+  //     </div>
 
-  )
+  //     <button onClick={handleClick}>Join Room</button>
+  //     <input type='text'></input>
+  //   <div style={{display: 'flex', justifyContent: 'center'}}>
+  //     <video className="localVideo" autoPlay playsInline controls={true}/>
+  //     <video className="remoteVideo" autoPlay playsInline controls={true}/>
+  //   </div>
+  //   </div>
+
+  // )
   
 }
 
