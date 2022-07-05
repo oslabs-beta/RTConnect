@@ -1,3 +1,5 @@
+// If I uncomment ws.send on Line 135, an error occurs
+
 import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
 import VideoComponent from '../../client/src/components/VideoComponent.jsx';
@@ -60,13 +62,15 @@ const App = () => {
         ],
         iceCandidatePoolSize: 10,
     };
+
     let peerConnection = null;
     let localStream = null;
     let remoteStream = null;
     let roomDialog = null;
     let roomId = null;
 
-    function registerPeerConnectionListeners() {
+    // listens for changes/event listeners
+    const registerPeerConnectionListeners = async () => {
         console.log('registerPeerConnectionListeners function invoked')
         peerConnection.addEventListener('Line 71: icegatheringstatechange', () => {
           console.log(
@@ -87,161 +91,174 @@ const App = () => {
         });
     }
 
+    // gets local webcam permissions and starts local stream
     async function openUserMedia() {
-        const stream = await navigator.mediaDevices.getUserMedia(
-            {video: true, audio: true});
+        const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
         document.querySelector('.localVideo').srcObject = stream;
         localStream = stream;
+    }
+
+    // the functions that are in common for both createOffer and createAnswer
+    const createPeerConnection = async () => {
+        peerConnection = new RTCPeerConnection(configuration);
         remoteStream = new MediaStream();
+        console.log('remote Stream')
         document.querySelector('.remoteVideo').srcObject = remoteStream;
-      
-        console.log('Stream:', document.querySelector('.localVideo').srcObject);
-        // document.querySelector('#cameraBtn').disabled = true;
-        // document.querySelector('#joinBtn').disabled = false;
-        // document.querySelector('#createBtn').disabled = false;
-        // document.querySelector('#hangupBtn').disabled = false;
-      }
-      
+
+        if (!localStream) {
+            openUserMedia();
+        }
+        // media tracks are then added to the RTCPeerConnection by passing them into addTrack(). 
+        localStream.getTracks().forEach((track) => {
+            console.log('Line 105 - localstream', track);
+            peerConnection.addTrack(track, localStream);
+        });
+
+        // event listener for when our peer adds tracks 
+        peerConnection.ontrack = (event) => {
+            console.log('Got remote track:', event.streams[0]);
+            event.streams[0].getTracks().forEach((track) => {
+              remoteStream.addTrack(track);
+            });
+        };
+
+        // event listener whenever we create an ICE candidate
+        peerConnection.onicecandidate = async (event) => {
+            if (event.candidate) { // whenever ice candidate is created
+                console.log('Line 119 - New ICE candidate:', event.candidate);
+                const icePayload = {
+                    action_type: 'ICECANDIDATE',
+                    candidate: event.candidate, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+                };
+                ws.iceCandidate = icePayload;
+                // ws.send(JSON.stringify(icePayload));
+            }
+        }
+
+    }
+
+    // peer 1: remoteDescription = offer and localDescription = offer
+
+    // creates offer, sets LocalDescription, and sends offer and roomId
+    const createOffer = async () => {
+        await createPeerConnection();
+
+        // create offer
+        let offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+
+        const payload = {
+            action_type: 'OFFER',
+            offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+        };
+
+        // each video chat session = a room. A user can create a new room by clicking Create Room button. This will generate an ID that the remote party can use to join the same room.
+        roomId = 'ROOMKEY';
+        ws.roomId = roomId;
+
+        ws.roomOffer = payload;
+        // ws.send(JSON.stringify(payload));
+
+        console.log("Line 161 - peerConnection: ", peerConnection);
+    }
+
+    // peer 2: remoteDescription = offer and localDescription = answer
+    // creates answer, sends it via ws
+    async function createAnswer(offer) {
+        await createPeerConnection();
+        await peerConnection.setRemoteDescription(offer);
+
+        // create answer
+        let answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer); // set answer as the local description,
+
+        // after peer 2 creates answer, they have to send back their answer 
+
+        const answerPayload = {
+            action_type: 'ANSWER',
+            answer: answer,
+        }
+        ws.roomAnswer = answerPayload;
+        // ws.send(JSON.stringify(answerPayload))
+    }
+
+    // Lets Peer 1 set their remote description after getting an answer back from peer 2
+    const addAnswer = async (ans) => {
+        if (!peerConnection.currentRemoteDescription) {
+            peerConnection.setRemoteDescription(ans)
+        }
+
+    }
+    // SENDING ICE CANDIDATE VIA WS
+    async function handleIceCandidates(pc, websocket) {
+        pc.addEventListener('icecandidate', event => {
+            if (!event.candidate) {
+              console.log('Got final candidate!', event.candidate);
+              return;
+            }
+            console.log('Line 104 - Got candidate: ', event.candidate);
+            const payload = {
+                action_type: 'ICECANDIDATE',
+                content: event.candidate
+            }
+            ws.candidate = payload;
+            // ws.send(JSON.stringify(payload)) // causes Join Room button to stop working
+        });
+    }
+
     const createRoom = async () => {
         // generate a room key and render on frontend
         document.querySelector('.createRoomText').innerHTML = 'ROOMKEY';
         console.log("Room Created")
-        await openUserMedia();
 
-        peerConnection = new RTCPeerConnection(configuration);
+        try {
+            await openUserMedia(); // sets local video to local stream
+        } catch (error) {
+            console.log('usermedia not valid: ', error)
+        }
+
+        await createOffer();
+
+        // handler for track events to handle inbound video and audio tracks that have been negotiated to be received by this peer connection
+        peerConnection.ontrack = ({track, streams}) => {
+            track.onunmute = () => {
+              if (document.querySelector(".remoteVideo").srcObject) {
+                console.log('working')
+                return;
+            }
+              document.querySelector(".remoteVideo").srcObject = streams[0];
+            };
+        };
 
         registerPeerConnectionListeners();
-
-    // ************* CODE FOR CREATING A ROOM ****************
-        // each video chat session = a room. 
-        // A user can create a new room by clicking Create Room button. 
-        // This will generate an ID that the remote party can use to join the same room.
-        
-        // creates an RTCSessionDescription that will represent the offer from the caller
-        const offer = await peerConnection.createOffer();
-        // set as the local description,
-        await peerConnection.setLocalDescription(offer);
-    
-        console.log('Line 125: Check peerConnection.localDescription', peerConnection)
-        const payload = {
-            action_type: 'OFFER',
-            offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
-        }
-
-        ws.roomOffer = payload;
-
-        const roomId = 'ROOMKEY';
-        ws.roomId = roomId;
-
-        // console.log(`%c ${message}`, 'color: green')
-        console.log(`%c ws line 139`, 'color: green')
-        console.dir(ws);
-
-        console.log("peerConnection: ", peerConnection.currentRemoteDescription);
-
-        localStream.getTracks().forEach(track => {
-            peerConnection.addTrack(track, localStream);
-          });
-
-    // ============ END CODE FOR CREATING A ROOM ============
-
-    // ************* Code for collecting ICE candidates below *************
-
-    // ============ Code for collecting ICE candidates above ============
-
-        peerConnection.addEventListener('track', event => {
-            console.log('Got remote track:', event.streams[0]);
-            event.streams[0].getTracks().forEach(track => {
-              console.log('Add a track to the remoteStream:', track);
-              remoteStream.addTrack(track);
-            });
-        });     
-  // ************* Listening for remote session description below *************
-        // Need to detect when an answer from the callee has been added.
-        if (peerConnection.currentRemoteDescription === null && ws.roomAnswer !== null) {
-            console.log('Set remote description: ', ws.roomOffer);
-        // This will wait until the callee writes the RTCSessionDescription for the answer, and set that as the remote description on the caller RTCPeerConnection.
-            const answer = new RTCSessionDescription(ws.roomAnswer.answer)
-        //     console.log("answer", answer)
-            await peerConnection.setRemoteDescription(answer);
-        }
-
-  // ============ Listening for remote session description above ============
-
-  // ************* Listen for remote ICE candidates below *************
-
-  // ============ Listen for remote ICE candidates above ============
-
-        // ws.send(JSON.stringify(payload));
-
     }
 
     // when Join Room button is clicked
     const joinRoom = async () => {
+        document.querySelector('.remoteVideo-div').style.display = 'block';
+
         try {
-            console.log(`%c Line 185 ws.roomOffer.offer: ${ws.roomOffer.offer}`, 'color: red');
-
-            // extracting the offer from the caller
-            if (ws.roomOffer.offer) {
-                console.log('Create PeerConnection with configuration: ', configuration);
+            // if there is an offer
+            if (ws.roomOffer.offer !== null) {
                 peerConnection = new RTCPeerConnection(configuration);
-                registerPeerConnectionListeners();
 
-                // localStream.getTracks().forEach(track => {
-                //     peerConnection.addTrack(track, localStream);
-                // });
-    
-            // ************* Code for collecting ICE candidates below *************
-    
-            // ============ Code for collecting ICE candidates above ============
-    
-            peerConnection.addEventListener('track', event => {
-                console.log('Got remote track:', event.streams[0]);
-                event.streams[0].getTracks().forEach(track => {
-                  console.log('Add a track to the remoteStream:', track);
-                  remoteStream.addTrack(track);
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
                 });
-            });
     
-        // ************* Code for creating SDP answer below *************
-            // extracting the offer from the caller 
-            const {offer} = ws.roomOffer;
-
-            // set the offer as the remote description
-            await peerConnection.setRemoteDescription(offer);
-        
-            // create answer to offer
-            const answer = await peerConnection.createAnswer();
-
-            // set answer as the local description,
-            await peerConnection.setLocalDescription(answer);
-            console.log(`Line 227 answer: ${peerConnection}`, 'color: red');
-
-            const roomAnswer = {
-                action_type: 'ANSWER',
-                answer: answer,
+            // ************* Code for creating SDP answer below *************
+                const {offer} = ws.roomOffer; // extracting the offer from the caller 
+                await createAnswer(offer);
             }
+            console.log('Lin 247 peerConnection', peerConnection)
 
-            console.log("roomAnswer", roomAnswer)
-            ws.roomAnswer = roomAnswer;
-            // ============ Code for creating SDP answer above ============
-        
-            // ************* Listening for remote ICE candidates below *************
-        
-            // ============ Listening for remote ICE candidates above ============
-        }
-        console.log('peerConnection', peerConnection)
+            registerPeerConnectionListeners();
 
         } catch (error) {
             alert('Create a room first');
             console.error('Error in joinRoom function in App.jsx', error);
         }
-
     }
-    // const handleJoinRoomClick = () => {
-    //     console.log('Join Room function')
-    //     joinRoom();
-    // }
 
     const handleCreateRoomClick = async () => {
         try {
@@ -252,32 +269,20 @@ const App = () => {
                 // console.dir(data)
                 console.dir(parsedMessage)
                 // console.dir(data)
+                
+
+                // NEED TO REPLACE STRINGS 'offer', 'answer' and 'icecandidate'
                 switch (parsedMessage.ACTION_TYPE) {
                     case 'OFFER':
-                        // data = {
-                        //     action_type: OFFER,
-                        //     payload: 'adskfjasdlkfjasdflkjasdfk asdfjsa'
-                        // }
-                        // const { payload } = data
-                        const offerPayload = parsedMessage.payload;
-                        const offerDesc = new RTCSessionDescription(offerPayload);
-                        peerConnection.setRemoteDescription(offerDesc)
-                        const answer = await peerConnection.createAnswer()
-                        await peerConnection.setLocalDescription(answer)
-                        ws.send({'answer': answer})
+                        createAnswer('offer');
                         break;
-                        //handle offer
                     case 'ANSWER':
-                        // ({ payload } = data)
-                        const answerPayload = parsedMessage.payload;
-                        const answerDesc = new RTCSessionDescription(answerPayload);
-                        await peerConnection.setRemoteDescription(answerDesc);
+                        addAnswer('answer')
                         break;
                     case 'ICECANDIDATE':
-                        //handle ice candidates
-                        // ({payload} = data)
-                        const answerIceCandidate = parsedMessage.payload;
-                        peerConnection.addIceCandidate(answerIceCandidate)
+                        if (peerConnection) {
+                            peerConnection.addIceCandidate('candidate')
+                        }
                         break;
                 }
             });
@@ -306,12 +311,15 @@ const App = () => {
 
                 <div>
                     {/* <button id="hangupBtn">End Call</button> */}
+                    <button onclick={openUserMedia}>Open Media</button>
                     <button id="createBtn" onClick={handleCreateRoomClick}>Create Room</button>
                     <button id="joinBtn" onClick={joinRoom}>Join Room</button>
                 </div>
 
                 <VideoComponent
-                    handleCreateRoomClick={handleCreateRoomClick}
+                    // handleCreateRoomClick={handleCreateRoomClick}
+                    createRoom={createRoom}
+                    openUserMedia={openUserMedia}
                     hasJoined={hasJoined}
                     // handleJoinRoomClick={handleJoinRoomClick}
                     joinRoom={joinRoom}

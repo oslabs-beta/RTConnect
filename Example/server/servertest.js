@@ -39,6 +39,7 @@ const server = app.listen(PORT, () => {
         WebSocketServer.clients.forEach(client => console.log('client.id', client.id, client.RawData));
 
         ws.on("message", function(event, message){
+          console.log('message', message, 'event', event)
             console.log("ws.roomOffer", ws.roomOffer)
 
             console.log("event, message:", event, message);
@@ -65,3 +66,4 @@ const server = app.listen(PORT, () => {
 
     console.log('listening on port:', PORT, process.env.NODE_ENV);
 });
+

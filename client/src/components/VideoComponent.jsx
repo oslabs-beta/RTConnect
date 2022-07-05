@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 
 
-const VideoComponent = ({ handleCreateRoomClick, hasJoined, handleJoinRoomClick, joinRoom }) => {
+const VideoComponent = ({ handleCreateRoomClick, hasJoined, handleJoinRoomClick, joinRoom, openUserMedia, createRoom }) => {
   // const [hasJoined, setHasJoined] = useState(true)
   // const handleClick = async () => {
   //   try {
@@ -23,14 +23,31 @@ const VideoComponent = ({ handleCreateRoomClick, hasJoined, handleJoinRoomClick,
 return (
   <div>
     <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
-      <button onClick={handleCreateRoomClick}>Create Room</button>
+      <button onClick={openUserMedia}>Start Webcam</button>
+
+      {/* <button onClick={handleCreateRoomClick}>Create Room</button> */}
+      <button onClick={createRoom}>Create Room</button>
       <p className='createRoomText'></p>
+
       <button onClick={joinRoom}>Join Room</button>
       <input type='text'></input>
     </div>
+
     <div style={{display: 'flex', justifyContent: 'center'}}>
-      <video className="localVideo" autoPlay playsInline controls={true}/>
-      <video className="remoteVideo" autoPlay playsInline controls={true}/>
+      <div className="localVideo-div">
+        <video className="localVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
+        <p className='peer-names'>Name 1</p>
+      </div>
+
+      <div className="remoteVideo-div">
+        <video className="remoteVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
+        <p className='peer-names'>Name 2</p>
+      </div>
+    </div>
+
+
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <button style={{borderRadius:'100%', padding: '10px', justifyItems: 'center', backgroundColor: 'red'}}>End Call</button>
     </div>
   </div>
 )
