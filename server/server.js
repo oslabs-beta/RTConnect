@@ -45,19 +45,13 @@ class SignalingChannel {
                 const data = message.toString();
                 switch (data.ACTION_TYPE) {
                     case OFFER:
-                        this.webSocketServer.clients.forEach(client => {
-                            if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-                            })
+                        this.transmit();
                         break;
                     case ANSWER:
-                        this.webSocketServer.clients.forEach(client => {
-                            if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-                        })
+                        this.transmit();
                         break;
                     case ICECANDIDATE:
-                        this.webSocketServer.clients.forEach(client => {
-                            if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-                        })
+                        this.transmit();
                         break;
                     case LOGIN:
                         //data.payload should contain a username
@@ -67,6 +61,12 @@ class SignalingChannel {
             })
         })
     }
+
+        transmit(action) {
+            this.webSocketServer.clients.forEach(client => {
+                if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
+            })
+        }
 
     //create a function
         //broadcast/sendto all users except the user that sent the message
