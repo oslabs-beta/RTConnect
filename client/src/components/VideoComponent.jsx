@@ -26,7 +26,7 @@ return (
       <button onClick={openUserMedia}>Start Webcam</button>
 
       {/* <button onClick={handleCreateRoomClick}>Create Room</button> */}
-      <button onClick={createRoom}>Create Room</button>
+      <button onClick={handleCreateRoomClick}>Create Room</button>
       <p className='createRoomText'></p>
 
       <button onClick={joinRoom}>Join Room</button>

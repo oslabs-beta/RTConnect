@@ -33,23 +33,26 @@ const App = () => {
     const [message, setMessage] = useState('');
     const [backMessage, setBackMessage] = useState('');
     const [hasJoined, setHasJoined] = useState(true);
+    const [username, setUsername] = useState('');
 
 
-    function handleInputChange(e) {
-        setMessage(e.target.value);
-    }
-
-    function handleSubmit(){
-        console.log(`%c line 50 - handleSubmit button clicked: App.jsx, handleSubmit(), message: ${message}`, 'color: green');
-        ws.send(message)
-        setMessage('');
-    }
     
-    // Sending message in input form and sending it to backend when Send Message Button clicked 
-    ws.onmessage = (messageBack) => { 
-        console.log("line 65:  App.jsx, ws.onmessage, messageBack.data:", messageBack.data);
-        setBackMessage(JSON.parse(messageBack.data));
-    }
+
+    // function handleInputChange(e) {
+    //     setMessage(e.target.value);
+    // }
+
+    // function handleSubmit(){
+    //     console.log(`%c line 50 - handleSubmit button clicked: App.jsx, handleSubmit(), message: ${message}`, 'color: green');
+    //     ws.send(message)
+    //     setMessage('');
+    // }
+    
+    // // Sending message in input form and sending it to backend when Send Message Button clicked 
+    // ws.onmessage = (messageBack) => { 
+    //     console.log("line 65:  App.jsx, ws.onmessage, messageBack.data:", messageBack.data);
+    //     setBackMessage(JSON.parse(messageBack.data));
+    // }
 
     const configuration = {
         iceServers: [
@@ -66,8 +69,11 @@ const App = () => {
     let peerConnection = null;
     let localStream = null;
     let remoteStream = null;
-    let roomDialog = null;
     let roomId = null;
+
+    const handleUsername = () => {
+
+    }
 
     // listens for changes/event listeners
     const registerPeerConnectionListeners = async () => {
@@ -131,7 +137,7 @@ const App = () => {
                     candidate: event.candidate, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
                 };
                 ws.iceCandidate = icePayload;
-                // ws.send(JSON.stringify(icePayload));
+                ws.send(JSON.stringify(icePayload));
             }
         }
 
@@ -157,7 +163,7 @@ const App = () => {
         ws.roomId = roomId;
 
         ws.roomOffer = payload;
-        // ws.send(JSON.stringify(payload));
+        ws.send(JSON.stringify(payload));
 
         console.log("Line 161 - peerConnection: ", peerConnection);
     }
@@ -179,7 +185,7 @@ const App = () => {
             answer: answer,
         }
         ws.roomAnswer = answerPayload;
-        // ws.send(JSON.stringify(answerPayload))
+        ws.send(JSON.stringify(answerPayload))
     }
 
     // Lets Peer 1 set their remote description after getting an answer back from peer 2
@@ -190,21 +196,21 @@ const App = () => {
 
     }
     // SENDING ICE CANDIDATE VIA WS
-    async function handleIceCandidates(pc, websocket) {
-        pc.addEventListener('icecandidate', event => {
-            if (!event.candidate) {
-              console.log('Got final candidate!', event.candidate);
-              return;
-            }
-            console.log('Line 104 - Got candidate: ', event.candidate);
-            const payload = {
-                action_type: 'ICECANDIDATE',
-                content: event.candidate
-            }
-            ws.candidate = payload;
-            // ws.send(JSON.stringify(payload)) // causes Join Room button to stop working
-        });
-    }
+    // async function handleIceCandidates(pc, websocket) {
+    //     pc.addEventListener('icecandidate', event => {
+    //         if (!event.candidate) {
+    //           console.log('Got final candidate!', event.candidate);
+    //           return;
+    //         }
+    //         console.log('Line 104 - Got candidate: ', event.candidate);
+    //         const payload = {
+    //             action_type: 'ICECANDIDATE',
+    //             content: event.candidate
+    //         }
+    //         ws.candidate = payload;
+    //         // ws.send(JSON.stringify(payload)) // causes Join Room button to stop working
+    //     });
+    // }
 
     const createRoom = async () => {
         // generate a room key and render on frontend
@@ -250,12 +256,12 @@ const App = () => {
                 const {offer} = ws.roomOffer; // extracting the offer from the caller 
                 await createAnswer(offer);
             }
-            console.log('Lin 247 peerConnection', peerConnection)
+            console.log('Line 247 peerConnection', peerConnection)
 
             registerPeerConnectionListeners();
 
         } catch (error) {
-            alert('Create a room first');
+            // alert('Create a room first');
             console.error('Error in joinRoom function in App.jsx', error);
         }
     }
@@ -263,6 +269,8 @@ const App = () => {
     const handleCreateRoomClick = async () => {
         try {
             await createRoom();
+
+    
             ws.addEventListener('message', async message => {
                 const data = JSON.parse(message.data);
                 const parsedMessage = JSON.parse(data.message)
@@ -270,11 +278,14 @@ const App = () => {
                 console.dir(parsedMessage)
                 // console.dir(data)
                 
-
+            // const payload = {
+            //     action_type: 'OFFER',
+            //     offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+            // };
                 // NEED TO REPLACE STRINGS 'offer', 'answer' and 'icecandidate'
-                switch (parsedMessage.ACTION_TYPE) {
+                switch (parsedMessage.action_type) {
                     case 'OFFER':
-                        createAnswer('offer');
+                        createAnswer(ws.roomAnswer.answer);
                         break;
                     case 'ANSWER':
                         addAnswer('answer')
@@ -293,29 +304,16 @@ const App = () => {
     }
       
     return(
-        <>
-            <input
-                name='newMessage'
-                type='text'
-                value={message}
-                onChange={handleInputChange}
-            >
-            </input>
-            <button type='submit' onClick={() => handleSubmit()}>Send Message</button>
-            <ChatMessage
-                messageChat={backMessage}
-            />
+        !username ? 
+        <div>  
+            <input type='text' placeholder='username'></input>
+            <button onClick={() => handleUsername()}>Submit Username</button>
+        </div>
+
+        :
+
+
             <div>
-                <input type='text' placeholder="Enter your name"></input>
-                <button>Submit</button>
-
-                <div>
-                    {/* <button id="hangupBtn">End Call</button> */}
-                    <button onclick={openUserMedia}>Open Media</button>
-                    <button id="createBtn" onClick={handleCreateRoomClick}>Create Room</button>
-                    <button id="joinBtn" onClick={joinRoom}>Join Room</button>
-                </div>
-
                 <VideoComponent
                     // handleCreateRoomClick={handleCreateRoomClick}
                     createRoom={createRoom}
@@ -326,7 +324,19 @@ const App = () => {
                     autoplay
                 />
             </div>
-        </>
+            
+                        {/* <input
+                name='newMessage'
+                type='text'
+                value={message}
+                onChange={handleInputChange}
+            > */}
+            {/* </input>
+            <button type='submit' onClick={() => handleSubmit()}>Send Message</button>
+            <ChatMessage
+                messageChat={backMessage}
+            /> */}
+    
     )
 }
 

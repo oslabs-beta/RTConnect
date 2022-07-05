@@ -2,11 +2,11 @@ const path = require('path');
 const express = require('express');
 const WebSocket = require('ws');
 const cors = require('cors');
+const SignalingServer = require('../server/server.js')
 
 const app = express();
 const PORT = 3001;
 
-// const server2 = require('http').createServer(app);
 
 app.use(cors());
 app.use(express.json());
@@ -17,26 +17,19 @@ app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../client/index.html'))
 })
 
-// const WebSocketServer = new WebSocket.Server({server: server, path: "/"})
-
-// WebSocketServer.on("connection", function(event){
-//    console.log('someone has connected')
-// });
-
-// WebSocketServer.on("message", function(event, message){
-//     console.send(message);
-//  });
-
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
     const WebSocketServer = new WebSocket.Server({server: server, path: "/"})
     WebSocketServer.on("connection", function(ws, req) {
         ws.id = Math.floor(Math.random() * 100); //testing for 'unique' id, each socket's id
+
+        
+
         // const ip = req.socket.remoteAddress; //grabbing ip addresses for ice candidates --ngrok?
         // console.log(ip);
         // console.log("event start", event, 'event end')
-        console.log('Server: Someone has connected')
+
         console.log('Currently serving:', WebSocketServer.clients.size, 'people websockets')
-        WebSocketServer.clients.forEach(client => console.log('client.id', client.id, client.RawData));
+        WebSocketServer.clients.forEach(client => console.log('client.id', client.id));
 
         ws.on("message", function(event, message){
           console.log('message', message, 'event', event)
