@@ -27,11 +27,14 @@ export default Socket = props => {
                 case OFFER:
                     break;
                     //handle offer
+                    // sendTo( {type: "OFFER", offer: data.offer, name: connection.name})
                 case ANSWER:
                     //handle answer
                     break;
                 case ICECANDIDATE:
                     //handle ice candidates
+                    // will receive ice candidates from peer1 and now has to 
+                    // send to peer 2
                     break;
             }
         }
