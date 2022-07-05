@@ -19,10 +19,10 @@ class SignalingChannel {
     //socket.send(JSON.stringify(data.payload));
 
 //option2 -- scales
-    //WebSocketServer.clients.forEach(client => {
-    //if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-    // client.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')
-    //}
+    WebSocketServer.clients.forEach(client => {
+    if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
+    client.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')}))
+    })
 
 /**
  * contains each room created by the client

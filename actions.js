@@ -1,4 +1,4 @@
-export default action = {
+const actions = {
     CONNECTION: 'CONNECTION',
     OFFER: 'OFFER',
     ANSWER: 'ANSWER',
@@ -7,3 +7,5 @@ export default action = {
     CREATE_ROOM: 'CREATE_ROOM',
     JOIN_ROOM: 'JOIN_ROOM'
 }
+// exports.actions  = actions
+module.exports = actions;
