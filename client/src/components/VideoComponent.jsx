@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 
 
-const VideoComponent = ({ handleCreateRoomClick, hasJoined, handleJoinRoomClick, joinRoom, openUserMedia, createRoom }) => {
+const VideoComponent = ({ handleCreateRoomClick, hasJoined ,handleJoinRoomClick, joinRoom, openUserMedia, createRoom }) => {
   // const [hasJoined, setHasJoined] = useState(true)
   // const handleClick = async () => {
   //   try {
@@ -36,12 +36,12 @@ return (
     <div style={{display: 'flex', justifyContent: 'center'}}>
       <div className="localVideo-div">
         <video className="localVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
-        <p className='peer-names'>Name 1</p>
+        <p className='peer-names peer-1'></p>
       </div>
 
       <div className="remoteVideo-div">
         <video className="remoteVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
-        <p className='peer-names'>Name 2</p>
+        <p className='peer-names peer-2'></p>
       </div>
     </div>
 

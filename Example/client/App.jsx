@@ -3,16 +3,15 @@
 import React, { useState, useEffect } from "react";
 import ChatMessage from "./ChatMessage.jsx";
 import VideoComponent from '../../client/src/components/VideoComponent.jsx';
-import actions from '../../actions.js';
 import Socket from '../../client/src/components/Socket.jsx'
+import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../actions.js';
 
-const {OFFER, ANSWER, ICECANDIDATE} = actions
 const ws = new WebSocket('ws://localhost:3001');
 
 // whenever client connects to homepage,
 ws.addEventListener('open', () => {
     console.log('Websocket connection has opened.');
-    ws.send('I connected! Is the back-end able to see this?');
+    // ws.send('I connected! Is the back-end able to see this?');
 })
 
 ws.addEventListener('close', () => {
@@ -34,9 +33,8 @@ const App = () => {
     const [backMessage, setBackMessage] = useState('');
     const [hasJoined, setHasJoined] = useState(true);
     const [username, setUsername] = useState('');
+    //list of users to display, stretch feature
 
-
-    
 
     // function handleInputChange(e) {
     //     setMessage(e.target.value);
@@ -71,8 +69,18 @@ const App = () => {
     let remoteStream = null;
     let roomId = null;
 
-    const handleUsername = () => {
 
+    const handleUsername = () => {
+        const inputValue = document.querySelector('#username-field').value;
+        // document.querySelector('.peer-1').innerText = inputValue;
+        console.log(inputValue);
+
+        const loginPayload = {
+            ACTION_TYPE: LOGIN, 
+            payload: inputValue
+        }
+        ws.send(JSON.stringify(loginPayload))
+        setUsername(inputValue);
     }
 
     // listens for changes/event listeners
@@ -133,7 +141,7 @@ const App = () => {
             if (event.candidate) { // whenever ice candidate is created
                 console.log('Line 119 - New ICE candidate:', event.candidate);
                 const icePayload = {
-                    action_type: 'ICECANDIDATE',
+                    ACTION_TYPE: ICECANDIDATE,
                     candidate: event.candidate, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
                 };
                 ws.iceCandidate = icePayload;
@@ -154,7 +162,7 @@ const App = () => {
         await peerConnection.setLocalDescription(offer);
 
         const payload = {
-            action_type: 'OFFER',
+            ACTION_TYPE: OFFER,
             offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
         };
 
@@ -163,7 +171,7 @@ const App = () => {
         ws.roomId = roomId;
 
         ws.roomOffer = payload;
-        ws.send(JSON.stringify(payload));
+        // ws.send(JSON.stringify(payload));
 
         console.log("Line 161 - peerConnection: ", peerConnection);
     }
@@ -181,7 +189,7 @@ const App = () => {
         // after peer 2 creates answer, they have to send back their answer 
 
         const answerPayload = {
-            action_type: 'ANSWER',
+            ACTION_TYPE: ANSWER,
             answer: answer,
         }
         ws.roomAnswer = answerPayload;
@@ -204,7 +212,7 @@ const App = () => {
     //         }
     //         console.log('Line 104 - Got candidate: ', event.candidate);
     //         const payload = {
-    //             action_type: 'ICECANDIDATE',
+    //             ACTION_TYPE: 'ICECANDIDATE',
     //             content: event.candidate
     //         }
     //         ws.candidate = payload;
@@ -279,18 +287,18 @@ const App = () => {
                 // console.dir(data)
                 
             // const payload = {
-            //     action_type: 'OFFER',
+            //     ACTION_TYPE: 'OFFER',
             //     offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
             // };
                 // NEED TO REPLACE STRINGS 'offer', 'answer' and 'icecandidate'
-                switch (parsedMessage.action_type) {
-                    case 'OFFER':
-                        createAnswer(ws.roomAnswer.answer);
+                switch (parsedMessage.ACTION_TYPE) {
+                    case OFFER:
+                        createAnswer('ws.roomAnswer.answer');
                         break;
-                    case 'ANSWER':
+                    case ANSWER:
                         addAnswer('answer')
                         break;
-                    case 'ICECANDIDATE':
+                    case ICECANDIDATE:
                         if (peerConnection) {
                             peerConnection.addIceCandidate('candidate')
                         }
@@ -304,9 +312,16 @@ const App = () => {
     }
       
     return(
+        // <VideoComponent
+        //     handleCreateRoomClick={handleCreateRoomClick}
+        //     createRoom={createRoom}
+        //     openUserMedia={openUserMedia}
+        //     hasJoined={hasJoined}
+        //     joinRoom={joinRoom}
+        // />
         !username ? 
         <div>  
-            <input type='text' placeholder='username'></input>
+            <input type='text' placeholder='username' id="username-field"></input>
             <button onClick={() => handleUsername()}>Submit Username</button>
         </div>
 
@@ -324,18 +339,18 @@ const App = () => {
                     autoplay
                 />
             </div>
-            
-                        {/* <input
-                name='newMessage'
-                type='text'
-                value={message}
-                onChange={handleInputChange}
-            > */}
-            {/* </input>
-            <button type='submit' onClick={() => handleSubmit()}>Send Message</button>
-            <ChatMessage
-                messageChat={backMessage}
-            /> */}
+            //text messages
+            //             {/* <input
+            //     name='newMessage'
+            //     type='text'
+            //     value={message}
+            //     onChange={handleInputChange}
+            // > */}
+            // {/* </input>
+            // <button type='submit' onClick={() => handleSubmit()}>Send Message</button>
+            // <ChatMessage
+            //     messageChat={backMessage}
+            // /> */}
     
     )
 }
