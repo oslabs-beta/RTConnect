@@ -2,7 +2,11 @@ import React from 'react'
 import { useState } from 'react'
 
 
-const VideoComponent = ({ handleCreateRoomClick, hasJoined, handleJoinRoomClick, joinRoom, openUserMedia, createRoom }) => {
+const VideoComponent = ({ handleCreateRoomClick, hasJoined, openUserMedia, createRoom, handleOffer }) => {
+
+  
+
+  
   // const [hasJoined, setHasJoined] = useState(true)
   // const handleClick = async () => {
   //   try {
@@ -29,19 +33,19 @@ return (
       <button onClick={handleCreateRoomClick}>Create Room</button>
       <p className='createRoomText'></p>
 
-      <button onClick={joinRoom}>Join Room</button>
-      <input type='text'></input>
+      <button onClick={handleOffer}>Enter receiver name</button>
+      <input type='text' id='receiverName'></input>
     </div>
 
     <div style={{display: 'flex', justifyContent: 'center'}}>
       <div className="localVideo-div">
         <video className="localVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
-        <p className='peer-names'>Name 1</p>
+        <p className='peer-names peer-1'></p>
       </div>
 
       <div className="remoteVideo-div">
         <video className="remoteVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
-        <p className='peer-names'>Name 2</p>
+        <p className='peer-names peer-2'></p>
       </div>
     </div>
 
