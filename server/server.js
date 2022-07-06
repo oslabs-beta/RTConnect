@@ -70,9 +70,10 @@ class SignalingChannel {
         })
     }
 // log rtc peer connection object after each ice candidate is set to check the local and rmeote descriptions
-//answer object, no sender
 //error handling, edge cases, calling names needs a name or send an error if name doesn't exist
 //joining website restarts webcams, why?
+
+//createpeerconnection commented currently
 
         transmit(data) {
             console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
