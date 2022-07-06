@@ -6,25 +6,6 @@ import VideoComponent from '../../client/src/components/VideoComponent.jsx';
 import Socket from '../../client/src/components/Socket.jsx'
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../actions.js';
 
-const ws = new WebSocket('ws://localhost:3001');
-
-// whenever client connects to homepage,
-ws.addEventListener('open', () => {
-    console.log('Websocket connection has opened.');
-    // ws.send('I connected! Is the back-end able to see this?');
-})
-
-ws.addEventListener('close', () => {
-    console.log('Websocket connection closed.');
-})
-
-ws.addEventListener('error', (e) => {
-    console.log('Websocket error:', e);
-})
-
-// ws.addEventListener('message', (message) => {
-//     console.log("line 15: message.data, ws.onmessage, App.jsx ", message.data);
-// })
 
 const App = () => {
 
@@ -33,6 +14,14 @@ const App = () => {
     const [backMessage, setBackMessage] = useState('');
     const [hasJoined, setHasJoined] = useState(true);
     const [username, setUsername] = useState('');
+    const [users, setUsers] = useState([]);
+
+    let receiver = null;
+    let peerConnection = null;
+    let localStream;
+    let remoteStream = null;
+    let roomId = null;
+    
     //list of users to display, stretch feature
 
 
@@ -52,6 +41,52 @@ const App = () => {
     //     setBackMessage(JSON.parse(messageBack.data));
     // }
 
+    const ws = new WebSocket('ws://localhost:3001');
+
+// whenever client connects to homepage,
+    ws.addEventListener('open', () => {
+    console.log('Websocket connection has opened.');
+    // ws.send('I connected! Is the back-end able to see this?');
+})
+
+    ws.addEventListener('close', () => {
+    console.log('Websocket connection closed.');
+})
+
+    ws.addEventListener('error', (e) => {
+    console.log('Websocket error:', e);
+})
+
+    ws.addEventListener('message', async message => {
+    const { data } = message;
+    const parsedData = JSON.parse(data);
+    console.log(data);
+    
+// const payload = {
+//     ACTION_TYPE: 'OFFER',
+//     offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+// };
+
+
+    switch (parsedData.ACTION_TYPE) {
+        case LOGIN: 
+            getUsers(parsedData);
+        case OFFER:
+            receiver = parsedData.sender  //swap receiver and sender
+            createAnswer(parsedData);
+            break;
+        case ANSWER:
+            addAnswer(parsedData);
+            console.log(peerConnection);
+            break;
+        case ICECANDIDATE:
+            if (peerConnection) {
+                peerConnection.addIceCandidate(parsedData.payload)
+            }
+            break;
+    }
+});
+
     const configuration = {
         iceServers: [
           {
@@ -64,17 +99,11 @@ const App = () => {
         iceCandidatePoolSize: 10,
     };
 
-    let peerConnection = null;
-    let localStream = null;
-    let remoteStream = null;
-    let roomId = null;
-
 
     const handleUsername = () => {
         const inputValue = document.querySelector('#username-field').value;
         // document.querySelector('.peer-1').innerText = inputValue;
         console.log(inputValue);
-
         const loginPayload = {
             ACTION_TYPE: LOGIN, 
             payload: inputValue
@@ -82,6 +111,23 @@ const App = () => {
         ws.send(JSON.stringify(loginPayload))
         setUsername(inputValue);
     }
+
+    const getUsers = (data) => {
+        setUsers(data.payload);
+        console.log(users);
+    }
+    
+    const handleOffer = () => {
+        let inputField = document.querySelector('#receiverName');
+        console.log(`receiver: ${inputField.value}`)
+        console.log(`receiver state ${receiver}`);
+
+        receiver = inputField.value;
+
+        inputField.value = ''
+
+        createOffer(receiver);
+      }
 
     // listens for changes/event listeners
     const registerPeerConnectionListeners = async () => {
@@ -116,15 +162,17 @@ const App = () => {
     const createPeerConnection = async () => {
         peerConnection = new RTCPeerConnection(configuration);
         remoteStream = new MediaStream();
-        console.log('remote Stream')
-        document.querySelector('.remoteVideo').srcObject = remoteStream;
+        document.querySelector('.remoteVideo').srcObject = remoteStream; // 
+
+        // console.log('peerConnection:', peerConnection, 'remoteStream:', remoteStream);
 
         if (!localStream) {
             openUserMedia();
+            console.dir(localStream)
         }
         // media tracks are then added to the RTCPeerConnection by passing them into addTrack(). 
         localStream.getTracks().forEach((track) => {
-            console.log('Line 105 - localstream', track);
+            console.log('Line 105 - localstream TRACK', track);
             peerConnection.addTrack(track, localStream);
         });
 
@@ -138,40 +186,50 @@ const App = () => {
 
         // event listener whenever we create an ICE candidate
         peerConnection.onicecandidate = async (event) => {
-            if (event.candidate) { // whenever ice candidate is created
+            if (event && event.candidate) { // whenever ice candidate is created
                 console.log('Line 119 - New ICE candidate:', event.candidate);
+                console.log(peerConnection);
+
+                // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+                //event.candidate contains ice candidate to be sent to remote peer (callee)
+                
                 const icePayload = {
                     ACTION_TYPE: ICECANDIDATE,
-                    candidate: event.candidate, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+                    payload: event.candidate,
+                    sender: username,
+                    receiver: receiver
                 };
-                ws.iceCandidate = icePayload;
+                // ws.iceCandidate = icePayload;
                 ws.send(JSON.stringify(icePayload));
             }
         }
-
+        registerPeerConnectionListeners();
     }
 
     // peer 1: remoteDescription = offer and localDescription = offer
 
     // creates offer, sets LocalDescription, and sends offer and roomId
-    const createOffer = async () => {
+    const createOffer = async (receiver) => {
         await createPeerConnection();
 
         // create offer
         let offer = await peerConnection.createOffer();
+        console.log(`%c MY OFFER ${ JSON.stringify(offer) }`, 'color: red')
         await peerConnection.setLocalDescription(offer);
 
-        const payload = {
+        const offerPayload = {
             ACTION_TYPE: OFFER,
-            offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+            payload: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
+            sender: username,
+            receiver: receiver
         };
 
         // each video chat session = a room. A user can create a new room by clicking Create Room button. This will generate an ID that the remote party can use to join the same room.
-        roomId = 'ROOMKEY';
-        ws.roomId = roomId;
+        // roomId = 'ROOMKEY';
+        // ws.roomId = roomId;
 
-        ws.roomOffer = payload;
-        // ws.send(JSON.stringify(payload));
+        // ws.roomOffer = payload;
+        ws.send(JSON.stringify(offerPayload));
 
         console.log("Line 161 - peerConnection: ", peerConnection);
     }
@@ -179,46 +237,35 @@ const App = () => {
     // peer 2: remoteDescription = offer and localDescription = answer
     // creates answer, sends it via ws
     async function createAnswer(offer) {
+        console.log(offer)
         await createPeerConnection();
-        await peerConnection.setRemoteDescription(offer);
-
+        await peerConnection.setRemoteDescription(offer.payload);
         // create answer
         let answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer); // set answer as the local description,
 
         // after peer 2 creates answer, they have to send back their answer 
+        
+        registerPeerConnectionListeners()
 
         const answerPayload = {
             ACTION_TYPE: ANSWER,
             answer: answer,
+            sender: username,
+            receiver: offer.sender
         }
-        ws.roomAnswer = answerPayload;
+        // ws.roomAnswer = answerPayload;
         ws.send(JSON.stringify(answerPayload))
     }
 
     // Lets Peer 1 set their remote description after getting an answer back from peer 2
     const addAnswer = async (ans) => {
         if (!peerConnection.currentRemoteDescription) {
-            peerConnection.setRemoteDescription(ans)
+            console.log(ans)
+            await peerConnection.setRemoteDescription(ans.payload)
         }
-
+        console.log(peerConnection);
     }
-    // SENDING ICE CANDIDATE VIA WS
-    // async function handleIceCandidates(pc, websocket) {
-    //     pc.addEventListener('icecandidate', event => {
-    //         if (!event.candidate) {
-    //           console.log('Got final candidate!', event.candidate);
-    //           return;
-    //         }
-    //         console.log('Line 104 - Got candidate: ', event.candidate);
-    //         const payload = {
-    //             ACTION_TYPE: 'ICECANDIDATE',
-    //             content: event.candidate
-    //         }
-    //         ws.candidate = payload;
-    //         // ws.send(JSON.stringify(payload)) // causes Join Room button to stop working
-    //     });
-    // }
 
     const createRoom = async () => {
         // generate a room key and render on frontend
@@ -248,63 +295,35 @@ const App = () => {
     }
 
     // when Join Room button is clicked
-    const joinRoom = async () => {
-        document.querySelector('.remoteVideo-div').style.display = 'block';
+    // const joinRoom = async () => {
+    //     document.querySelector('.remoteVideo-div').style.display = 'block';
 
-        try {
-            // if there is an offer
-            if (ws.roomOffer.offer !== null) {
-                peerConnection = new RTCPeerConnection(configuration);
+    //     try {
+    //         // if there is an offer
+    //         if (ws.roomOffer.offer !== null) {
+    //             peerConnection = new RTCPeerConnection(configuration);
 
-                localStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, localStream);
-                });
+    //             localStream.getTracks().forEach(track => {
+    //                 peerConnection.addTrack(track, localStream);
+    //             });
     
-            // ************* Code for creating SDP answer below *************
-                const {offer} = ws.roomOffer; // extracting the offer from the caller 
-                await createAnswer(offer);
-            }
-            console.log('Line 247 peerConnection', peerConnection)
+    //         // ************* Code for creating SDP answer below *************
+    //             const {offer} = ws.roomOffer; // extracting the offer from the caller 
+    //             await createAnswer(offer);
+    //         }
+    //         console.log('Line 247 peerConnection', peerConnection)
 
-            registerPeerConnectionListeners();
+    //         registerPeerConnectionListeners();
 
-        } catch (error) {
-            // alert('Create a room first');
-            console.error('Error in joinRoom function in App.jsx', error);
-        }
-    }
+    //     } catch (error) {
+    //         // alert('Create a room first');
+    //         console.error('Error in joinRoom function in App.jsx', error);
+    //     }
+    // }
 
     const handleCreateRoomClick = async () => {
         try {
-            await createRoom();
-
-    
-            ws.addEventListener('message', async message => {
-                const data = JSON.parse(message.data);
-                const parsedMessage = JSON.parse(data.message)
-                // console.dir(data)
-                console.dir(parsedMessage)
-                // console.dir(data)
-                
-            // const payload = {
-            //     ACTION_TYPE: 'OFFER',
-            //     offer: offer, // must be full SDP object with type or else causes error when setting remoteDescription on peerConnection obj
-            // };
-                // NEED TO REPLACE STRINGS 'offer', 'answer' and 'icecandidate'
-                switch (parsedMessage.ACTION_TYPE) {
-                    case OFFER:
-                        createAnswer('ws.roomAnswer.answer');
-                        break;
-                    case ANSWER:
-                        addAnswer('answer')
-                        break;
-                    case ICECANDIDATE:
-                        if (peerConnection) {
-                            peerConnection.addIceCandidate('candidate')
-                        }
-                        break;
-                }
-            });
+            // await createRoom();
             
         } catch (error) {
             console.error('Error accessing media devices.', error);
@@ -330,14 +349,16 @@ const App = () => {
 
             <div>
                 <VideoComponent
-                    // handleCreateRoomClick={handleCreateRoomClick}
+                    handleCreateRoomClick={handleCreateRoomClick}
                     createRoom={createRoom}
                     openUserMedia={openUserMedia}
                     hasJoined={hasJoined}
                     // handleJoinRoomClick={handleJoinRoomClick}
-                    joinRoom={joinRoom}
+                    // joinRoom={joinRoom}
+                    handleOffer={handleOffer}
                     autoplay
                 />
+                {users}
             </div>
             //text messages
             //             {/* <input

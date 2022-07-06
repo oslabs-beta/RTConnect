@@ -46,32 +46,42 @@ class SignalingChannel {
                 
                 const stringifiedMessage = message.toString('utf-8')
                 const data = JSON.parse(stringifiedMessage);
-                console.log('websocket confirmation:', data.ACTION_TYPE, data.payload);
+                // console.log('websocket confirmation:', data.ACTION_TYPE, data.payload);
 
                 switch (data.ACTION_TYPE) {
                     case OFFER:
-                        this.transmit();
+                        console.log('this is going to', data.receiver, data.payload)
+                        this.transmit(data);
                         break;
                     case ANSWER:
-                        this.transmit();
+                        this.transmit(data);
                         break;
                     case ICECANDIDATE:
-                        this.transmit();
+                        this.transmit(data);
                         break;
                     case LOGIN:
-                        console.log('username received:', data.payload);
                         this.users.set(data.payload, socket)
-                        console.log('all users connected', this.users.size);
-                        console.log('list of users', this.users.keys());
+                        console.log('all users connected', this.users.size, this.users.keys());
+                        const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
+                        //send to all users
+                        this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
                 }
             })
         })
     }
+// log rtc peer connection object after each ice candidate is set to check the local and rmeote descriptions
+//answer object, no sender
+//error handling, edge cases, calling names needs a name or send an error if name doesn't exist
+//joining website restarts webcams, why?
 
-        transmit(action) {
-            this.webSocketServer.clients.forEach(client => {
-                if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-            })
+        transmit(data) {
+            console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
+            this.users.get(data.receiver).send(JSON.stringify(data));
+            // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
+            
+            // this.webSocketServer.clients.forEach(client => {
+            //     if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
+            // })
         }
 
     //create a function
