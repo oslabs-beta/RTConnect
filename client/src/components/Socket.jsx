@@ -1,72 +1,48 @@
-import React, { Component } from 'react';
-import { OFFER, ANSWER, ICECANDIDATE } from '../../../actions';
+import React from 'react';
+import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../../actions.js';
 
 
-/**
- * will be imported
- *  needs to be passed url e.g. 'wss://localhost:8080'
- * 
- */
-const Socket = (props) => {
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
 
     //potentially use immediately invoked function expression
-    
     const initalizeConnection = () => {
-        const { URL } = this.props;
-        const ws = new WebSocket(URL);
 
-        ws.onopen = () => {
-            console.log('You\'ve connected to the websocket server!')
-        }
-        // const peerConnection = new RTCPeerConnection();
-        // peerConnection.createOffer()
+        ws.addEventListener('open', () => {
+            console.log('Websocket connection has opened.');
+        })
 
-        const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
-        const peerConnection = new RTCPeerConnection(configuration); //config -- ice: stun server
+        ws.addEventListener('close', () => {
+            console.log('Websocket connection closed.');
+        })
 
-        //data = {action_type, payload}
-        ws.onmessage = async (data) => {
-            data = JSON.parse(data);
-            switch (data.ACTION_TYPE) {
-                case OFFER:
-                    // data = {
-                    //     action_type: OFFER,
-                    //     payload: 'adskfjasdlkfjasdflkjasdfk asdfjsa'
-                    // }
-                    // const { payload } = data
-                    const offerPayload = data.payload;
-                    const offerDesc = new RTCSessionDescription(offerPayload);
-                    peerConnection.setRemoteDescription(offerDesc)
-                    const answer = await peerConnection.createAnswer()
-                    await peerConnection.setLocalDescription(answer)
-                    ws.send({'answer': answer})
+        ws.addEventListener('error', (e) => {
+            console.error('Socket Error:', error)
+        })
+
+        ws.addEventListener('message', message => {
+            const parsedData = JSON.parse(message.data);
+
+            switch (parsedData.ACTION_TYPE) {
+                case LOGIN: 
+                    getUsers(parsedData);
                     break;
-                    //handle offer
+                case OFFER:
+                    handleReceiveCall(parsedData);
+                    break;
                 case ANSWER:
-                    // ({ payload } = data)
-                    const answerPayload = data.payload;
-                    const answerDesc = new RTCSessionDescription(answerPayload);
-                    await peerConnection.setRemoteDescription(answerDesc);
+                    handleAnswer(parsedData);
                     break;
                 case ICECANDIDATE:
-                    //handle ice candidates
-                    // ({payload} = data)
-                    const answerIceCandidate = data.payload;
-                    peerConnection.addIceCandidate(answerIceCandidate)
+                    handleNewIceCandidateMsg(parsedData);
+                    break;
+                default:
+                    console.error('error', parsedData);
                     break;
             }
-        }
-
-        ws.onclose = (event) => {
-
-        }
-
-        ws.onerror = (error) => {
-            console.log(`Socket Error: ${error}`)
-            return `Socket Error: ${error}`
-
-        }
+        });
     }
+
+    initalizeConnection();
 
     return (
         <>
