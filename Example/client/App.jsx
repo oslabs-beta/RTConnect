@@ -2,16 +2,18 @@ import React, { useState, useRef } from "react";
 import VideoComponent from '../../client/src/components/VideoComponent.jsx';
 import Socket from '../../client/src/components/Socket.jsx'
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../actions.js';
+import { Button, Input, Container, Divider } from "@mantine/core";
+import logo from '../assets/logo.png';
 
 const App = () => {
-
+    
     const [ws, setWs] = useState(new WebSocket("ws://localhost:3001"));
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
 
     const localVideo = useRef();
     const remoteVideo = useRef();
-    const peerRef = useRef();
+    const peerRef = useRef(); 
     const otherUser = useRef();
     const localStream = useRef();
     const senders = useRef([]);
@@ -37,8 +39,8 @@ const App = () => {
     };
     const constraints = {
         video: {
-            width:{min:640, ideal:1920, max:1920},
-            height:{min:480, ideal:1080, max:1080},
+            width:{ min:640, ideal:1920, max:1920 },
+            height:{ min:480, ideal:1080, max:1080 },
         },
         audio: true
     }
@@ -81,8 +83,7 @@ const App = () => {
 
     const openUserMedia = async () => {
         try {
-            localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); //let stream before
-
+            localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
         } catch (error) {
             console.log('Error in openUserMedia: ', error);
         }
@@ -106,8 +107,7 @@ const App = () => {
           });
 
         peer.addEventListener('icegatheringstatechange', () => {
-          console.log(
-              `ICE gathering state changed: ${peerRef.current.iceGatheringState}`);
+          console.log(`ICE gathering state changed: ${peerRef.current.iceGatheringState}`);
         });
       
         peer.addEventListener('connectionstatechange', () => {
@@ -120,8 +120,7 @@ const App = () => {
         });
       
         peer.addEventListener('iceconnectionstatechange ', () => {
-          console.log(
-              `ICE connection state change: ${peerRef.current.iceConnectionState}`);
+          console.log(`ICE connection state change: ${peerRef.current.iceConnectionState}`);
         });
 
         return peer;
@@ -142,10 +141,10 @@ const App = () => {
     }
 
 
-    function handleReceiveCall(incoming) {
-        otherUser.current = incoming.sender;
+    function handleReceiveCall(data) {
+        otherUser.current = data.sender;
         peerRef.current = createPeer();
-        const desc = new RTCSessionDescription(incoming.payload);
+        const desc = new RTCSessionDescription(data.payload);
         peerRef.current.setRemoteDescription(desc).then(() => {
             localStream.current.getTracks().forEach(track => peerRef.current.addTrack(track, localStream.current));
         }).then(() => {
@@ -155,7 +154,7 @@ const App = () => {
         }).then(() => {
             const answerPayload = {
                 ACTION_TYPE: ANSWER,
-                receiver: incoming.sender,
+                receiver: data.sender,
                 sender: username,
                 payload: peerRef.current.localDescription
             }
@@ -164,8 +163,8 @@ const App = () => {
     }
 
     function handleAnswer(data) {
-        const desc = new RTCSessionDescription(data.payload);
-        peerRef.current.setRemoteDescription(desc).catch(e => console.log(e));
+        const answerSDP = new RTCSessionDescription(data.payload);
+        peerRef.current.setRemoteDescription(answerSDP).catch(e => console.log(e));
     }
 
     function handleIceCandidateEvent(e) {
@@ -434,23 +433,33 @@ const App = () => {
     return(
         !username ? 
 
-            <div>  
-                <input type='text' placeholder='username' id="username-field" onChange={(e) => userField = e.target.value }></input>
-                <button onClick={() => handleUsername()}>Submit Username</button>
+        <Container>
+            <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', border: '2px green', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
+                <img src={require('../assets/logo.png')} />
+
+                <img src='../assets/logo.png' />
+
+                <img src={logo} />
+                <br />
+                   
+                    <Input type='text' placeholder='username' id="username-field" onChange={(e) => userField = e.target.value } style={{paddingBottom:'70px', width:"200px"}}></Input>
+                    <Button onClick={() => handleUsername()} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Submit Username</Button>
             </div>
+        </Container>
 
         :
 
         <>
             <Socket ws={ws} getUsers={getUsers} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg} />
 
-            <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:"column"} }>
+            <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
 
-                <button onClick={openUserMedia}>Start Webcam</button>
-                <button onClick={handleOffer}>Enter receiver name</button>
-                <input type='text' id='receiverName'></input>
 
-                <div id="main-video-container">
+                <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:"center", alignItems:"center"}}>
+                        <div>
+                            Users connected:
+                            {users}
+                        </div>
                     <div id="local-video-container">
                         <VideoComponent
                             video={localVideo}
@@ -462,7 +471,15 @@ const App = () => {
                     />
                     </div>
                 </div>
-            {users}
+
+                <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:"center", marginTop:"10px"}}>
+                <Button onClick={openUserMedia} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}>Start Webcam</Button>
+                <Divider size="xs" />
+                <Button onClick={handleOffer} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"400px", width: '200px'}}>Enter receiver name</Button>
+                <Divider size="xs" />
+                <Input type='text' id='receiverName'style={{marginBottom:'3px'}}></Input>
+                <Divider size="md" />
+                </div>
             </div>
         </>
     )

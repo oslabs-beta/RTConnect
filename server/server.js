@@ -72,7 +72,7 @@ class SignalingChannel {
                     case LOGIN:
                         this.users.set(data.payload, socket)
                         console.log('all users connected', this.users.size, this.users.keys());
-                        
+
                         const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
                         this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
                 }
@@ -87,7 +87,7 @@ class SignalingChannel {
 
         transmit(data) {
             console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
-            this.users.get(data.receiver).send(JSON.stringify(data));
+            if (this.users.get(data.receiver)) this.users.get(data.receiver).send(JSON.stringify(data));
             // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
             
             // this.webSocketServer.clients.forEach(client => {
