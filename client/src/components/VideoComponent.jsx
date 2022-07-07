@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-
+import { Button, Input, Container, Grid, Center } from "@mantine/core";
 
 const VideoComponent = ({ handleCreateRoomClick, hasJoined, openUserMedia, createRoom, handleOffer }) => {
 
@@ -25,19 +25,21 @@ const VideoComponent = ({ handleCreateRoomClick, hasJoined, openUserMedia, creat
   // }
 
 return (
-  <div>
-    <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black'}}>
-      <button onClick={openUserMedia}>Start Webcam</button>
+  <div style={{display: 'flex' , flexDirection: 'column', gap: '100px'}}>
+    <div style={{display: 'flex', justifyContent: 'center', border: '1px solid black', margin: '10px'}}>
+      <Button onClick={openUserMedia} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Start Webcam</Button>
 
       {/* <button onClick={handleCreateRoomClick}>Create Room</button> */}
-      <button onClick={handleCreateRoomClick}>Create Room</button>
+      <Button onClick={handleCreateRoomClick} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Create Room</Button>
       <p className='createRoomText'></p>
-
-      <button onClick={handleOffer}>Enter receiver name</button>
-      <input type='text' id='receiverName'></input>
+    </div>
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Input type='text' id='receiverName'></Input>
+      <Button onClick={handleOffer}  variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Enter receiver name</Button>
     </div>
 
-    <div style={{display: 'flex', justifyContent: 'center'}}>
+    <div>
+    <div style={{display: 'flex', justifyContent: 'center', gap: '50px'}}>
       <div className="localVideo-div">
         <video className="localVideo" autoPlay playsInline controls={true} style={{ width: "400px", height: '300px' }}/>
         <p className='peer-names peer-1'></p>
@@ -48,10 +50,10 @@ return (
         <p className='peer-names peer-2'></p>
       </div>
     </div>
-
+    </div>
 
     <div style={{display: 'flex', justifyContent: 'center'}}>
-      <button style={{borderRadius:'100%', padding: '10px', justifyItems: 'center', backgroundColor: 'red'}}>End Call</button>
+      <Button style={{borderRadius:'100%', padding: '10px', justifyItems: 'center', backgroundColor: 'red'}}>End Call</Button>
     </div>
   </div>
 )

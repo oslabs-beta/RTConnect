@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/oslabs-beta/rtez#readme",
   "dependencies": {
+    "@mantine/core": "^4.2.12",
+    "@mantine/hooks": "^4.2.12",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "react": "^18.2.0",

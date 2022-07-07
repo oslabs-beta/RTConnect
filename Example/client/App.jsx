@@ -6,6 +6,8 @@ import VideoComponent from '../../client/src/components/VideoComponent.jsx';
 import Socket from '../../client/src/components/Socket.jsx'
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../actions.js';
 
+import { Button, Input, Container, Grid, Center } from "@mantine/core";
+
 
 const App = () => {
 
@@ -153,7 +155,7 @@ const App = () => {
 
     // gets local webcam permissions and starts local stream
     async function openUserMedia() {
-        const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+        const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
         document.querySelector('.localVideo').srcObject = stream;
         localStream = stream;
     }
@@ -260,6 +262,7 @@ const App = () => {
 
     // Lets Peer 1 set their remote description after getting an answer back from peer 2
     const addAnswer = async (ans) => {
+        
         if (!peerConnection.currentRemoteDescription) {
             console.log(ans)
             await peerConnection.setRemoteDescription(ans.payload)
@@ -339,10 +342,13 @@ const App = () => {
         //     joinRoom={joinRoom}
         // />
         !username ? 
-        <div>  
-            <input type='text' placeholder='username' id="username-field"></input>
-            <button onClick={() => handleUsername()}>Submit Username</button>
-        </div>
+            <div className="login-box" style={{display: 'flex',position: 'absolute', top: '20%', left: '28%', margin: '0 auto', height: '500px', width: '800px', border: '2px green', borderStyle: 'solid', justifyContent: 'center', alignItems: 'center', margin: '0 auto'}}>
+                <Container>
+                    <Input  type='text' placeholder='username' id="username-field"></Input>
+                    <Button variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} onClick={() => handleUsername()}>Submit Username</Button>
+                </Container>
+                
+            </div>
 
         :
 
