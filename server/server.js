@@ -6,10 +6,12 @@ const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../actions');
     //should not have to run SignalingChannel.connect() but rather be assigned to a variable and started
 
 class SignalingChannel {
-    constructor(configuration) { //no config defined yet, just passing in a server (https, app)
-    this.webSocketServer = ws.Server({server: configuration})
+    constructor(server) { //no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
+    this.webSocketServer = new ws.Server(server)
     this.users = new Map();
-    this.rooms = new Map(); //focus on later
+    // this.rooms = new Map(); //focus on later
+    }
+
 
 //option1 --quick and easy for test purposes
     //user = {id: socket}
@@ -19,54 +21,69 @@ class SignalingChannel {
     //socket.send(JSON.stringify(data.payload));
 
 //option2 -- scales
-    WebSocketServer.clients.forEach(client => {
-    if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-    client.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')}))
-    })
+    // WebSocketServer.clients.forEach(client => {
+    // if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
+    // client.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')}))
+    // })
+
 
 /**
  * contains each room created by the client
  * key: room (possible the generated id), values: [users] (each user is the socket, socket.send)
  * {roomID: [me, raisa]}
  */
-    }
     
     /**
      * listens to each client connecting
      * can use iife here too?
      */
     initializeConnection() {
+        console.log(this.webSocketServer.clients.size);
         this.webSocketServer.on('connection', (socket) => {
-            // this.users.set('')
             console.log('A user has connected to the websocket server.')
-            socket.send(JSON.stringify)
 
             socket.on('message', (message) => {
-                const data = message.toString();
+                
+                const stringifiedMessage = message.toString('utf-8')
+                const data = JSON.parse(stringifiedMessage);
+                // console.log('websocket confirmation:', data.ACTION_TYPE, data.payload);
+
                 switch (data.ACTION_TYPE) {
                     case OFFER:
-                        this.webSocketServer.clients.forEach(client => {
-                            if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-                            })
+                        console.log('this is going to', data.receiver, data.payload)
+                        this.transmit(data);
                         break;
                     case ANSWER:
-                        this.webSocketServer.clients.forEach(client => {
-                            if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-                        })
+                        this.transmit(data);
                         break;
                     case ICECANDIDATE:
-                        this.webSocketServer.clients.forEach(client => {
-                            if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-                        })
+                        this.transmit(data);
                         break;
                     case LOGIN:
-                        //data.payload should contain a username
-                        //store username in users
-                            //users ={username: socket}
+                        this.users.set(data.payload, socket)
+                        console.log('all users connected', this.users.size, this.users.keys());
+                        const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
+                        //send to all users
+                        this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
                 }
             })
         })
     }
+// log rtc peer connection object after each ice candidate is set to check the local and rmeote descriptions
+//error handling, edge cases, calling names needs a name or send an error if name doesn't exist
+//joining website restarts webcams, why?
+
+//createpeerconnection commented currently
+
+        transmit(data) {
+            console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
+            this.users.get(data.receiver).send(JSON.stringify(data));
+            // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
+            
+            // this.webSocketServer.clients.forEach(client => {
+            //     if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
+            // })
+        }
 
     //create a function
         //broadcast/sendto all users except the user that sent the message

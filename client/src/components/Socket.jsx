@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {OFFER, ANSWER, ICECANDIDATE} from '../../../actions';
+import { OFFER, ANSWER, ICECANDIDATE } from '../../../actions';
 
-// const {OFFER, ANSWER, ICECANDIDATE} = actions
 
 /**
  * will be imported
@@ -69,7 +68,6 @@ const Socket = (props) => {
         }
     }
 
-    // functional component, does componentDidMount work, or how does the set up work for useEffect for a one time invoke of initialize connection
     return (
         <>
         </>
