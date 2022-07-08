@@ -42,6 +42,17 @@ class SignalingChannel {
         this.webSocketServer.on('connection', (socket) => {
             console.log('A user has connected to the websocket server.')
 
+            socket.on('close', () => {
+                const userToDelete = this.getByValue(this.users, socket)
+                this.users.delete(userToDelete);
+                socket.terminate();
+
+                const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
+                this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
+
+                console.log(this.users.size);
+            })
+
             socket.on('message', (message) => {
                 
                 const stringifiedMessage = message.toString('utf-8')
@@ -50,7 +61,6 @@ class SignalingChannel {
 
                 switch (data.ACTION_TYPE) {
                     case OFFER:
-                        console.log('this is going to', data.receiver, data.payload)
                         this.transmit(data);
                         break;
                     case ANSWER:
@@ -62,8 +72,8 @@ class SignalingChannel {
                     case LOGIN:
                         this.users.set(data.payload, socket)
                         console.log('all users connected', this.users.size, this.users.keys());
+
                         const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
-                        //send to all users
                         this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
                 }
             })
@@ -77,12 +87,19 @@ class SignalingChannel {
 
         transmit(data) {
             console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
-            this.users.get(data.receiver).send(JSON.stringify(data));
+            if (this.users.get(data.receiver)) this.users.get(data.receiver).send(JSON.stringify(data));
             // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
             
             // this.webSocketServer.clients.forEach(client => {
             //     if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
             // })
+        }
+
+        getByValue(map, searchValue) {
+            for (let [key, value] of map.entries()) {
+              if (value === searchValue)
+                return key;
+            }
         }
 
     //create a function
