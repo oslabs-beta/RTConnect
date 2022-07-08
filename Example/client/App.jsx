@@ -152,6 +152,7 @@ const App = () => {
             const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
             document.querySelector('.localVideo').srcObject = stream;
             localStream = stream;
+            
             // await createPeerConnection(); // this fixes browser always starting up cam, have to click button if this is uncommented
         } catch (error) {
             console.log('Error in openUserMedia: ', error);
