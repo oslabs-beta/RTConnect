@@ -3,7 +3,7 @@ const https = require('https');
 const express = require('express');
 const WebSocket = require('ws');
 const cors = require('cors');
-const SignalingChannel = require('../../server/server.js')
+const SignalingChannel = require('../../lib/server/server.js')
 
 const app = express();
 const PORT = 3001;
@@ -16,7 +16,7 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-app.use('/build', express.static(path.join(__dirname, '../../build'))); //for production
+app.use("/build", express.static(path.join(__dirname, "../../build"))); //for production
 
 app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../client/index.html'))

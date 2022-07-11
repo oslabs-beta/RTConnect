@@ -10,3 +10,15 @@
 .root {
     font-family: 'Raleway', sans-serif;
 }
+
+.login-box {
+    height: '500px';
+    width: '600px';
+    border:'2px';
+    border-style: 'solid';
+    display: "flex";
+    justify-content: 'center';
+    align-items: 'center';
+    margin: '0 auto'
+
+}
