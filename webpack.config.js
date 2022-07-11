@@ -29,17 +29,21 @@ module.exports =  {
                         implementation: require('node-sass'),
                     }
                 }]
+            },
+            {
+                test: /\.png|svg|jpg|gif$/,
+                use: 'file-loader',
             }
         ]
     },
     plugins: [new HtmlWebpackPlugin({template: './Example/client/index.html'})],
     devServer: {
-        // proxy: {
-        //     '/test': {
-        //         target: 'ws://localhost:3001',
-        //         ws: true
-        // }
-    // },
+        proxy: {
+            '/': {
+                target: 'ws://localhost:3001',
+                ws: true
+        }
+    },
         static: {
         directory: path.resolve(__dirname, 'build'), 
         publicPath: '/build'
