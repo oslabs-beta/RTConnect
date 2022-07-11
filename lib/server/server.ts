@@ -1,7 +1,7 @@
 import { WebSocket, WebSocketServer } from "ws";
 
 const ws = require('ws');
-const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../actions');
+const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../constants/actions.js');
 
 
 //how to use IIFE and classes?, on instantiation of this class it should start the websocket connection

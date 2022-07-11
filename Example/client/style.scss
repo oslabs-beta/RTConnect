@@ -9,5 +9,16 @@
 
 .root {
     font-family: 'Raleway', sans-serif;
-    background-color: #23022E;
+}
+
+.login-box {
+    height: '500px';
+    width: '600px';
+    border:'2px';
+    border-style: 'solid';
+    display: "flex";
+    justify-content: 'center';
+    align-items: 'center';
+    margin: '0 auto'
+
 }
