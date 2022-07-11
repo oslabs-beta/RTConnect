@@ -1,5 +1,5 @@
 {
-  "name": "rtez",
+  "name": "RTConnect",
   "version": "1.0.0",
   "description": "",
   "main": "webpack.config.js",
@@ -7,13 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=production nodemon Example/server/servertest.js",
     "build": "cross-env NODE_ENV=production webpack",
-    "dev": "concurrently \"NODE_ENV=development nodemon Example/server/servertest.js\" \"NODE_ENV=development webpack serve --hot --open\""
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "build",
-      "client"
-    ]
+    "dev": "concurrently \"NODE_ENV=development webpack serve --hot --open --progress --color\" \"NODE_ENV=development nodemon Example/server/servertest.js\""
   },
   "repository": {
     "type": "git",
@@ -31,6 +25,7 @@
     "@mantine/hooks": "^4.2.12",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "file-loader": "^6.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "webpack": "^5.73.0",
