@@ -432,28 +432,27 @@ const App = () => {
       
     return(
         !username ? 
-        <>
-        <img src={logo} style={{width: 'auto', height: '13%'}}/>
+
         <Container>
-            
+            <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', border: '2px green', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
+                <img src={require('../assets/logo.png')} />
 
-            <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '300px', width: '600px', border: '2px green', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
+                <img src='../assets/logo.png' />
 
-                
+                <img src={logo} />
                 <br />
                    
                     <Input type='text' placeholder='username' id="username-field" onChange={(e) => userField = e.target.value } style={{paddingBottom:'70px', width:"200px"}}></Input>
                     <Button onClick={() => handleUsername()} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Submit Username</Button>
             </div>
         </Container>
-        </>
+
         :
 
         <>
             <Socket ws={ws} getUsers={getUsers} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg} />
 
-                <img src={logo} style={{width: 'auto', height: '13%'}}/>
-            <div style={{display: 'flex', justifyContent: 'space-around', border: '2px green', borderRadius: '8px', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
+            <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
 
 
                 <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:"center", alignItems:"center"}}>
@@ -476,7 +475,7 @@ const App = () => {
                 <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:"center", marginTop:"10px"}}>
                 <Button onClick={openUserMedia} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}>Start Webcam</Button>
                 <Divider size="xs" />
-                <Button onClick={handleOffer} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"400px", width: '200px'}}>Call</Button>
+                <Button onClick={handleOffer} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"400px", width: '200px'}}>Enter receiver name</Button>
                 <Divider size="xs" />
                 <Input type='text' id='receiverName'style={{marginBottom:'3px'}}></Input>
                 <Divider size="md" />
