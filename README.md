@@ -25,10 +25,12 @@ npm install rtconnect
  After installing the rtconnect npm package, import the VideoComponent component in your React file:
 ```
 import { VideoComponent } from ‘rtconnect’;
+```
 
+Then use the RTConnect VideoComponent as you would any other React component
+```
 <RTConnect>
 ```
-Then use the RTConnect VideoComponent as you would any other React component
 
 ## <a name="team "/> The Team
 F. Raisa Iftekher    | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
