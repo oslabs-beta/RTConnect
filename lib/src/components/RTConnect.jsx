@@ -1,11 +1,8 @@
 import React, { useState, useRef } from "react";
-import VideoComponent from '../../lib/components/VideoComponent.tsx';
-import Socket from '../../lib/components/Socket.tsx'
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../lib/components/actions.js';
-import { Button, Input, Container, Divider } from "@mantine/core";
-// import logo from '../assets/logo.png';
+import RTConnectVideo from '../../lib/components/RTConnectVideo.jsx';
+import Socket from '../../lib/components/Socket.jsx'
 
-const App = () => {
+const RTConnect = () => {
     
     const [ws, setWs] = useState(new WebSocket("ws://localhost:3001"));
     const [username, setUsername] = useState('');
@@ -31,6 +28,8 @@ const App = () => {
         ],
         iceCandidatePoolSize: 10,
     };
+
+    // Let users customize constraints
     const constraints = {
         video: {
             width:{ min:640, ideal:1920, max:1920 },
@@ -63,7 +62,7 @@ const App = () => {
 
         otherUser.current = receiver;
         callUser(receiver);
-      }
+    }
 
     const openUserMedia = async () => {
         try {
@@ -176,13 +175,11 @@ const App = () => {
     return(
         !username ? 
         <>
-            <Container>
-                <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '300px', width: '600px', border: '2px green', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
+            <div>
                 <br />
-                    <Input type='text' placeholder='username' id="username-field" onChange={(e) => userField = e.target.value } style={{paddingBottom:'70px', width:"200px"}}></Input>
-                    <Button onClick={() => handleUsername()} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Submit Username</Button>
-                </div>
-            </Container>
+                    <input type='text' placeholder='username' id="username-field" onChange={(e) => userField = e.target.value } style={{paddingBottom:'70px', width:"200px"}}></input>
+                    <button onClick={() => handleUsername()} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Submit Username</button>
+            </div>
         </>
         :
         <>
@@ -190,37 +187,34 @@ const App = () => {
             <div style={{display: 'flex', justifyContent: 'space-around', border: '2px green', borderRadius: '8px', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
                 <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:"center", alignItems:"center"}}>
                     <div>
-                        Users connected:
-                        {users}
+                        Users connected: {users}
                     </div>
+                    
                     <div id="local-video-container">
-                        <VideoComponent
-                            video={localVideo}
-                        />
+                        <VideoComponent video={localVideo}/>
                     </div>
-                <div id="remote-video-container">
-                    <VideoComponent
-                        video={remoteVideo}
-                    />
+                    
+                    <div id="remote-video-container">
+                        <VideoComponent video={remoteVideo}/>
                     </div>
                 </div>
 
                 <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:"center", marginTop:"10px"}}>
-                    <Button onClick={openUserMedia} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}>Start Webcam</Button>
+                    <button onClick={openUserMedia} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}>Start Webcam</button>
                     
-                    <Divider size="xs" />
+                    <br/>
                     
-                    <Button onClick={handleOffer} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"400px", width: '200px'}}>Call</Button>
+                    <button onClick={handleOffer} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"400px", width: '200px'}}>Call</button>
                     
-                    <Divider size="xs" />
+                    <br/>
                     
-                    <Input type='text' id='receiverName'style={{marginBottom:'3px'}}></Input>
+                    <input type='text' id='receiverName'style={{marginBottom:'3px'}}></input>
                     
-                    <Divider size="md" />
+                    <br/>
                 </div>
             </div>
         </>
     )
 }
 
-export default App;
+export default RTConnect;
