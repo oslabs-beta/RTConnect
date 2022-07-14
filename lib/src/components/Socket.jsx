@@ -1,5 +1,5 @@
 import React from 'react';
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions.js';
+import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from './actions.js';
 
 
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
@@ -16,7 +16,7 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
         })
 
         ws.addEventListener('error', (e) => {
-            console.error('Socket Error:', e)
+            console.error('Socket Error:', error)
         })
 
         ws.addEventListener('message', message => {
