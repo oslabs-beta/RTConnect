@@ -9,6 +9,7 @@
 - [What is RTConnect?](#what)
 - [Install](#install)
 - [Getting Started](#implementation)
+- [Demo](#demo)
 - [The Team ](#team )
 
 
@@ -33,6 +34,9 @@ Then use the RTConnect VideoComponent as you would any other React component
 ```
 <RTConnect>
 ```
+
+## <a name="demo"/> Demo
+
 
 ## <a name="team "/> The Team
 F. Raisa Iftekher    | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
