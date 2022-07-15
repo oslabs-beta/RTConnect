@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
-import VideoComponent from '../../lib/components/VideoComponent.jsx';
-import Socket from '../../lib/components/Socket.jsx'
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../lib/components/actions.js';
+import VideoComponent from '../../dist/src/components/VideoComponent.js';
+import Socket from '../../dist/src/components/Socket.js'
+import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../dist/src/constants/actions.js';
 import { Button, Input, Container, Divider } from "@mantine/core";
 import logo from '../assets/logo.png';
 

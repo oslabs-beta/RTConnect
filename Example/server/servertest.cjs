@@ -3,7 +3,7 @@ const https = require('https');
 const express = require('express');
 const WebSocket = require('ws');
 const cors = require('cors');
-const SignalingChannel = require('../../lib/server/server.js')
+const SignalingChannel = require('../../lib/server/server.ts')
 
 const app = express();
 const PORT = 3001;
@@ -26,7 +26,7 @@ const server = app.listen(PORT, () => {
     console.log('listening on port:', PORT, process.env.NODE_ENV);
 });
 
-const WebSocketServer = new SignalingChannel({server: server}); //can pass in a different port
+const WebSocketServer = new SignalingChannel({server: server }); //can pass in a different port
 // setTimeout(() => console.log(WebSocketServer.webSocketServer.clients.size, 200))
 WebSocketServer.initializeConnection();
 

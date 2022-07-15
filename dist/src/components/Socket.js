@@ -1,35 +1,25 @@
-import React from 'react';
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions';
-// import actions from '../constants/actions';
-
-// tsc to compile
-// left off at:
-    //importing actions.ts properly
-    //changing example imports to dist file path
-        //dist is what we will be publishing to npm
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(require("react"));
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
-
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {
-
         ws.addEventListener('open', () => {
             console.log('Websocket connection has opened.');
-        })
-
+        });
         ws.addEventListener('close', () => {
             console.log('Websocket connection closed.');
-        })
-
+        });
         ws.addEventListener('error', (e) => {
-            console.error('Socket Error:', e)
-        })
-
+            console.error('Socket Error:', e);
+        });
         ws.addEventListener('message', message => {
             const parsedData = JSON.parse(message.data);
-
             switch (parsedData.ACTION_TYPE) {
-                case LOGIN: 
+                case LOGIN:
                     getUsers(parsedData);
                     break;
                 case OFFER:
@@ -46,14 +36,8 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
                     break;
             }
         });
-    }
-
+    };
     initalizeConnection();
-
-    return (
-        <>
-        </>
-    )
-}
-
-export default Socket;
+    return (react_1.default.createElement(react_1.default.Fragment, null));
+};
+exports.default = Socket;

@@ -1,21 +1,23 @@
 import { WebSocket, WebSocketServer } from "ws";
-
+// const { WebSocket, WebSocketServer } = require('@types/ws/index');
+//require after
+//Cannot use import statement outside a module
 const ws = require('ws');
 const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../constants/actions.js');
 
 
 //how to use IIFE and classes?, on instantiation of this class it should start the websocket connection
     //should not have to run SignalingChannel.connect() but rather be assigned to a variable and connected to signalling channel
-const test: { prop1: string }  = {prop1: 'test'};
-const findingType = WebSocket //erase and delete last later and look at modal
+
+// const findingType: WebSocketServer = new ws.Server(8080) //erase and delete last letter and look at modal
 
 
 
 class SignalingChannel {
-    webSocketServer: any
-    users: Map<String, WebSocket | any>
+    webSocketServer: WebSocketServer
+    users: Map<String, WebSocket>
 
-    constructor(server: any) { //no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
+    constructor(server: number | string) { //no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
     this.webSocketServer = new ws.Server(server)
     this.users = new Map();
     // this.rooms = new Map(); //focus on later
@@ -70,8 +72,9 @@ class SignalingChannel {
 
         // broadcast to other user, sender --> receiver
         transmit(data: any): void {
+            console.log(`c% ${data}`, "background-color: yellow")
             console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
-            if (this.users.get(data.receiver)) this.users.get(data.receiver).send(JSON.stringify(data));
+            this.users.get(data.receiver)?.send(JSON.stringify(data));
             // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
             
             // this.webSocketServer.clients.forEach(client => {

@@ -39,7 +39,7 @@ module.exports =  {
     plugins: [new HtmlWebpackPlugin({template: './Example/client/index.html'})],
     devServer: {
         proxy: {
-            '/': {
+            '/api': {
                 target: 'ws://localhost:3001',
                 ws: true
         }
