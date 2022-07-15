@@ -5,9 +5,9 @@
   "main": "webpack.config.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=production nodemon Example/server/servertest.js",
+    "start": "cross-env NODE_ENV=production nodemon Example/server/servertest.cjs",
     "build": "cross-env NODE_ENV=production webpack",
-    "dev": "concurrently \"NODE_ENV=development webpack serve --hot --open --progress --color\" \"NODE_ENV=development nodemon Example/server/servertest.js\""
+    "dev": "concurrently \"NODE_ENV=development webpack serve --hot --open --progress --color\" \"NODE_ENV=development nodemon Example/server/servertest.cjs\""
   },
   "repository": {
     "type": "git",

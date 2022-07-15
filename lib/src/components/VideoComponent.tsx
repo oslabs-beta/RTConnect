@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 
+type videoComponent = {
+  video: React.MutableRefObject<null> 
 
-const VideoComponent = ({ video }) => {
+}
+
+const VideoComponent = ({ video }: videoComponent) => {
 
   return (
     <>

@@ -4,7 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
+const actions_1 = __importDefault(require("../constants/actions"));
+const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions_1.default;
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
+    //<Socket ws={ws} getUsers={getUsers} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg} />
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {
         ws.addEventListener('open', () => {

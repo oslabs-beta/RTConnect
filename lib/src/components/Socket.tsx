@@ -1,14 +1,26 @@
 import React from 'react';
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions';
-// import actions from '../constants/actions';
+import actions from '../constants/actions';
+const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions;
 
 // tsc to compile
 // left off at:
     //importing actions.ts properly
     //changing example imports to dist file path
         //dist is what we will be publishing to npm
+//comment all code
+//need rtc peer connection
+//delete other comments and clean up code
 
-const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
+type SocketType = {
+    ws: WebSocket,
+    getUsers: Function,
+    handleReceiveCall: Function,
+    handleAnswer: Function,
+    handleNewIceCandidateMsg: Function
+}
+
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }: SocketType): JSX.Element => {
+    //<Socket ws={ws} getUsers={getUsers} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg} />
 
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {
