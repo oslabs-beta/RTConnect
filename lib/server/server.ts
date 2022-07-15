@@ -12,7 +12,11 @@ const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../constants/actions.js'
 // const findingType: WebSocketServer = new ws.Server(8080) //erase and delete last letter and look at modal
 
 
-
+/**
+ * @desc Signaling Channel
+ * @params server
+ * @returns
+ */
 class SignalingChannel {
     webSocketServer: WebSocketServer
     users: Map<String, WebSocket>

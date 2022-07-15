@@ -1,5 +1,5 @@
 import React from 'react';
-import actions from '../constants/actions';
+import actions from '../constants/actions.js';
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions;
 
 // tsc to compile

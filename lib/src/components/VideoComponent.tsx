@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { LegacyRef, useState } from 'react';
 
-type videoComponent = {
-  video: React.MutableRefObject<null> 
+type videoComponentType = {
+  video: React.MutableRefObject<null> | LegacyRef<HTMLVideoElement>
 
 }
 
-const VideoComponent = ({ video }: videoComponent) => {
+const VideoComponent = ({ video }: videoComponentType) => {
 
   return (
     <>

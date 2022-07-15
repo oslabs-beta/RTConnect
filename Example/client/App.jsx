@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
-import VideoComponent from '../../dist/src/components/VideoComponent.js';
-import Socket from '../../dist/src/components/Socket.js'
+import VideoComponent from '/dist/src/components/VideoComponent';
+import Socket from '../../dist/src/components/Socket'
 // import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../dist/src/constants/actions.js';
-import actions from "../../dist/src/constants/actions.js";
+import actions from "../../dist/src/constants/actions";
 import { Button, Input, Container, Divider } from "@mantine/core";
 import logo from '../assets/logo.png';
 

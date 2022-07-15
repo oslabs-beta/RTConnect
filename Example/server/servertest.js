@@ -3,7 +3,8 @@ const https = require('https');
 const express = require('express');
 const WebSocket = require('ws');
 const cors = require('cors');
-const SignalingChannel = require('../../lib/server/server.ts')
+// const SignalingChannel = require('../../dist/server/server.js')
+import { SignalingChannel } from '../../dist/server/server.js'
 
 const app = express();
 const PORT = 3001;

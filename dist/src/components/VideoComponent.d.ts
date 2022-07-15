@@ -1,6 +1,6 @@
-import React from 'react';
-declare type videoComponent = {
-    video: React.MutableRefObject<null>;
+import React, { LegacyRef } from 'react';
+declare type videoComponentType = {
+    video: React.MutableRefObject<null> | LegacyRef<HTMLVideoElement>;
 };
-declare const VideoComponent: ({ video }: videoComponent) => JSX.Element;
+declare const VideoComponent: ({ video }: videoComponentType) => JSX.Element;
 export default VideoComponent;

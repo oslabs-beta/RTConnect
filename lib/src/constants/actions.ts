@@ -18,6 +18,6 @@ const actions: actionType = {
     JOIN_ROOM: 'JOIN_ROOM'
 }
 
-export default actions
+export default actions;
 
 // module.exports = actions;
