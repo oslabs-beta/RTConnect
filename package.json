@@ -1,13 +1,11 @@
 {
   "name": "rtconnect",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "",
-  "main": "webpack.config.cjs",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=production nodemon Example/server/servertest.js",
-    "build": "cross-env NODE_ENV=production webpack",
-    "dev": "concurrently \"NODE_ENV=development webpack serve --hot --open --progress --color\" \"NODE_ENV=development nodemon Example/server/servertest.js\""
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
@@ -20,37 +18,25 @@
     "url": "https://github.com/oslabs-beta/rtez/issues"
   },
   "homepage": "https://github.com/oslabs-beta/rtez#readme",
-  "type": "module",
   "types": "./dist",
   "dependencies": {
-    "@mantine/core": "^4.2.12",
-    "@mantine/hooks": "^4.2.12",
-    "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "file-loader": "^6.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "webpack": "^5.73.0",
     "ws": "^8.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.6",
-    "@babel/preset-env": "^7.18.6",
-    "@babel/preset-react": "^7.18.6",
     "@types/react": "^18.0.15",
     "@types/ws": "^8.5.3",
-    "babel-loader": "^8.2.5",
-    "concurrently": "^7.2.2",
-    "cross-env": "^7.0.3",
-    "css-loader": "^6.7.1",
-    "html-webpack-plugin": "^5.5.0",
-    "node-sass": "^7.0.1",
-    "nodemon": "^2.0.18",
-    "sass-loader": "^13.0.2",
-    "style-loader": "^3.3.1",
-    "typescript": "^4.7.4",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.9.2"
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.0",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "g": "^2.0.1",
+    "typescript": "^4.7.4"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.6",

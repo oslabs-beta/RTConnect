@@ -1,11 +1,16 @@
-// const { WebSocket, WebSocketServer } = require('@types/ws/index');
-//require after
-//Cannot use import statement outside a module
-const ws = require('ws');
-const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../constants/actions.js');
-//how to use IIFE and classes?, on instantiation of this class it should start the websocket connection
-//should not have to run SignalingChannel.connect() but rather be assigned to a variable and connected to signalling channel
-// const findingType: WebSocketServer = new ws.Server(8080) //erase and delete last letter and look at modal
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// import ws from 'ws'; //require in websocket module
+const ws = require("ws");
+const actions_1 = __importDefault(require("../src/constants/actions"));
+const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = actions_1.default;
+/**
+ * @class
+ * @classdesc Class representing the SignalingChannel
+ */
 /**
  * @desc Signaling Channel
  * @params server
@@ -56,7 +61,7 @@ class SignalingChannel {
     // broadcast to other user, sender --> receiver
     transmit(data) {
         var _a;
-        console.log(`c% ${data}`, "background-color: yellow");
+        console.log(`c% ${data}`, 'background-color: yellow');
         console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
         (_a = this.users.get(data.receiver)) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify(data));
         // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
@@ -71,7 +76,7 @@ class SignalingChannel {
     }
     getByValue(map, searchValue) {
         let user = '';
-        for (let [key, value] of map.entries()) {
+        for (const [key, value] of map.entries()) {
             if (value === searchValue)
                 user = key;
         }
@@ -79,4 +84,4 @@ class SignalingChannel {
     }
 }
 module.exports = SignalingChannel;
-export {};
+//testing

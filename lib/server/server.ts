@@ -1,115 +1,104 @@
-import { WebSocket, WebSocketServer } from "ws";
-// const { WebSocket, WebSocketServer } = require('@types/ws/index');
-//require after
-//Cannot use import statement outside a module
-const ws = require('ws');
-const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = require('../constants/actions.js');
-
-
-//how to use IIFE and classes?, on instantiation of this class it should start the websocket connection
-    //should not have to run SignalingChannel.connect() but rather be assigned to a variable and connected to signalling channel
-
-// const findingType: WebSocketServer = new ws.Server(8080) //erase and delete last letter and look at modal
+import ws = require('ws'); //require in websocket module
+import { WebSocket, WebSocketServer } from 'ws';
+import actions from '../src/constants/actions';
+const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = actions;
 
 
 /**
- * @desc Signaling Channel
- * @params server
- * @returns
+ * @class
+ * @classdesc Class representing the SignalingChannel using websockets to allow communication between clients connected to the websocket server
+ * @prop { WebsocketServer } websocketServer - a simple websocket server
+ * @prop { Map } users - an object of users in the following fashion { username1: socket1, username2: socket2, usernameN: socketN, ... }
  */
 class SignalingChannel {
-    webSocketServer: WebSocketServer
-    users: Map<String, WebSocket>
+  webSocketServer: WebSocketServer;
+  users: Map<string, WebSocket>;
 
-    constructor(server: number | string) { //no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
-    this.webSocketServer = new ws.Server(server)
+  /**
+   * 
+   * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
+   * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
+   */
+  constructor(server: ws.ServerOptions) { 
+    this.webSocketServer = new ws.Server(server);
     this.users = new Map();
     // this.rooms = new Map(); //focus on later
-    }
+  }
     
-    initializeConnection(): void {
-        console.log(this.webSocketServer.clients.size);
-        this.webSocketServer.on('connection', (socket) => {
-            console.log('A user has connected to the websocket server.')
+  /**
+   * @description Upon creation and connection to the websocket server, the websocket server will add these event listeners to their socket to perform key functionality
+   * @function initializeConnection Signaling server will listen to client when client has been connected. 
+   * when the message event is triggered, it will either send each user list to each user upon login or sending the receiver the data 
+   * @return a socket that corresponds to the client conencting.
+   */
+  initializeConnection(): void {
+    this.webSocketServer.on('connection', (socket) => {
+      console.log('A user has connected to the websocket server.');
 
-            socket.on('close', () => {
-                const userToDelete = this.getByValue(this.users, socket)
-                    this.users.delete(userToDelete);
-                    socket.terminate();
+      // when a client closes their browser or connection to the websocket server (onclose), their socket gets terminated and they are removed from the map of users
+      // lastly a new user list is sent out to all clients connected to the websocket server. 
+      socket.on('close', () => {
+        const userToDelete = this.getByValue(this.users, socket);
+        this.users.delete(userToDelete);
+        socket.terminate();
+
+        const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
+        this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
+      });
+
+      // the meat of the websocket server, when messages are received from the client...
+      // we will filter through what course of action to take based on data.ACTION_TYPE (see constants/actions.ts)
+      socket.on('message', (message) => {
                 
+        // messages sent between the client and websocket server must be strings
+        // importantly, messages sent to the websocket server are passed as Buffer objects encoded in utf-8 format
+        const stringifiedMessage = message.toString('utf-8');
+        const data = JSON.parse(stringifiedMessage);
 
-                const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
-                this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
-
-                console.log(this.users.size);
-            })
-
-            socket.on('message', (message) => {
-                
-                const stringifiedMessage = message.toString('utf-8')
-                const data = JSON.parse(stringifiedMessage);
-                
-                //use this console log with postman, "ws://localhost:3001"
-                // console.log('websocket confirmation:', data.ACTION_TYPE, data.payload); 
-
-                switch (data.ACTION_TYPE) {
-                    case OFFER:
-                        this.transmit(data);
-                        break;
-                    case ANSWER:
-                        this.transmit(data);
-                        break;
-                    case ICECANDIDATE:
-                        this.transmit(data);
-                        break;
-                    case LOGIN:
-                        this.users.set(data.payload, socket)
-                        console.log('all users connected', this.users.size, this.users.keys());
-
-                        const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
-                        this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
-                }
-            })
-        })
-    }
-
-
-        // broadcast to other user, sender --> receiver
-        transmit(data: any): void {
-            console.log(`c% ${data}`, "background-color: yellow")
-            console.log('this is the current socket for:', data.ACTION_TYPE, data.receiver);
-            this.users.get(data.receiver)?.send(JSON.stringify(data));
-            // this.webSocketServer.clients.forEach(client => client === this.users.get(data.receiver) ? client.send(JSON.stringify(data)) : console.log('this isn\'t the socket I want'));
-            
-            // this.webSocketServer.clients.forEach(client => {
-            //     if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-            // })
-
-            //option2 -- scales
-            // WebSocketServer.clients.forEach(client => {
-            // if (client !== socket && client.readyState === WebSocket.OPEN) client.send(data);
-            // client.send(JSON.stringify({id: ws.id, message: event.toString('utf-8')}))
-            // })
+        switch (data.ACTION_TYPE) {
+          case OFFER:
+            this.transmit(data);
+            break;
+          case ANSWER:
+            this.transmit(data);
+            break;
+          case ICECANDIDATE:
+            this.transmit(data);
+            break;
+          case LOGIN:
+            this.users.set(data.payload, socket);
+            this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(
+              { 
+                ACTION_TYPE: LOGIN, 
+                payload: Array.from(this.users.keys()) 
+              })));
         }
+      });
+    });
+  }
 
-        getByValue (map: any, searchValue: any): string {
-            let user = '';
-            for (let [key, value] of map.entries()) {
-              if (value === searchValue) user = key;
-        }
-        return user;
+  /**
+   * @description Broadcasting from sender to receiver. Accessing the receiver from the data object and if the user exists, the data is sent
+   * @param data 
+   */
+  transmit(data: { ACTION_TYPE: string, receiver: string }): void {
+    this.users.get(data.receiver)?.send(JSON.stringify(data));
+  }
+
+  /**
+   * @description Getting user from Map
+   * @function getByValue identifies user and their specific websocket
+   * @param {Map} map
+   * @param {WebSocket} searchValue 
+   * @returns {string} user
+   */
+  getByValue (map: Map<string, WebSocket>, searchValue: ws.WebSocket): string {
+    let user = '';
+    for (const [key, value] of map.entries()) {
+      if (value === searchValue) user = key;
     }
-
-
-// createRoom
-/**
- * contains each room created by the client
- * key: room (possible the generated id), values: [users] (each user is the socket, socket.send)
- * {roomID: [me, raisa]}
- */
-
-// handleLeaveRoom
-    //delete room when nobody is longer in.
+    return user;
+  }
 }
 
 module.exports = SignalingChannel;

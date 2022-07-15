@@ -1,10 +1,14 @@
-import React from 'react';
-import actions from '../constants/actions.js';
-const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(require("react"));
+const actions_1 = __importDefault(require("../constants/actions"));
+const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions_1.default;
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
     //<Socket ws={ws} getUsers={getUsers} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg} />
-    //potentially use immediately invoked function expression
-    const initalizeConnection = () => {
+    (function initalizeConnection() {
         ws.addEventListener('open', () => {
             console.log('Websocket connection has opened.');
         });
@@ -34,8 +38,7 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
                     break;
             }
         });
-    };
-    initalizeConnection();
-    return (React.createElement(React.Fragment, null));
+    })();
+    return (react_1.default.createElement(react_1.default.Fragment, null));
 };
-export default Socket;
+exports.default = Socket;
