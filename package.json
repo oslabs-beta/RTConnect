@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oslabs-beta/rtez.git"
+    "url": "git+https://github.com/oslabs-beta/RTConnect.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oslabs-beta/rtez/issues"
+    "url": "https://github.com/oslabs-beta/RTConnect/issues"
   },
-  "homepage": "https://github.com/oslabs-beta/rtez#readme",
+  "homepage": "https://github.com/oslabs-beta/RTConnect#readme",
   "types": "./dist",
   "dependencies": {
     "react": "^18.2.0",
