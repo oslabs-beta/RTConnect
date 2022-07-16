@@ -1,3 +1,19 @@
+        // const getUsers = (data) => {
+    //     const userList = data.payload.map(name => (
+    //         <div>{name}</div>
+    //     ))
+    //     setUsers(userList);
+    // }
+        // function handleInputChange(e) {
+    //     setMessage(e.target.value);
+    // }
+
+    // function handleSubmit(){
+    //     console.log(`%c line 50 - handleSubmit button clicked: App.jsx, handleSubmit(), message: ${message}`, 'color: green');
+    //     ws.send(message)
+    //     setMessage('');
+    // }
+    
     // listens for changes/event listeners
     // const registerPeerConnectionListeners = async () => {
     //     console.log('registerPeerConnectionListners has activated');

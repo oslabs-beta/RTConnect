@@ -1,9 +1,10 @@
 const path = require('path');
 const https = require('https');
 const express = require('express');
-const WebSocket = require('ws');
 const cors = require('cors');
 const SignalingChannel = require('../../lib/server/server.js')
+const fs = require('fs');
+
 
 const app = express();
 const PORT = 3001;
@@ -22,13 +23,22 @@ app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../client/index.html'))
 })
 
-const server = app.listen(PORT, () => {
+// command to create pem files: openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 20 -nodes 
+const options = {
+    key: fs.readFileSync(path.resolve(__dirname, '../../../.ssh/key.pem')), // pem files go in quotes
+    cert: fs.readFileSync(path.resolve(__dirname, '../../../.ssh/cert.pem'))
+};
+
+ //https use thisisunsafe
+const server = https.createServer(options, app).listen(PORT, () => {
     console.log('listening on port:', PORT, process.env.NODE_ENV);
-});
+})
+console.log(server);
+
+// If you want to use http server
+// const server = app.listen(PORT, () => {
+//     console.log('listening on port:', PORT, process.env.NODE_ENV);
+// });
 
 const WebSocketServer = new SignalingChannel({server: server}); //can pass in a different port
-// setTimeout(() => console.log(WebSocketServer.webSocketServer.clients.size, 200))
 WebSocketServer.initializeConnection();
-
-// const server = https.createServer(app);
-//or pass in a different port

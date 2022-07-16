@@ -1,15 +1,18 @@
-import React, { useState, useRef, createContext } from "react";
+import React, { useState, useRef, createContext, useContext } from "react";
 import VideoComponent from '../../lib/src/components/VideoComponent.jsx';
 import Socket from '../../lib/src/components/Socket.jsx'
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../lib/src/constants/actions.js';
 import { Button, Input, Container, Divider } from "@mantine/core";
 import logo from '../assets/logo.png';
+import {UserContext, UserContextProvider} from './UserContext.jsx'
+import ShowUsers from "./ShowUsers.jsx";
 
 const App = () => {
-    
-    const [ws, setWs] = useState(new WebSocket("ws://localhost:3001"));
+
+    const [ws, setWs] = useState(new WebSocket("wss://localhost:3001"));
     const [username, setUsername] = useState('');
-    const [users, setUsers] = useState([]);
+    // const [users, setUsers] = useState([]);
+    // const { users, setUsers } = useContext(UserContext);
 
     const localVideo = useRef();
     const remoteVideo = useRef();
@@ -18,9 +21,9 @@ const App = () => {
     const localStream = useRef();
     const senders = useRef([]);
 
-
     //maybe try to use context/reference hooks here
     let userField = null;
+
     let receiver = null;
 
     // let peerConnection = null;
@@ -45,16 +48,6 @@ const App = () => {
         audio: true
     }
 
-    // function handleInputChange(e) {
-    //     setMessage(e.target.value);
-    // }
-
-    // function handleSubmit(){
-    //     console.log(`%c line 50 - handleSubmit button clicked: App.jsx, handleSubmit(), message: ${message}`, 'color: green');
-    //     ws.send(message)
-    //     setMessage('');
-    // }
-
     const handleUsername = () => {
         const loginPayload = {
             ACTION_TYPE: LOGIN, 
@@ -64,14 +57,6 @@ const App = () => {
         ws.send(JSON.stringify(loginPayload))
         setUsername(userField);
     }
-
-    const getUsers = (data) => {
-        const userList = data.payload.map(name => (
-            <div>{name}</div>
-        ))
-        setUsers(userList);
-    }
-    // const getUsersContext = createContext(getUsers)
     
     const handleOffer = () => {
         let inputField = document.querySelector('#receiverName');
@@ -192,6 +177,7 @@ const App = () => {
 
 //media constraints
 //server.ts module needs port and https server object configuration
+    //
 // experimental share screen function for a button
     // function shareScreen() {
     //     navigator.mediaDevices.getDisplayMedia({ cursor: true }).then(stream => {
@@ -208,6 +194,7 @@ const App = () => {
      * const [ws, setWs] = useState(new WebSocket("ws://localhost:3001"));
      * <socket ws={ws}
      */
+
     return(
         !username ? 
 
@@ -225,27 +212,17 @@ const App = () => {
 
         <>
             <img src={logo} style={{height: '50%', width: '50%'}}/>
-            <Socket ws={ws} getUsers={getUsers} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg} />
 
+            <UserContextProvider>
+                <Socket ws={ws} handleReceiveCall={handleReceiveCall} handleAnswer={handleAnswer} handleNewIceCandidateMsg={handleNewIceCandidateMsg}/>
             <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
-
-
                 <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:"center", alignItems:"center"}}>
-                        <div>
-                            Users connected:
-                            {users}
-                        </div>
-                    <div id="local-video-container">
-                        <VideoComponent
-                            video={localVideo}
-                        />
-                    </div>
-                <div id="remote-video-container">
-                    <VideoComponent
-                        video={remoteVideo}
-                    />
-                    </div>
+                    <ShowUsers/>
+                    <div id="local-video-container"><VideoComponent video={localVideo}/></div>
+                    <div id="remote-video-container"><VideoComponent video={remoteVideo}/>
                 </div>
+            </div>
+
 
                 <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:"center", marginTop:"10px"}}>
                 <Button onClick={openUserMedia} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}>Start Webcam</Button>
@@ -255,7 +232,10 @@ const App = () => {
                 <Input type='text' id='receiverName'style={{marginBottom:'3px'}}></Input>
                 <Divider size="md" />
                 </div>
+
             </div>
+            </UserContextProvider>
+
         </>
     )
 }
