@@ -8,6 +8,7 @@ const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = actions;
  * @prop { WebsocketServer } websocketServer - a simple websocket server
  * @prop { Map } users - an object of users in the following fashion { username1: socket1, username2: socket2, usernameN: socketN, ... }
  */
+
 class SignalingChannel {
   webSocketServer: WebSocketServer;
   users: Map<string, WebSocket>;
