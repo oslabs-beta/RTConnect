@@ -41,10 +41,10 @@ Then use the RTConnect VideoComponent as you would any other React component
 ## <a name="team "/> The Team
 F. Raisa Iftekher    | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
 <br>
-Yoojin Chang   | [GitHub]() | [LinkedIn]()
+Yoojin Chang   | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www.linkedin.com/in/yoojin-chang-32a75892/)
 <br>
-Louis Disen    | [GitHub]() | [LinkedIn]()
+Louis Disen    | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
-Anthony King  | [GitHub]() | [LinkedIn]()
+Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](www.linkedin.com/in/aking97)
 
 
