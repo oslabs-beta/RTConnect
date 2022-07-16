@@ -1,5 +1,5 @@
 import React from 'react';
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from './actions.js';
+import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions.js';
 
 
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
