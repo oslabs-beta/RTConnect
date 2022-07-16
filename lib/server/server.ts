@@ -1,8 +1,6 @@
-import ws = require('ws'); //require in websocket module
 import { WebSocket, WebSocketServer } from 'ws';
 import actions from '../src/constants/actions';
 const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = actions;
-
 
 /**
  * @class
@@ -19,8 +17,8 @@ class SignalingChannel {
    * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
    * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
    */
-  constructor(server: ws.ServerOptions) { 
-    this.webSocketServer = new ws.Server(server);
+  constructor(server: WebSocketServer) { 
+    this.webSocketServer = new WebSocket.Server(server);
     this.users = new Map();
     // this.rooms = new Map(); //focus on later
   }
@@ -79,12 +77,12 @@ class SignalingChannel {
 
   /**
    * @description Broadcasting from sender to receiver. Accessing the receiver from the data object and if the user exists, the data is sent
-   * @param data 
+   * @param {object} data 
    */
   transmit(data: { ACTION_TYPE: string, receiver: string }): void {
     this.users.get(data.receiver)?.send(JSON.stringify(data));
   }
-
+  
   /**
    * @description Getting user from Map
    * @function getByValue identifies user and their specific websocket
@@ -92,7 +90,7 @@ class SignalingChannel {
    * @param {WebSocket} searchValue 
    * @returns {string} user
    */
-  getByValue (map: Map<string, WebSocket>, searchValue: ws.WebSocket): string {
+  getByValue (map: Map<string, WebSocket>, searchValue: WebSocket): string {
     let user = '';
     for (const [key, value] of map.entries()) {
       if (value === searchValue) user = key;

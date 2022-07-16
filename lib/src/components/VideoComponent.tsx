@@ -5,6 +5,12 @@ type videoComponent = {
 
 }
 
+/**
+ * 
+ * @param {React.MutableRefObject} video 
+ * @returns a video component that is either the local or remote video stream
+ * controls can be set to true to pause and adjust volumes of streams
+ */
 const VideoComponent = ({ video }: videoComponent) => {
   return (
     <>
@@ -12,7 +18,7 @@ const VideoComponent = ({ video }: videoComponent) => {
         className="localVideo" 
         autoPlay
         playsInline
-        controls={true}
+        controls={false}
         ref={video}
         style={{ width: '500px', height: '500px' }}
       />

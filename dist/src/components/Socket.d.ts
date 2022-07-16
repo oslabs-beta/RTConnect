@@ -1,10 +1,10 @@
 /// <reference types="react" />
 declare type SocketType = {
     ws: WebSocket;
-    getUsers: (val: []) => void;
-    handleReceiveCall: (val: object) => void;
-    handleAnswer: (val: object) => void;
-    handleNewIceCandidateMsg: (val: object) => void;
+    getUsers: (parsedData: []) => void;
+    handleReceiveCall: (parsedData: object) => void;
+    handleAnswer: (parsedData: object) => void;
+    handleNewIceCandidateMsg: (parsedData: object) => void;
 };
 declare const Socket: ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }: SocketType) => JSX.Element;
 export default Socket;

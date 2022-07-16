@@ -13,4 +13,3 @@ const actions = {
     JOIN_ROOM: 'JOIN_ROOM'
 };
 exports.default = actions;
-// module.exports = actions;

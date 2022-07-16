@@ -2,15 +2,6 @@ import React from 'react';
 import actions from '../constants/actions';
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions;
 
-// tsc to compile
-// left off at:
-//importing actions.ts properly
-//changing example imports to dist file path
-//dist is what we will be publishing to npm
-//comment all code
-//need rtc peer connection
-//delete other comments and clean up code
-
 type SocketType = {
     ws: WebSocket,
     getUsers: (parsedData: []) => void,
@@ -19,9 +10,15 @@ type SocketType = {
     handleNewIceCandidateMsg: (parsedData: object) => void,
 }
 
+/**
+ * @desc 
+ * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
+ * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
+ */
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }: SocketType): JSX.Element => {
 
 
+  // IIFE, this function gets invoked when a new socket instance is created, thus adding all event listeners to the current socket connection and any socket that connects to your application.
   (function initalizeConnection() {
 
     ws.addEventListener('open', () => {
@@ -58,6 +55,8 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
       }
     });
   })();
+
+  // an empty jsx element is rendered because this component is only meant to initalize and load the client's socket connection with event listeners
   return (
     <>
     </>
