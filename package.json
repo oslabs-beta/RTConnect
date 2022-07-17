@@ -1,6 +1,6 @@
 {
-  "name": "RTConnect",
-  "version": "1.0.0",
+  "name": "rtconnect",
+  "version": "1.0.5",
   "description": "",
   "main": "webpack.config.js",
   "scripts": {

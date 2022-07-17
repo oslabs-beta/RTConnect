@@ -2,19 +2,15 @@ import React, { useState, useRef, createContext, useContext } from "react";
 import VideoComponent from '../../lib/src/components/VideoComponent.jsx';
 import Socket from '../../lib/src/components/Socket.jsx'
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../../lib/src/constants/actions.js';
-import { Button, Input, Container, Divider } from "@mantine/core";
-import logo from '../assets/logo.png';
-import {SocketContext, SocketContextProvider} from './SocketContext.jsx'
-import ShowUsers from "./ShowUsers.jsx";
+import ShowUsers from "../../ShowUsers.jsx";
 import Rtconnect from "./Rtconnect.jsx";
-import TestComponent from "./TestComponent.jsx";
 
 const App = () => {
 
     // const [ws, setWs] = useState(new WebSocket("wss://localhost:3001"));
     // const [username, setUsername] = useState('');
-    // // const [users, setUsers] = useState([]);
-    // // const { users, setUsers } = useContext(SocketContext);
+    // const [users, setUsers] = useState([]);
+    // const { users, setUsers } = useContext(SocketContext);
 
     // // const localVideo = useRef();
     // // const remoteVideo = useRef();
@@ -202,7 +198,7 @@ const App = () => {
     return(
         // !username ? 
 
-        <TestComponent URL={'localhost:3001'}/>
+        <Rtconnect URL={'localhost:3001'}/>
 
         // <Container>
         //     <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', border: '2px green', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  

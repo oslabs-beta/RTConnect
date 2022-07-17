@@ -1,5 +1,5 @@
 import React from 'react';
-import Rtconnect from './Rtconnect.jsx';
+import Rtconnect from './Example/client/Rtconnect.jsx';
 import { SocketContextProvider } from './SocketContext.jsx';
 
 const TestComponent = ({devURL}) => {

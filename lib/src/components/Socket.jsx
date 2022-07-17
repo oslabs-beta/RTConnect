@@ -1,10 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions.js';
-import { SocketContext } from '../../../Example/client/SocketContext.jsx'
 
 
-const Socket = ({ ws }) => {
-    const { getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg } = useContext(SocketContext);
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
 
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {

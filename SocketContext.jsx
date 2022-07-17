@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
+import { LOGIN } from "./lib/src/constants/actions";
 
 // create context
 const SocketContext = createContext();
@@ -7,17 +8,18 @@ const SocketContextProvider = ({ children }) => {
   // the value that will be given to the context
   const [username, setUsername] = useState('');
   const [users, setUsers] = useState([]);
+  const [userField, setUserField] = useState(null);
+  const [receiver, setReceiver] = useState(null);
 
   const localVideo = useRef();
   const remoteVideo = useRef();
-  const peerRef = useRef(); 
+  const peerRef = useRef(); // RTCPeerConnection Object
   const otherUser = useRef();
-  const localStream = useRef();
+  const localStream = useRef('stream');
   const senders = useRef([]);
 
-  let userField = null;
-
-  let receiver = null;
+  // let userField = null;
+  // let receiver = null;
 
   //'stun:stun2.l.google.com:19302',
   const configuration = {
@@ -49,7 +51,8 @@ const SocketContextProvider = ({ children }) => {
       ACTION_TYPE: LOGIN, 
       payload: userField
     }
-
+    console.log(userField);
+    
     ws.send(JSON.stringify(loginPayload))
     setUsername(userField);
   }
@@ -85,7 +88,7 @@ const SocketContextProvider = ({ children }) => {
         }
         ws.send(JSON.stringify(answerPayload));
     })
-}
+  }
   function handleAnswer(data) {
     const answerSDP = new RTCSessionDescription(data.payload);
     peerRef.current.setRemoteDescription(answerSDP).catch(e => console.log(e));
@@ -101,7 +104,9 @@ const SocketContextProvider = ({ children }) => {
   const openUserMedia = async () => {
     try {
         localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
-    } catch (error) {
+      } catch (error) {
+        console.log('localStream', localStream)
+
         console.log('Error in openUserMedia: ', error);
     }
   }
@@ -209,7 +214,10 @@ function handleTrackEvent(e) {
     peerRef,
     otherUser,
     users,
+    receiver,
     setUsers,
+    setUserField,
+    setReceiver
   };
 
   return(
