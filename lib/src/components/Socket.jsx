@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions.js';
-import { UserContext } from '../../../Example/client/UserContext.jsx'
+import { SocketContext } from '../../../Example/client/SocketContext.jsx'
 
 
-const Socket = ({ ws, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
-    const { getUsers, setUsers } = useContext(UserContext);
+const Socket = ({ ws }) => {
+    const { getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg } = useContext(SocketContext);
 
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {
@@ -48,9 +48,6 @@ const Socket = ({ ws, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg 
 
     return (
         <>
-            {/* <div>
-                Users connected:{users}
-            </div> */}
         </>
     )
 }

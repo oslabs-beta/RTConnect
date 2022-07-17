@@ -1,8 +1,8 @@
 import React, {useContext} from 'react'
-import {UserContext, UserContextProvider} from './UserContext.jsx'
+import {SocketContext, SocketContextProvider} from './SocketContext.jsx'
 
 const ShowUsers = () => {
-    const { users, setUsers } = useContext(UserContext);
+    const { users, setUsers } = useContext(SocketContext);
   return (
     <div>Users connected: {users}</div>
   )

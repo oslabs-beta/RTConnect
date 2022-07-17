@@ -33,7 +33,6 @@ const options = {
 const server = https.createServer(options, app).listen(PORT, () => {
     console.log('listening on port:', PORT, process.env.NODE_ENV);
 })
-console.log(server);
 
 // If you want to use http server
 // const server = app.listen(PORT, () => {

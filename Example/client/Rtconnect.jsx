@@ -1,10 +1,23 @@
+import React, { useContext } from 'react';
 import Socket from "../../lib/src/components/Socket.jsx";
 import VideoComponent from "../../lib/src/components/VideoComponent.jsx";
-import PeerLogic from "./PeerLogic.jsx";
+import { SocketContextProvider, SocketContext } from "./SocketContext.jsx";
 
-const Rtconnect = (URL) => {
-    const ws = new Websocket(`wss://${URL}`);
-        return (
-        <Socket ws={ws} getusers={getusers}/>
+//<Rtconnect URL={"localhost:3001"} />
+const Rtconnect = ({URL}) => {
+    const ws = new WebSocket({URL});
+    const { localVideo, remoteVideo, users, senders } = useContext(SocketContext)
+    console.log('localVideo', localVideo)
+    return (
+        <>
+        hi {users}
+            <SocketContextProvider>
+                <Socket ws={ws} />
+                <VideoComponent />
+                <VideoComponent />
+            </SocketContextProvider>
+        </>
     )
 }
+
+export default Rtconnect;
