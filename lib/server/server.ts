@@ -1,6 +1,6 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import actions from '../src/constants/actions';
-const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = actions;
+const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions;
 
 /**
  * @class
@@ -71,6 +71,13 @@ class SignalingChannel {
                 ACTION_TYPE: LOGIN, 
                 payload: Array.from(this.users.keys()) 
               })));
+            break;
+          case LEAVE:
+            this.transmit(data);
+            break;
+          default:
+            console.error('error', data);
+            break;
         }
       });
     });

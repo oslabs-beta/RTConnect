@@ -1,13 +1,14 @@
 import React from 'react';
 import actions from '../constants/actions';
-const { LOGIN, ICECANDIDATE, OFFER, ANSWER } = actions;
+const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions;
 
 type SocketType = {
     ws: WebSocket,
-    getUsers: (parsedData: []) => void,
-    handleReceiveCall: (parsedData: object) => void,
-    handleAnswer: (parsedData: object) => void,
-    handleNewIceCandidateMsg: (parsedData: object) => void,
+    getUsers: (parsedData: {payload: string[]}) => void,
+    handleReceiveCall: (data: { sender: string, payload: RTCSessionDescriptionInit }) => void ,
+    handleAnswer: (parsedData: {payload: RTCSessionDescriptionInit}) => void ,
+    handleNewIceCandidateMsg: (data: { payload: RTCIceCandidateInit }) => void,
+    endCall: (parsedData: boolean) => void
 }
 
 /**
@@ -15,7 +16,7 @@ type SocketType = {
  * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
  * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
  */
-const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }: SocketType): JSX.Element => {
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg, endCall }: SocketType): JSX.Element => {
 
 
   // IIFE, this function gets invoked when a new socket instance is created, thus adding all event listeners to the current socket connection and any socket that connects to your application.
@@ -48,6 +49,9 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
           break;
         case ICECANDIDATE:
           handleNewIceCandidateMsg(parsedData);
+          break;
+        case LEAVE:
+          endCall(true);
           break;
         default:
           console.error('error', parsedData);

@@ -4,6 +4,7 @@ type actionType = {
     ANSWER: string,
     LOGIN: string,
     ICECANDIDATE: string,
+    LEAVE: string,
     CREATE_ROOM: string,
     JOIN_ROOM: string,
 }
@@ -17,6 +18,7 @@ const actions: actionType = {
   ANSWER: 'ANSWER',
   LOGIN: 'LOGIN',
   ICECANDIDATE: 'ICECANDIDATE',
+  LEAVE: 'LEAVE',
   CREATE_ROOM: 'CREATE_ROOM',
   JOIN_ROOM: 'JOIN_ROOM'
 };

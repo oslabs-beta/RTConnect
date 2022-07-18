@@ -1,13 +1,12 @@
 import React from 'react';
 
 type videoComponent = {
-  video: React.MutableRefObject<null> | React.LegacyRef<HTMLVideoElement>
-
+  video: React.LegacyRef<HTMLVideoElement>
 }
 
 /**
  * 
- * @param {React.MutableRefObject} video 
+ * @param {} video 
  * @returns a video component that is either the local or remote video stream
  * controls can be set to true to pause and adjust volumes of streams
  */
