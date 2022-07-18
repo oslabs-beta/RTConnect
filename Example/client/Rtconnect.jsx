@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Socket from "../../lib/src/components/Socket.jsx";
 import VideoComponent from "../../lib/src/components/VideoComponent.jsx";
 import InputButtons from './InputButtons.jsx';
@@ -8,7 +8,10 @@ import { LOGIN, OFFER, ANSWER, ICECANDIDATE }from '../../lib/src/constants/actio
 //<Rtconnect URL={"localhost:3001"} />
 
 const Rtconnect = ({ URL }) => {
-    const ws = new WebSocket(`wss://${URL}`);
+    const [ws, setWs] = useState();
+    setWs(new WebSocket(`wss://${URL}`));
+    // const [ws, setWs] = useState({});
+
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
     // const [userField, setUserField] = useState('')
@@ -40,6 +43,10 @@ const Rtconnect = ({ URL }) => {
         },
         audio: true
     }
+
+    // useEffect(() => {
+    //     setWs(new WebSocket(`wss://${URL}`));
+    // },[])
 
     const handleUsername = () => {
         const loginPayload = {
@@ -206,6 +213,7 @@ const Rtconnect = ({ URL }) => {
 
     function endCall() {
         peerRef.current.close();
+        // remoteVideo.current = null;
     }
 //     <RTConnectVideo WS: ws://localhost:3001' />
     
@@ -216,7 +224,7 @@ const Rtconnect = ({ URL }) => {
 
      return(
         <>
-            <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', border: '2px green', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
+            <div style={{display: 'flex', flexDirection:"column", top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
                 <input 
                     type='text' 
                     placeholder='username' 
@@ -231,7 +239,9 @@ const Rtconnect = ({ URL }) => {
             </div>
 
             <Socket 
-                ws={ws} 
+                ws={ws}
+                setWs={setWs} 
+                URL={URL}
                 getUsers={getUsers}
                 handleReceiveCall={handleReceiveCall} 
                 handleAnswer={handleAnswer} 
@@ -251,7 +261,6 @@ const Rtconnect = ({ URL }) => {
                 <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:"center", marginTop:"10px"}}>
 
                     <button 
-                        onClick={openUserMedia} 
                         variant="gradient" 
                         style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}
                     >
@@ -263,15 +272,14 @@ const Rtconnect = ({ URL }) => {
                         Share Screen
                     </button>
 
-                    <button
-                        onClick={() => endCall()}
+                    {/* <button
+                        // onClick={() => endCall()}
                     >
-                        End Call
-                    </button>
+                    End Call
+                    </button>  */}
                     
                     <button 
                         onClick={handleOffer} 
-                        variant="gradient" 
                         style={{marginBottom:'25px', marginLeft:"400px", width: '200px'}}
                     >
                         Enter receiver name

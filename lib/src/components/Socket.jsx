@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions.js';
 
 
-const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
+const Socket = ({ ws, setWs, URL, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
+    // setWs(new WebSocket(`wss://${URL}`));
 
+    console.log('test');
+    // useEffect(() => {
+    //     console.log('ws', ws)
+    //     setWs(new WebSocket(`wss://${URL}`));
+    //     initalizeConnection();
+    // },[])
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {
 
