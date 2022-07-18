@@ -45,6 +45,6 @@ Yoojin Chang   | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://w
 <br>
 Louis Disen    | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
-Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](www.linkedin.com/in/aking97)
+Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
 
 
