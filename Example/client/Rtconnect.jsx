@@ -199,7 +199,8 @@ const Rtconnect = ({ URL }) => {
     //
 // experimental share screen function for a button
     function shareScreen() {
-
+        //Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
+        
         navigator.mediaDevices.getDisplayMedia({ cursor: true }).then(stream => {
             console.log('shareScreen stream', stream)
             const screenTrack = stream.getTracks()[0];
@@ -245,7 +246,7 @@ const Rtconnect = ({ URL }) => {
                 handleNewIceCandidateMsg={handleNewIceCandidateMsg}
                 endCall={endCall}
             /> : ''}
-            
+
             <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
                 <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:"center", alignItems:"center"}}>
                     <div id="local-video-container">
