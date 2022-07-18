@@ -1,16 +1,9 @@
 import React, { useEffect } from 'react';
-import { LOGIN, ICECANDIDATE, OFFER, ANSWER } from '../constants/actions.js';
+import { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } from '../constants/actions.js';
 
 
-const Socket = ({ ws, setWs, URL, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg }) => {
-    // setWs(new WebSocket(`wss://${URL}`));
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg, endCall }) => {
 
-    console.log('test');
-    // useEffect(() => {
-    //     console.log('ws', ws)
-    //     setWs(new WebSocket(`wss://${URL}`));
-    //     initalizeConnection();
-    // },[])
     //potentially use immediately invoked function expression
     const initalizeConnection = () => {
 
@@ -41,6 +34,9 @@ const Socket = ({ ws, setWs, URL, getUsers, handleReceiveCall, handleAnswer, han
                     break;
                 case ICECANDIDATE:
                     handleNewIceCandidateMsg(parsedData);
+                    break;
+                case LEAVE:
+                    endCall(true);
                     break;
                 default:
                     console.error('error', parsedData);

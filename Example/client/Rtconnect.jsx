@@ -3,19 +3,16 @@ import React, { useState, useRef, useEffect } from "react";
 import Socket from "../../lib/src/components/Socket.jsx";
 import VideoComponent from "../../lib/src/components/VideoComponent.jsx";
 import InputButtons from './InputButtons.jsx';
-import { LOGIN, OFFER, ANSWER, ICECANDIDATE }from '../../lib/src/constants/actions.js';
+import { LOGIN, OFFER, ANSWER, ICECANDIDATE, LEAVE }from '../../lib/src/constants/actions.js';
 
 //<Rtconnect URL={"localhost:3001"} />
 
 const Rtconnect = ({ URL }) => {
-    const [ws, setWs] = useState();
-    setWs(new WebSocket(`wss://${URL}`));
-    // const [ws, setWs] = useState({});
-
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
     // const [userField, setUserField] = useState('')
 
+    const ws = useRef();
     const localVideo = useRef();
     const remoteVideo = useRef();
     const peerRef = useRef(); 
@@ -36,17 +33,20 @@ const Rtconnect = ({ URL }) => {
         ],
         iceCandidatePoolSize: 10,
     };
+
     const constraints = {
         video: {
-            width:{ min:640, ideal:1920, max:1920 },
-            height:{ min:480, ideal:1080, max:1080 },
+            width: { min:640, ideal:1920, max:1920 },
+            height: { min:480, ideal:1080, max:1080 },
         },
         audio: true
     }
 
-    // useEffect(() => {
-    //     setWs(new WebSocket(`wss://${URL}`));
-    // },[])
+    useEffect(() => {
+        console.log('hi, where am  i')
+        ws.current = new WebSocket(`ws://${URL}`)
+        openUserMedia();
+    },[])
 
     const handleUsername = () => {
         const loginPayload = {
@@ -54,9 +54,8 @@ const Rtconnect = ({ URL }) => {
             payload: userField
         }
 
-        ws.send(JSON.stringify(loginPayload))
+        ws.current.send(JSON.stringify(loginPayload))
         setUsername(userField);
-        setUserField('');
     }
 
     // const handleUserField = (e) => {
@@ -137,7 +136,7 @@ const Rtconnect = ({ URL }) => {
                     receiver: userID,
                     payload: peerRef.current.localDescription
                 };
-                ws.send(JSON.stringify(offerPayload));
+                ws.current.send(JSON.stringify(offerPayload));
             })
             .catch(e => console.log(e));
     }
@@ -164,7 +163,7 @@ const Rtconnect = ({ URL }) => {
                 sender: username,
                 payload: peerRef.current.localDescription
             }
-            ws.send(JSON.stringify(answerPayload));
+            ws.current.send(JSON.stringify(answerPayload));
         })
     }
 
@@ -180,7 +179,7 @@ const Rtconnect = ({ URL }) => {
                 receiver: otherUser.current,
                 payload: e.candidate,
             }
-            ws.send(JSON.stringify(IcePayload));
+            ws.current.send(JSON.stringify(IcePayload));
         }
     }
 
@@ -211,16 +210,16 @@ const Rtconnect = ({ URL }) => {
         })
     }
 
-    function endCall() {
+    function endCall(isEnded) {
+        const LeavePayload = {
+            ACTION_TYPE: LEAVE,
+            receiver: otherUser.current,
+        }
         peerRef.current.close();
-        // remoteVideo.current = null;
+        isEnded ? peerRef.current.close() : ws.current.send(JSON.stringify(LeavePayload));
+        remoteVideo.current.srcObject = null;
     }
-//     <RTConnectVideo WS: ws://localhost:3001' />
-    
-    /**
-     * const [ws, setWs] = useState(new WebSocket("ws://localhost:3001"));
-     * <socket ws={ws}
-     */
+
 
      return(
         <>
@@ -238,15 +237,15 @@ const Rtconnect = ({ URL }) => {
                 >Submit Username</button>
             </div>
 
-            <Socket 
-                ws={ws}
-                setWs={setWs} 
-                URL={URL}
+            {ws.current ? <Socket 
+                ws={ws.current}
                 getUsers={getUsers}
                 handleReceiveCall={handleReceiveCall} 
                 handleAnswer={handleAnswer} 
                 handleNewIceCandidateMsg={handleNewIceCandidateMsg}
-            />
+                endCall={endCall}
+            /> : ''}
+            
             <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:"column", padding:"10px", marginTop: "10%"} }>
                 <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:"center", alignItems:"center"}}>
                     <div id="local-video-container">
@@ -260,23 +259,17 @@ const Rtconnect = ({ URL }) => {
                 
                 <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:"center", marginTop:"10px"}}>
 
-                    <button 
-                        variant="gradient" 
-                        style={{marginBottom:'25px', marginLeft:"200px", width: '200px'}}
-                    >
-                        Start Webcam
-                    </button>
                     <button
                         onClick={() => shareScreen()}
                     >
                         Share Screen
                     </button>
 
-                    {/* <button
-                        // onClick={() => endCall()}
+                    <button
+                        onClick={() => endCall()}
                     >
                     End Call
-                    </button>  */}
+                    </button> 
                     
                     <button 
                         onClick={handleOffer} 
