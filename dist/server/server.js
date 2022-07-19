@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ws_1 = require("ws");
 const actions_1 = __importDefault(require("../src/constants/actions"));
-const { OFFER, ANSWER, ICECANDIDATE, LOGIN } = actions_1.default;
+const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions_1.default;
 /**
  * @class
  * @classdesc Class representing the SignalingChannel using websockets to allow communication between clients connected to the websocket server
@@ -64,6 +64,13 @@ class SignalingChannel {
                             ACTION_TYPE: LOGIN,
                             payload: Array.from(this.users.keys())
                         })));
+                        break;
+                    case LEAVE:
+                        this.transmit(data);
+                        break;
+                    default:
+                        console.error('error', data);
+                        break;
                 }
             });
         });

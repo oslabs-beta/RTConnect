@@ -4,6 +4,7 @@ declare type actionType = {
     ANSWER: string;
     LOGIN: string;
     ICECANDIDATE: string;
+    LEAVE: string;
     CREATE_ROOM: string;
     JOIN_ROOM: string;
 };

@@ -206,7 +206,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
     peerRef.current?.setRemoteDescription(answerSDP).catch((e) => console.log(e));
   }
 
-  function handleIceCandidateEvent(e) {
+  function handleIceCandidateEvent(e: RTCPeerConnectionIceEvent) {
     if (e.candidate) {
       const IcePayload = {
         ACTION_TYPE: ICECANDIDATE,
@@ -224,7 +224,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
     .catch((e) => console.log(e));
   }
 
-  function handleTrackEvent(e) : void{
+  function handleTrackEvent(e: RTCTrackEvent) : void{
     remoteVideo.current.srcObject = e.streams[0];
   }
 
@@ -259,7 +259,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
   return(
     <>
       {users}
-      
+
       <div style={{display: 'flex', flexDirection:'column', top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
         <input 
           type='text' 
