@@ -107,4 +107,4 @@ class SignalingChannel {
   }
 }
 
-module.exports = SignalingChannel;
+export default SignalingChannel;
