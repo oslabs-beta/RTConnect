@@ -14,10 +14,10 @@ const VideoComponent = ({ video }: videoComponent) => {
   return (
     <>
       <video 
-        className="localVideo" 
+        className="videoPlayers" 
         autoPlay
         playsInline
-        controls={false}
+        controls={true}
         ref={video}
         style={{ width: '500px', height: '500px' }}
       />
