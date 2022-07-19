@@ -18,8 +18,8 @@ class SignalingChannel {
    * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
    * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
    */
-  constructor(server: WebSocketServer) { 
-    this.webSocketServer = new WebSocket.Server(server);
+  constructor(server: any ) { //fix any typing
+    this.webSocketServer = new WebSocket.Server({server: server});
     this.users = new Map();
     // this.rooms = new Map(); //focus on later
   }

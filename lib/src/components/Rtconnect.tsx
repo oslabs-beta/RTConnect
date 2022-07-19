@@ -30,7 +30,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
   const [users, setUsers] = useState<JSX.Element[]>();
   // const [userField, setUserField] = useState('')
 
-  const ws = useRef<WebSocket | null>();
+  const ws = useRef<WebSocket>(null!);
   const localVideo = useRef<HTMLVideoElement>(null!);
   const remoteVideo = useRef<HTMLVideoElement>(null!);
   const peerRef = useRef<RTCPeerConnection>(null!); 
@@ -81,14 +81,9 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
       payload: userField,
     };
 
-    ws.current?.send(JSON.stringify(loginPayload));
+    ws.current.send(JSON.stringify(loginPayload));
     setUsername(userField);
   };
-
-  // const handleUserField = (e) => {
-  //     e.preventDefault();
-  //     setUserField(e.target.value);
-  // }
     
   const handleOffer = (): void => {
     const inputField:HTMLInputElement | null = document.querySelector('#receiverName');
@@ -121,10 +116,8 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
   };
 
   const callUser = (userID: string): void => {
-    if (peerRef.current) {
-      peerRef.current = createPeer(userID);
-      localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current?.addTrack(track, localStream.current)));
-    }
+    peerRef.current = createPeer(userID);
+    localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current?.addTrack(track, localStream.current)));
   };
 
   const createPeer = (userID: string): RTCPeerConnection => {
@@ -171,7 +164,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
         receiver: userID,
         payload: peerRef.current?.localDescription
       };
-      ws.current?.send(JSON.stringify(offerPayload));
+      ws.current.send(JSON.stringify(offerPayload));
     })
     .catch(e => console.log(e));
   }
@@ -197,7 +190,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
         sender: username,
         payload: peerRef.current?.localDescription
       };
-      ws.current?.send(JSON.stringify(answerPayload));
+      ws.current.send(JSON.stringify(answerPayload));
     });
   }
 
@@ -213,7 +206,7 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
         receiver: otherUser.current,
         payload: e.candidate,
       };
-      ws.current?.send(JSON.stringify(IcePayload));
+      ws.current.send(JSON.stringify(IcePayload));
     }
   }
 

@@ -19,7 +19,7 @@ class SignalingChannel {
      * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
      */
     constructor(server) {
-        this.webSocketServer = new ws_1.WebSocket.Server(server);
+        this.webSocketServer = new ws_1.WebSocket.Server({ server: server });
         this.users = new Map();
         // this.rooms = new Map(); //focus on later
     }
@@ -99,4 +99,4 @@ class SignalingChannel {
         return user;
     }
 }
-module.exports = SignalingChannel;
+exports.default = SignalingChannel;

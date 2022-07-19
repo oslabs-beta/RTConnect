@@ -45,7 +45,7 @@ const Rtconnect = ({ URL }) => {
     const [username, setUsername] = (0, react_1.useState)('');
     const [users, setUsers] = (0, react_1.useState)();
     // const [userField, setUserField] = useState('')
-    const ws = (0, react_1.useRef)();
+    const ws = (0, react_1.useRef)(null);
     const localVideo = (0, react_1.useRef)(null);
     const remoteVideo = (0, react_1.useRef)(null);
     const peerRef = (0, react_1.useRef)(null);
@@ -84,18 +84,13 @@ const Rtconnect = ({ URL }) => {
         openUserMedia();
     }, []);
     const handleUsername = () => {
-        var _a;
         const loginPayload = {
             ACTION_TYPE: LOGIN,
             payload: userField,
         };
-        (_a = ws.current) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify(loginPayload));
+        ws.current.send(JSON.stringify(loginPayload));
         setUsername(userField);
     };
-    // const handleUserField = (e) => {
-    //     e.preventDefault();
-    //     setUserField(e.target.value);
-    // }
     const handleOffer = () => {
         const inputField = document.querySelector('#receiverName');
         if (inputField) {
@@ -120,10 +115,8 @@ const Rtconnect = ({ URL }) => {
         }
     });
     const callUser = (userID) => {
-        if (peerRef.current) {
-            peerRef.current = createPeer(userID);
-            localStream.current.getTracks().forEach((track) => { var _a; return senders.current.push((_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.addTrack(track, localStream.current)); });
-        }
+        peerRef.current = createPeer(userID);
+        localStream.current.getTracks().forEach((track) => { var _a; return senders.current.push((_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.addTrack(track, localStream.current)); });
     };
     const createPeer = (userID) => {
         const peer = new RTCPeerConnection(configuration);
@@ -159,14 +152,14 @@ const Rtconnect = ({ URL }) => {
             var _a;
             return (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.setLocalDescription(offer);
         }).then(() => {
-            var _a, _b;
+            var _a;
             const offerPayload = {
                 ACTION_TYPE: OFFER,
                 sender: username,
                 receiver: userID,
                 payload: (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.localDescription
             };
-            (_b = ws.current) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify(offerPayload));
+            ws.current.send(JSON.stringify(offerPayload));
         }).catch(e => console.log(e));
     }
     function handleReceiveCall(data) {
@@ -187,14 +180,14 @@ const Rtconnect = ({ URL }) => {
             return (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.setLocalDescription(answer);
         })
             .then(() => {
-            var _a, _b;
+            var _a;
             const answerPayload = {
                 ACTION_TYPE: ANSWER,
                 receiver: data.sender,
                 sender: username,
                 payload: (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.localDescription
             };
-            (_b = ws.current) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify(answerPayload));
+            ws.current.send(JSON.stringify(answerPayload));
         });
     }
     function handleAnswer(data) {
@@ -203,14 +196,13 @@ const Rtconnect = ({ URL }) => {
         (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.setRemoteDescription(answerSDP).catch((e) => console.log(e));
     }
     function handleIceCandidateEvent(e) {
-        var _a;
         if (e.candidate) {
             const IcePayload = {
                 ACTION_TYPE: ICECANDIDATE,
                 receiver: otherUser.current,
                 payload: e.candidate,
             };
-            (_a = ws.current) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify(IcePayload));
+            ws.current.send(JSON.stringify(IcePayload));
         }
     }
     function handleNewIceCandidateMsg(data) {
