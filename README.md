@@ -27,12 +27,17 @@ npm install rtconnect
  ## <a name="implementation"/> Implementation
  After installing the rtconnect npm package, import the VideoComponent component in your React file:
 ```
-import { VideoComponent } from ‘rtconnect’;
+import { Rtconnect } from ‘rtconnect’;
 ```
 
-Then use the RTConnect VideoComponent as you would any other React component
+Then use the RTConnect component as you would any other React component and include your URL.
 ```
-<RTConnect>
+<Rtconnect URL={'localhost:PORT'}>
+```
+For example, if your server is hosted on port 3000, then you would do the following:
+
+```
+<Rtconnect URL={'localhost:3000'}>
 ```
 
 ## <a name="demo"/> Demo
