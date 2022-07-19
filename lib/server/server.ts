@@ -1,3 +1,4 @@
+// import {http.Server} from 'http-server';
 import { WebSocket, WebSocketServer } from 'ws';
 import actions from '../src/constants/actions';
 const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions;
@@ -21,7 +22,7 @@ class SignalingChannel {
   constructor(server: any ) { //fix any typing
     this.webSocketServer = new WebSocket.Server({server: server});
     this.users = new Map();
-    // this.rooms = new Map(); //focus on later
+    // this.rooms = new Map(); //focus on later when constructing 2+ video conferencing functionality, SFU topology
   }
     
   /**

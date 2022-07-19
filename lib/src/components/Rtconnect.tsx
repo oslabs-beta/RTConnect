@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import React, { useState, useRef, useEffect } from 'react';
 import Socket from './Socket';
 import VideoComponent from './VideoComponent';
 import actions from '../constants/actions';
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions;
 
-//<Rtconnect URL={"localhost:3001"} />
-// type RtconnectType = {
-//   URL: string
-// }
-
+// starting off with defining interfaces for payloads that will be sent to other socket connections over websockets.
 interface payloadObj {
   ACTION_TYPE: string, 
   sender?: string,
@@ -69,7 +66,6 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
   // };
 
   useEffect(() => {
-    console.log('hi, where am  i');
     ws.current = new WebSocket(`ws://${URL}`);
     openUserMedia();
   },[]);
@@ -116,8 +112,10 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
   };
 
   const callUser = (userID: string): void => {
-    peerRef.current = createPeer(userID);
-    localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current?.addTrack(track, localStream.current)));
+    if (peerRef.current) {
+      peerRef.current = createPeer(userID);
+      localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
+    }
   };
 
   const createPeer = (userID: string): RTCPeerConnection => {
@@ -275,11 +273,13 @@ const Rtconnect = ({ URL }: { URL: string}): JSX.Element => {
         handleNewIceCandidateMsg={handleNewIceCandidateMsg}
         endCall={endCall}
       /> : ''}
+      {/* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events multiple websocket connections will be made and error 
+          every user when one closes their browser */}
 
       <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
         <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}>
           <div id="local-video-container">
-            <VideoComponent video={localVideo} />
+            <VideoComponent video={localVideo}/>
           </div>
           <div id="remote-video-container">
             <VideoComponent video={remoteVideo} />
