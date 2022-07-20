@@ -12,13 +12,13 @@ type SocketType = {
 }
 
 /**
- * @desc 
+ * @desc Using the initial websocket connection, this functional component provides the event listeners for each client socket to allow bi-lateral communication.
  * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
  * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
  */
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg, endCall }: SocketType): JSX.Element => {
 
-  // IIFE, this function gets invoked when a new socket instance is created, thus adding all event listeners to the current socket connection and any socket that connects to your application.
+  // IIFE, this function gets invoked when a new socket component is created
   (function initalizeConnection() {
 
     ws.addEventListener('open', () => {

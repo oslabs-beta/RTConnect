@@ -21,6 +21,13 @@ interface loginPayObj extends payloadObj {
 interface offerPayObj extends payloadObj {
   payload: RTCSessionDescription | null | undefined
 }
+interface answerPayObj extends payloadObj {
+  payload: RTCSessionDescription | null | undefined
+}
+
+interface icePayObj extends payloadObj {
+  payload: RTCIceCandidate
+}
 
 /**
  * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and Websockets. 
@@ -29,7 +36,8 @@ interface offerPayObj extends payloadObj {
  * @param {string} this.props.URL 
  * @returns A component that renders two VideoComponents (currently not dynamic), a
  */
-const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
+//mediaOptions: { controls: boolean, style: { width: string, height: string }
+const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { controls: boolean, style: { width: string, height: string }}}): JSX.Element => {
   //username will store a name the client enters and users (see getUsers) will be updated whenever a user logs in or leaves
   const [username, setUsername] = useState<string>('');
   const [users, setUsers] = useState<JSX.Element[]>();
@@ -83,6 +91,7 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
    *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over websockets
    *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
    *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
+   *  |       |-------------------|------------------>|       Peer B's NAT
    *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
    *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
    *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the earlier candidates sent.
@@ -163,8 +172,8 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
 
   /**
   * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
-  * @param { string } userID
-  * @returns { RTCPeerConnection } RTCPeerConnection object 
+  * @param {string} userID
+  * @returns {RTCPeerConnection} RTCPeerConnection object 
   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
   */
   const createPeer = (userID: string): RTCPeerConnection => {
@@ -223,7 +232,7 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
 
   /**
   * @desc When an offer is received from the SignalingChannel, this function is invoked, creating a new RTCPeerConnection with the local client's media attached and an Answer is created that is then sent back to the original caller through the websocket connection.
-  * @param { RTCSessionDescriptionInit } data
+  * @param {RTCSessionDescriptionInit} data
   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer 
   */
   function handleReceiveCall(data: { sender: string, payload: RTCSessionDescriptionInit }): void {
@@ -241,7 +250,7 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
       return peerRef.current?.setLocalDescription(answer);
     })
     .then(() => {
-      const answerPayload = {
+      const answerPayload: answerPayObj = {
         ACTION_TYPE: ANSWER,
         receiver: data.sender,
         sender: username,
@@ -263,11 +272,11 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
   }
   /**
   * @desc As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
-  * @param e
+  * @param {RTCPeerConnectionIceEvent} e
   */
   function handleIceCandidateEvent(e: RTCPeerConnectionIceEvent) {
     if (e.candidate) { // Contains the RTCIceCandidate containing the candidate associated with the event,
-      const IcePayload = {
+      const IcePayload: icePayObj = {
         ACTION_TYPE: ICECANDIDATE,
         receiver: otherUser.current, // username for other user
         payload: e.candidate, 
@@ -289,14 +298,14 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
   }
   
   /**
-  * @desc 
-  * @param {RTCTrackEvent} e An Event Object, also contains the streams from the 
+  * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
+  * @param {RTCTrackEvent} e An Event Object, also contains the stream
   */
   function handleTrackEvent(e: RTCTrackEvent) : void{
     remoteVideo.current.srcObject = e.streams[0];
   }
   /**
-  * @desc Enables screen sharing and displays a cursor 
+  * @desc Enables screen sharing using MediaSession.getDisplayMedia()
   */
   function shareScreen(): void {
     //TODOS: On a new connection the local and streamed screen bugs producing: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
@@ -315,10 +324,10 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
   }
   /**
   * @desc if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
-  * @param { boolean } isEnded 
+  * @param {boolean} isEnded 
   */
   function endCall(isEnded: boolean): void {
-    const LeavePayload = {
+    const LeavePayload: payloadObj = {
       ACTION_TYPE: LEAVE,
       receiver: otherUser.current,
     };
@@ -374,13 +383,13 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
             id="local-video-container"
             className='' 
           >
-            <VideoComponent video={localVideo}/>
+            <VideoComponent video={localVideo} mediaOptions={mediaOptions}/>
           </div>
           <div 
             id="remote-video-container"
             className='' 
           >
-            <VideoComponent video={remoteVideo} />
+            <VideoComponent video={remoteVideo} mediaOptions={mediaOptions} />
           </div>
         </div>
       </div>
