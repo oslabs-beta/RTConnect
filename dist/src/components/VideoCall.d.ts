@@ -1,5 +1,5 @@
 import React from 'react';
-declare type videoComponent = {
+declare type videoCall = {
     video: React.LegacyRef<HTMLVideoElement>;
     mediaOptions: {
         controls: boolean;
@@ -14,5 +14,5 @@ declare type videoComponent = {
  * @returns a video component that is either the local or remote video stream
  * controls can be set to true to pause and adjust volumes of streams
  */
-declare const VideoComponent: ({ video, mediaOptions }: videoComponent) => JSX.Element;
-export default VideoComponent;
+declare const VideoCall: ({ video, mediaOptions }: videoCall) => JSX.Element;
+export default VideoCall;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-type videoComponent = {
+type videoCall = {
   video: React.LegacyRef<HTMLVideoElement>
   mediaOptions: { controls: boolean, style: { width: string, height: string }}
 }
@@ -12,9 +12,8 @@ type videoComponent = {
  * @returns a video component that is either the local or remote video stream
  * controls can be set to true to pause and adjust volumes of streams
  */
-const VideoComponent = ({ video, mediaOptions }: videoComponent) => {
+const VideoCall = ({ video, mediaOptions = { controls: true, style: { width: '640px', height: '360px'}}}: videoCall) => {
   const { controls, style } = mediaOptions;
-  const defaultStyle = { width: '640px', height: '480px' };
 
   return (
     <>
@@ -22,12 +21,12 @@ const VideoComponent = ({ video, mediaOptions }: videoComponent) => {
         className="videoPlayer" 
         autoPlay
         playsInline
-        controls={(mediaOptions || controls) !== undefined ? controls : true}
+        controls={controls}
         ref={video}
-        style={(mediaOptions || style) !== undefined ? style : defaultStyle}
+        style={style}
       />
     </>
   );
 };
 
-export default VideoComponent;
+export default VideoCall;

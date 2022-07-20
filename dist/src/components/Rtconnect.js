@@ -38,7 +38,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const Socket_1 = __importDefault(require("./Socket"));
-const VideoComponent_1 = __importDefault(require("./VideoComponent"));
+const VideoCall_1 = __importDefault(require("./VideoCall"));
 const actions_1 = __importDefault(require("../constants/actions"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
@@ -86,7 +86,7 @@ const Rtconnect = ({ URL, mediaOptions }) => {
     };
     // a new one-time websocket connection is made on component mount and a permissions request for the client's video and audio is made
     (0, react_1.useEffect)(() => {
-        ws.current = new WebSocket(`ws://${URL}`);
+        ws.current = new WebSocket(URL);
         openUserMedia();
     }, []);
     /**
@@ -162,10 +162,8 @@ const Rtconnect = ({ URL, mediaOptions }) => {
     * @param {string} userID
     */
     const callUser = (userID) => {
-        if (peerRef.current) {
-            peerRef.current = createPeer(userID);
-            localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
-        }
+        peerRef.current = createPeer(userID);
+        localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
     };
     /**
     * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
@@ -303,9 +301,11 @@ const Rtconnect = ({ URL, mediaOptions }) => {
             var _a, _b;
             const screenTrack = stream.getTracks()[0];
             (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(screenTrack);
+            localVideo.current.srcObject = stream; // changing local video to reflect what we're sharing to the other end of the connection
             screenTrack.onended = function () {
                 var _a, _b;
                 (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(localStream.current.getTracks()[1]);
+                localVideo.current.srcObject = localStream.current; // changing local video displayed back to webcam
             };
         });
     }
@@ -323,24 +323,44 @@ const Rtconnect = ({ URL, mediaOptions }) => {
         isEnded ? (_b = peerRef.current) === null || _b === void 0 ? void 0 : _b.close() : (_c = ws.current) === null || _c === void 0 ? void 0 : _c.send(JSON.stringify(LeavePayload));
         remoteVideo.current.srcObject = null;
     }
+    const buttonStyling = { backgroundColor: '#C2FBD7',
+        borderRadius: '50px',
+        borderWidth: '0',
+        boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px;',
+        color: '#008000',
+        cursor: 'pointer',
+        display: 'inline-block',
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontSize: '1em',
+        height: '50px',
+        padding: '0 25px',
+    };
+    /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events
+    multiple websocket connections will be made and error
+    every user when one closes their browser
+    */
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("div", { className: 'users-list' }, users),
-        react_1.default.createElement("div", { className: 'input-div', style: { display: 'flex', flexDirection: 'column', top: '20%', left: '28%', margin: '0 auto', marginTop: '10%', height: '500px', width: '600px', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center' } },
-            react_1.default.createElement("input", { className: '', type: 'text', placeholder: 'username', id: "username-field", onChange: (e) => userField = e.target.value, style: { paddingBottom: '70px', width: '200px' } }),
-            react_1.default.createElement("button", { className: '', onClick: () => handleUsername() }, "Submit Username")),
         ws.current ?
             react_1.default.createElement(Socket_1.default, { ws: ws.current, getUsers: getUsers, handleReceiveCall: handleReceiveCall, handleAnswer: handleAnswer, handleNewIceCandidateMsg: handleNewIceCandidateMsg, endCall: endCall })
             : '',
-        react_1.default.createElement("div", { className: '', style: { display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection: 'column', padding: '10px', marginTop: '10%' } },
+        react_1.default.createElement("div", { className: '', style: { display: 'flex', justifyContent: 'space-around', flexDirection: 'column', padding: '10px', marginTop: '10%' } },
+            username === '' ? react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement("div", { className: 'input-div', style: { display: 'flex', flexDirection: 'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center' } },
+                    react_1.default.createElement("input", { className: '', type: 'text', placeholder: 'username', id: "username-field", onChange: (e) => userField = e.target.value, style: { paddingBottom: '40px', width: '200px' } }),
+                    react_1.default.createElement("button", { className: '', onClick: () => handleUsername(), style: buttonStyling }, "Submit Username"))) :
+                react_1.default.createElement("div", { className: 'users-list', style: { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' } },
+                    "Users connected: ",
+                    users),
             react_1.default.createElement("div", { id: "main-video-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '100px', justifyContent: 'center', alignItems: 'center' } },
-                react_1.default.createElement("div", { id: "local-video-container", className: '' },
-                    react_1.default.createElement(VideoComponent_1.default, { video: localVideo, mediaOptions: mediaOptions })),
-                react_1.default.createElement("div", { id: "remote-video-container", className: '' },
-                    react_1.default.createElement(VideoComponent_1.default, { video: remoteVideo, mediaOptions: mediaOptions })))),
-        react_1.default.createElement("div", { id: "button-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'center', marginTop: '10px' } },
-            react_1.default.createElement("button", { className: '', onClick: () => shareScreen() }, "Share Screen"),
-            react_1.default.createElement("button", { className: '', onClick: () => endCall(false) }, "End Call"),
-            react_1.default.createElement("button", { className: '', onClick: handleOffer, style: { marginBottom: '25px', marginLeft: '400px', width: '200px' } }, "Call"),
-            react_1.default.createElement("input", { className: '', type: 'text', id: 'receiverName', style: { marginBottom: '3px' } }))));
+                react_1.default.createElement("div", { id: "local-video-container", className: '', style: { display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center' } },
+                    react_1.default.createElement(VideoCall_1.default, { video: localVideo, mediaOptions: mediaOptions }),
+                    react_1.default.createElement("div", { id: "local-button-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'center', marginTop: '10px' } },
+                        react_1.default.createElement("button", { className: '', onClick: () => shareScreen(), style: buttonStyling }, "Share Screen"),
+                        react_1.default.createElement("button", { className: '', onClick: () => endCall(false), style: Object.assign(Object.assign({}, buttonStyling), { backgroundColor: '#ff6961', color: '#28282B' }) }, "End Call"))),
+                react_1.default.createElement("div", { id: "remote-video-container", className: '', style: { display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center' } },
+                    react_1.default.createElement(VideoCall_1.default, { video: remoteVideo, mediaOptions: mediaOptions }),
+                    react_1.default.createElement("div", { id: "remote-button-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'center', marginTop: '10px' } },
+                        react_1.default.createElement("button", { className: '', onClick: handleOffer, style: buttonStyling }, "Call"),
+                        react_1.default.createElement("input", { className: '', type: 'text', id: 'receiverName', style: { marginLeft: '2%' } })))))));
 };
 exports.default = Rtconnect;

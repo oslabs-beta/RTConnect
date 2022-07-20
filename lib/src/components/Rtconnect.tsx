@@ -2,12 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Socket from './Socket';
-import VideoComponent from './VideoComponent';
+import VideoCall from './VideoCall';
 import actions from '../constants/actions';
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions;
 
 // Defining interfaces for payloads that will be sent to other socket connections via websockets.
-  // These interfaces describe the different events for the websocket message event to filter
+// These interfaces describe the different events for the websocket message event to filter
 interface payloadObj {
   ACTION_TYPE: string, 
   sender?: string,
@@ -57,8 +57,8 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   let receiver: string | null = '';
 
   // this configuration defines the parameters for how an RTCPeerConnection should be created, also ice trickling is enabled with iceCandidatePoolSize set to a value
-    // stun servers are used to identify users so that peers can connect to eachother directly without the use of a middleman server (which would create latency)
-    //'stun:stun2.l.google.com:19302', an additional ice server
+  // stun servers are used to identify users so that peers can connect to eachother directly without the use of a middleman server (which would create latency)
+  //'stun:stun2.l.google.com:19302', an additional ice server
   const configuration: RTCConfiguration = {
     iceServers: [
       {
@@ -79,7 +79,7 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   
   // a new one-time websocket connection is made on component mount and a permissions request for the client's video and audio is made
   useEffect(() => {
-    ws.current = new WebSocket(`ws://${URL}`);
+    ws.current = new WebSocket(URL);
     openUserMedia();
   },[]);
 
@@ -164,10 +164,8 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   * @param {string} userID
   */
   const callUser = (userID: string): void => {
-    if (peerRef.current) {
-      peerRef.current = createPeer(userID);
-      localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
-    }
+    peerRef.current = createPeer(userID);
+    localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
   };
 
   /**
@@ -315,10 +313,13 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       senders.current
       ?.find(sender => sender.track?.kind === 'video')
       ?.replaceTrack(screenTrack);
+      localVideo.current.srcObject = stream; // changing local video to reflect what we're sharing to the other end of the connection
+
       screenTrack.onended = function() {
         senders.current
         ?.find(sender => sender.track?.kind === 'video')
         ?.replaceTrack(localStream.current.getTracks()[1]);
+        localVideo.current.srcObject = localStream.current;  // changing local video displayed back to webcam
       };
     });
   }
@@ -336,28 +337,27 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
+  const buttonStyling = { backgroundColor: '#C2FBD7',
+    borderRadius: '50px',
+    borderWidth: '0',
+    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px;' ,
+    color: '#008000',
+    cursor: 'pointer',
+    display: 'inline-block',
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    fontSize: '1em',
+    height: '50px',
+    padding: '0 25px',
+  };
+
+
+  /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
+  multiple websocket connections will be made and error 
+  every user when one closes their browser
+  */
+
   return(
     <>
-      <div className='users-list'>{users}</div>
-      <div className='input-div' 
-        style={{display: 'flex', flexDirection:'column', top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}
-      >  
-        <input
-          className=''
-          type='text' 
-          placeholder='username' 
-          id="username-field" 
-          onChange={(e) => userField = e.target.value}
-          style={{paddingBottom:'70px', width:'200px'}}
-        ></input>
-                
-        <button 
-          className=''
-          onClick={() => handleUsername()}
-        >
-          Submit Username
-        </button>
-      </div>
 
       {ws.current ?
         <Socket 
@@ -369,12 +369,33 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           endCall={endCall}
         /> 
         : ''}
-      {/* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events multiple websocket connections will be made and error 
-          every user when one closes their browser */}
 
-      <div
-        className=''
-        style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
+      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
+        { username === '' ? <>
+          <div className='input-div' 
+            style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+          >  
+            <input
+              className=''
+              type='text' 
+              placeholder='username' 
+              id="username-field" 
+              onChange={(e) => userField = e.target.value}
+              style={{paddingBottom:'40px', width:'200px'}}
+            ></input>
+                
+            <button 
+              className=''
+              onClick={() => handleUsername()}
+              style={buttonStyling}
+            >
+              Submit Username
+            </button>
+          </div>
+        </> : 
+        <div className='users-list' style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
+              Users connected: {users}
+        </div>}
         <div 
           id="main-video-container" 
           className='' 
@@ -382,50 +403,56 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           <div 
             id="local-video-container"
             className='' 
+            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
           >
-            <VideoComponent video={localVideo} mediaOptions={mediaOptions}/>
+            <VideoCall video={localVideo} mediaOptions={mediaOptions}/>
+            <div 
+              id="local-button-container"
+              className='' 
+              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
+              <button
+                className='' 
+                onClick={() => shareScreen()}
+                style={buttonStyling}
+              >
+          Share Screen
+              </button>
+
+              <button
+                className='' 
+                onClick={() => endCall(false)}
+                style={{ ...buttonStyling, backgroundColor:'#ff6961', color:'#28282B' }}
+              >
+          End Call
+              </button> 
+            </div>
           </div>
           <div 
             id="remote-video-container"
             className='' 
+            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
           >
-            <VideoComponent video={remoteVideo} mediaOptions={mediaOptions} />
+            <VideoCall video={remoteVideo} mediaOptions={mediaOptions} />
+            <div id="remote-button-container"
+              className=''
+              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+            >
+              <button
+                className='' 
+                onClick={handleOffer} 
+                style={buttonStyling}
+              >
+          Call
+              </button>
+                
+              <input
+                className='' 
+                type='text' 
+                id='receiverName'
+                style={{marginLeft:'2%'}}></input>
+            </div>
           </div>
         </div>
-      </div>
-                
-      <div 
-        id="button-container"
-        className='' 
-        style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
-
-        <button
-          className='' 
-          onClick={() => shareScreen()}
-        >
-          Share Screen
-        </button>
-
-        <button
-          className='' 
-          onClick={() => endCall(false)}
-        >
-          End Call
-        </button> 
-                    
-        <button
-          className='' 
-          onClick={handleOffer} 
-          style={{marginBottom:'25px', marginLeft:'400px', width: '200px'}}
-        >
-          Call
-        </button>
-                
-        <input
-          className='' 
-          type='text' 
-          id='receiverName'
-          style={{marginBottom:'3px'}}></input>
       </div>
     </>
   );
