@@ -1,13 +1,15 @@
 # RTConnect
 
-RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
+RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. 
+
+RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
 
 # Installation
 
 ```
 npm install rtconnect
 ```
-After installing the rtconnect npm package, import the VideoComponent component in your React file:
+After installing the rtconnect npm package, import the Rtconnect component in your React file:
 
 ```
 import { Rtconnect } from ‘rtconnect’;
@@ -18,6 +20,7 @@ Then use the RTConnect component as you would any other React component and incl
 ```
 <Rtconnect URL={'localhost:PORT'}>
 ```
+
 For example, if your server is hosted on port 3000, then you would do the following:
 ```
 <Rtconnect URL={'localhost:3000'}>
