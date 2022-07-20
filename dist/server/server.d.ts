@@ -1,4 +1,8 @@
+/// <reference types="node" />
+/// <reference types="node" />
 import { WebSocket, WebSocketServer } from 'ws';
+import { Server } from 'http';
+import { Server as httpsServer } from 'https';
 /**
  * @class
  * @classdesc Class representing the SignalingChannel using websockets to allow communication between clients connected to the websocket server
@@ -11,9 +15,9 @@ declare class SignalingChannel {
     /**
      *
      * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
-     * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
+     * @param {Server} server - pass in a server (http or https), or pass in port (not the same port (this port can't be the same as the application port and has to listen on the same port in rtconnect!)
      */
-    constructor(server: any);
+    constructor(server: Server | httpsServer | number);
     /**
      * @description Upon creation and connection to the websocket server, the websocket server will add these event listeners to their socket to perform key functionality
      * @function initializeConnection Signaling server will listen to client when client has been connected.

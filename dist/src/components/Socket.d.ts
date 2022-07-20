@@ -17,7 +17,7 @@ declare type SocketType = {
     endCall: (parsedData: boolean) => void;
 };
 /**
- * @desc
+ * @desc Using the initial websocket connection, this functional component provides the event listeners for each client socket to allow bi-lateral communication.
  * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
  * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
  */

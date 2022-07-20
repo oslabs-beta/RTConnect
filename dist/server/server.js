@@ -16,12 +16,12 @@ class SignalingChannel {
     /**
      *
      * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
-     * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
+     * @param {Server} server - pass in a server (http or https), or pass in port (not the same port (this port can't be the same as the application port and has to listen on the same port in rtconnect!)
      */
     constructor(server) {
-        this.webSocketServer = new ws_1.WebSocket.Server({ server: server });
+        this.webSocketServer = typeof server === 'number' ? new ws_1.WebSocket.Server({ port: server }) : new ws_1.WebSocket.Server({ server: server });
         this.users = new Map();
-        // this.rooms = new Map(); //focus on later
+        // this.rooms = new Map(); //focus on later when constructing 2+ video conferencing functionality, SFU topology
     }
     /**
      * @description Upon creation and connection to the websocket server, the websocket server will add these event listeners to their socket to perform key functionality
