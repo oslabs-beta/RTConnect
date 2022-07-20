@@ -1,5 +1,6 @@
-// import {http.Server} from 'http-server';
 import { WebSocket, WebSocketServer } from 'ws';
+import { Server } from 'http';
+import { Server as httpsServer } from 'https';
 import actions from '../src/constants/actions';
 const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions;
 
@@ -17,10 +18,10 @@ class SignalingChannel {
   /**
    * 
    * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
-   * @param {Server} server - no config defined yet, just passing in a server (https, app), can pass in port too (not the same port)
+   * @param {Server} server - pass in a server (http or https), or pass in port (not the same port (this port can't be the same as the application port and has to listen on the same port in rtconnect!)
    */
-  constructor(server: any ) { //fix any typing
-    this.webSocketServer = new WebSocket.Server({server: server});
+  constructor(server: Server | httpsServer | number) { 
+    this.webSocketServer = typeof server === 'number' ? new WebSocket.Server({port: server}) : new WebSocket.Server({server: server});
     this.users = new Map();
     // this.rooms = new Map(); //focus on later when constructing 2+ video conferencing functionality, SFU topology
   }

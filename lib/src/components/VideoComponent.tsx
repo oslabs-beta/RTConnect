@@ -6,7 +6,7 @@ type videoComponent = {
 
 /**
  * 
- * @param {} video 
+ * @param {HTMLVideoElement} video 
  * @returns a video component that is either the local or remote video stream
  * controls can be set to true to pause and adjust volumes of streams
  */
@@ -14,7 +14,7 @@ const VideoComponent = ({ video }: videoComponent) => {
   return (
     <>
       <video 
-        className="videoPlayers" 
+        className="videoPlayer" 
         autoPlay
         playsInline
         controls={true}
