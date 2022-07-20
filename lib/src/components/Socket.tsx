@@ -18,7 +18,6 @@ type SocketType = {
  */
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg, endCall }: SocketType): JSX.Element => {
 
-
   // IIFE, this function gets invoked when a new socket instance is created, thus adding all event listeners to the current socket connection and any socket that connects to your application.
   (function initalizeConnection() {
 

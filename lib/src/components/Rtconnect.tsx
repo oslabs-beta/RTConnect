@@ -89,8 +89,8 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
    *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be circumvented.
    *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
    * 
-   * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> send Offer SDP --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
-   * If Peer B receives a call then we invoke... Receive Offer SDP --> handleReceiveCall --> createPeer --> ^send Answer SDP^ --> handleIceCandidateMsg --> handleIceCandidateEvent --> once connected, handleTrackEvent
+   * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> ^send Offer SDP^ --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
+   * If Peer B receives a call then we invoke... ^Receive Offer SDP^ --> handleReceiveCall --> createPeer --> ^send Answer SDP^ --> handleIceCandidateMsg --> handleIceCandidateEvent --> once connected, handleTrackEvent
    * 
    * Note: Media is attached to the Peer Connection and sent along with the offers/answers to describe what media each client has. (see RTCPeerConnection.addTrack() MDN)
    */
@@ -134,7 +134,6 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
     const userList = parsedData.payload.map((name: string, idx:number) => (
       <div key={idx}>{name}</div>
     ));
-
     setUsers(userList);
   };
 
@@ -153,7 +152,7 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
 
   /**
   * @desc Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
-  * @param userID
+  * @param {string} userID
   */
   const callUser = (userID: string): void => {
     if (peerRef.current) {
@@ -263,19 +262,20 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
     .catch((e) => console.log(e));
   }
   /**
-  * @desc As ICE Candidates are being generated, these candidates are being sent to the remote client to complete the connection
-  * @event e
+  * @desc As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
+  * @param e
   */
   function handleIceCandidateEvent(e: RTCPeerConnectionIceEvent) {
-    if (e.candidate) {
+    if (e.candidate) { // Contains the RTCIceCandidate containing the candidate associated with the event,
       const IcePayload = {
         ACTION_TYPE: ICECANDIDATE,
-        receiver: otherUser.current,
-        payload: e.candidate,
+        receiver: otherUser.current, // username for other user
+        payload: e.candidate, 
       };
       ws.current.send(JSON.stringify(IcePayload));
     }
   }
+
   /**
   * @desc ICE Candidates being sent from each end of the connection are added to a list of potential connection methods until both ends have a way of connecting to eachother
   * @param {Object} data containing a property payload with an incoming ICE Candidate
@@ -296,17 +296,20 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
     remoteVideo.current.srcObject = e.streams[0];
   }
   /**
-  * @desc 
+  * @desc Enables screen sharing and displays a cursor 
   */
   function shareScreen(): void {
-    //TODOS: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
-        
-    navigator.mediaDevices.getDisplayMedia().then(stream => {
-      console.log('shareScreen stream', stream);
+    //TODOS: On a new connection the local and streamed screen bugs producing: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
+    navigator.mediaDevices.getDisplayMedia()
+    .then(stream => {
       const screenTrack = stream.getTracks()[0];
-      senders.current?.find(sender => sender.track?.kind === 'video')?.replaceTrack(screenTrack);
+      senders.current
+      ?.find(sender => sender.track?.kind === 'video')
+      ?.replaceTrack(screenTrack);
       screenTrack.onended = function() {
-        senders.current?.find(sender => sender.track?.kind === 'video')?.replaceTrack(localStream.current.getTracks()[1]);
+        senders.current
+        ?.find(sender => sender.track?.kind === 'video')
+        ?.replaceTrack(localStream.current.getTracks()[1]);
       };
     });
   }
@@ -326,10 +329,12 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
 
   return(
     <>
-      {users}
-
-      <div style={{display: 'flex', flexDirection:'column', top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}>  
-        <input 
+      <div className='users-list'>{users}</div>
+      <div className='input-div' 
+        style={{display: 'flex', flexDirection:'column', top: '20%', left: '28%', margin: '0 auto', marginTop:'10%', height: '500px', width: '600px', borderStyle: 'solid', borderRadius: '25px', justifyContent: 'center', alignItems: 'center'}}
+      >  
+        <input
+          className=''
           type='text' 
           placeholder='username' 
           id="username-field" 
@@ -338,8 +343,11 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
         ></input>
                 
         <button 
+          className=''
           onClick={() => handleUsername()}
-        >Submit Username</button>
+        >
+          Submit Username
+        </button>
       </div>
 
       {ws.current ?
@@ -355,39 +363,60 @@ const Rtconnect = ({ URL }: { URL: string }): JSX.Element => {
       {/* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events multiple websocket connections will be made and error 
           every user when one closes their browser */}
 
-      <div style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
-        <div id="main-video-container" style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}>
-          <div id="local-video-container">
+      <div
+        className=''
+        style={{display: 'flex', justifyContent: 'space-around', border: '1px solid black', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
+        <div 
+          id="main-video-container" 
+          className='' 
+          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}>
+          <div 
+            id="local-video-container"
+            className='' 
+          >
             <VideoComponent video={localVideo}/>
           </div>
-          <div id="remote-video-container">
+          <div 
+            id="remote-video-container"
+            className='' 
+          >
             <VideoComponent video={remoteVideo} />
           </div>
         </div>
       </div>
                 
-      <div id="button-container" style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
+      <div 
+        id="button-container"
+        className='' 
+        style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
 
         <button
+          className='' 
           onClick={() => shareScreen()}
         >
           Share Screen
         </button>
 
         <button
+          className='' 
           onClick={() => endCall(false)}
         >
           End Call
         </button> 
                     
-        <button 
+        <button
+          className='' 
           onClick={handleOffer} 
           style={{marginBottom:'25px', marginLeft:'400px', width: '200px'}}
         >
           Call
         </button>
                 
-        <input type='text' id='receiverName'style={{marginBottom:'3px'}}></input>
+        <input
+          className='' 
+          type='text' 
+          id='receiverName'
+          style={{marginBottom:'3px'}}></input>
       </div>
     </>
   );
