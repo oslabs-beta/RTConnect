@@ -1,6 +1,6 @@
 {
   "name": "rtconnect",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "",
   "main": "./dist/src/index.js",
   "scripts": {

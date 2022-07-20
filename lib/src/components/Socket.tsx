@@ -7,7 +7,7 @@ type SocketType = {
     getUsers: (parsedData: {payload: string[]}) => void,
     handleReceiveCall: (data: { sender: string, payload: RTCSessionDescriptionInit }) => void ,
     handleAnswer: (parsedData: {payload: RTCSessionDescriptionInit}) => void ,
-    handleNewIceCandidateMsg: (data: { payload: RTCIceCandidateInit }) => void,
+    handleNewIceCandidate: (data: { payload: RTCIceCandidateInit }) => void,
     endCall: (parsedData: boolean) => void
 }
 
@@ -16,7 +16,7 @@ type SocketType = {
  * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
  * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
  */
-const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg, endCall }: SocketType): JSX.Element => {
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidate, endCall }: SocketType): JSX.Element => {
 
   // IIFE, this function gets invoked when a new socket component is created
   (function initalizeConnection() {
@@ -47,7 +47,7 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
           handleAnswer(parsedData);
           break;
         case ICECANDIDATE:
-          handleNewIceCandidateMsg(parsedData);
+          handleNewIceCandidate(parsedData);
           break;
         case LEAVE:
           endCall(true);

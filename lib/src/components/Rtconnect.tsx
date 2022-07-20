@@ -287,7 +287,7 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   * @desc ICE Candidates being sent from each end of the connection are added to a list of potential connection methods until both ends have a way of connecting to eachother
   * @param {Object} data containing a property payload with an incoming ICE Candidate
   */
-  function handleNewIceCandidateMsg(data: { payload: RTCIceCandidateInit }): void {
+  function handleNewIceCandidate(data: { payload: RTCIceCandidateInit }): void {
     const candidate = new RTCIceCandidate(data.payload);
 
     peerRef.current
@@ -365,7 +365,7 @@ const Rtconnect = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           getUsers={getUsers}
           handleReceiveCall={handleReceiveCall} 
           handleAnswer={handleAnswer} 
-          handleNewIceCandidateMsg={handleNewIceCandidateMsg}
+          handleNewIceCandidate={handleNewIceCandidate}
           endCall={endCall}
         /> 
         : ''}
