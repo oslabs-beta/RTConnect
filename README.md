@@ -43,7 +43,7 @@ npm install rtconnect
  
  2. Create your server — you have the option of using an http server or setting up a more secure connection by implementing an https server in order to set up a WebSocket secure connection.
 
-(Note: Setting up an https server will require a few extra steps and instructions will be at the end of this article.)
+(Note: Setting up an https server will require a few extra steps. <a href="https://adamtheautomator.com/https-nodejs/">Instructions on how to set up an https server</a>)
 
 3. Import the RTConnect Signaling Channel class/module and instantiate the RTConnect Signaling Channel. Pass in your http or https server as an argument.
 
