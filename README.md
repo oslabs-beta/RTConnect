@@ -62,7 +62,7 @@ The Team
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
 <br>
 ## <a name="demo"/> Demo
-
+<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 
