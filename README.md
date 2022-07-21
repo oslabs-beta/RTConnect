@@ -12,7 +12,7 @@ npm install rtconnect
 After installing the rtconnect npm package, import the Rtconnect component in your React file:
 
 <p align="center">
-	<img src='' alt="logo" width="300">
+	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
 	<br>
   	<a href="https://github.com/oslabs-beta/RTConnect"><img src="https://img.shields.io/badge/license-MIT-blue"/></a>
 	<br>
