@@ -1,6 +1,13 @@
-import React from 'react';
-declare type videoCall = {
-    video: React.LegacyRef<HTMLVideoElement>;
+/// <reference types="react" />
+/**
+ * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and Websockets.
+ * Any client can call another thus not all functions are invoked for every user.
+ * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection, which we connected in our backend using RTConnect's importable  SignalingChannel
+ * @param {string} this.props.URL
+ * @returns A component that renders two VideoComponents (currently not dynamic), a
+ */
+declare const VideoCall: ({ URL, mediaOptions }: {
+    URL: string;
     mediaOptions: {
         controls: boolean;
         style: {
@@ -8,11 +15,5 @@ declare type videoCall = {
             height: string;
         };
     };
-};
-/**
- * @param {HTMLVideoElement} video
- * @returns a video component that is either the local or remote video stream
- * controls can be set to true to pause and adjust volumes of streams
- */
-declare const VideoCall: ({ video, mediaOptions }: videoCall) => JSX.Element;
+}) => JSX.Element;
 export default VideoCall;

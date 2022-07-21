@@ -11,7 +11,7 @@ const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
  * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
  * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
  */
-const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidateMsg, endCall }) => {
+const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidate, endCall }) => {
     // IIFE, this function gets invoked when a new socket component is created
     (function initalizeConnection() {
         ws.addEventListener('open', () => {
@@ -36,7 +36,7 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
                     handleAnswer(parsedData);
                     break;
                 case ICECANDIDATE:
-                    handleNewIceCandidateMsg(parsedData);
+                    handleNewIceCandidate(parsedData);
                     break;
                 case LEAVE:
                     endCall(true);

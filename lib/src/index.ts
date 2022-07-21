@@ -1,11 +1,11 @@
-import Rtconnect from './components/Rtconnect';
-import Socket from './components/Socket';
 import VideoCall from './components/VideoCall';
+import Socket from './components/Socket';
+import VideoComponent from './components/VideoComponent';
 import actions from './constants/actions';
 import SignalingChannel from '../server/server';
 
-export default Rtconnect;
+export default VideoCall;
 export { Socket };
-export { VideoCall };
+export { VideoComponent };
 export { actions };
 export { SignalingChannel };
