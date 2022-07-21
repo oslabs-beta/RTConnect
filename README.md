@@ -4,14 +4,6 @@ RTConnect is an easy-to-use React component library that enables developers to s
 
 RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
 
-# Installation
-Install the RTConnect npm package, rtconnect
-
-```
-npm install rtconnect
-```
-After installing the rtconnect npm package, import the Rtconnect component in your React file:
-
 <p align="center">
 	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
 	<br>
