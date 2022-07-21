@@ -53,7 +53,9 @@ For example, if your server is hosted on port 3000, then you would do the follow
 ```
 
 ## <a name="demo"/> Demo
-<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
+<p align="center">
+	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
+</p>
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
