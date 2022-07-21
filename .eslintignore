@@ -1,0 +1,4 @@
+# don't lint build or dist output
+dist
+build
+tsconfig.json
