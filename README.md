@@ -7,8 +7,6 @@ RTConnect achieves these features within the functional scope of React component
 <p align="center">
 	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
 	<br>
-  	<a href="https://github.com/oslabs-beta/RTConnect"><img src="https://img.shields.io/badge/license-MIT-blue"/></a>
-	<br>
 </p>
 
 ## Table of Contents
