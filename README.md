@@ -1,4 +1,4 @@
-![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/reactplay/react-play?v&limit=7)
+[![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
 
 # RTConnect
 
