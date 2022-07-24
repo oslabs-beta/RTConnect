@@ -1,3 +1,5 @@
+![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/reactplay/react-play?v&limit=7)
+
 # RTConnect
 
 RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. 
@@ -9,7 +11,6 @@ RTConnect achieves these features within the functional scope of React component
 	<br>
 </p>
 
-[![Stargazers repo roster for @oslabs-beta/RTConnect](https://reporoster.com/stars/notext/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
 
 ## Table of Contents
 - [What is RTConnect?](#what)
