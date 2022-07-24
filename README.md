@@ -9,6 +9,8 @@ RTConnect achieves these features within the functional scope of React component
 	<br>
 </p>
 
+[![Stargazers repo roster for @oslabs-beta/RTConnect](https://reporoster.com/stars/notext/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
+
 ## Table of Contents
 - [What is RTConnect?](#what)
 - [Install](#install)
