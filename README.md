@@ -15,8 +15,9 @@ RTConnect achieves these features within the functional scope of React component
 ## Table of Contents
 - [What is RTConnect?](#what)
 - [Install](#install)
-- [Getting Started](#implementation)
+- [Getting Started and Using RTConnect](#implementation)
 - [Demo](#demo)
+- [How Can I Contribute](#contribution)
 - [The Team ](#team )
 
 
@@ -103,6 +104,13 @@ const App = () => {
 
 export default App;
 ```
+## <a name="contribution" /> How Can I Contribute? 
+There are many features and improvements that our team is still adding to RTConect but while we are in the process of implementing some of them, you are more than welcome to help out the RTConnect team!
+
+We are currently in the process of: 
+- Implementing testing using Jest.
+- Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
+
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
