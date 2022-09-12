@@ -1,11 +1,15 @@
 "use strict";
+
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+
 Object.defineProperty(exports, "__esModule", { value: true });
+
 const ws_1 = require("ws");
 const actions_1 = __importDefault(require("../src/constants/actions"));
 const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions_1.default;
+
 /**
  * @class
  * @classdesc Class representing the SignalingChannel using websockets to allow communication between clients connected to the websocket server
@@ -21,8 +25,9 @@ class SignalingChannel {
     constructor(server) {
         this.webSocketServer = typeof server === 'number' ? new ws_1.WebSocket.Server({ port: server }) : new ws_1.WebSocket.Server({ server: server });
         this.users = new Map();
-        // this.rooms = new Map(); //focus on later when constructing 2+ video conferencing functionality, SFU topology
+        // this.rooms = new Map(); // focus on later when constructing 2+ video conferencing functionality, SFU topology
     }
+    
     /**
      * @description Upon creation and connection to the websocket server, the websocket server will add these event listeners to their socket to perform key functionality
      * @function initializeConnection Signaling server will listen to client when client has been connected.
@@ -41,6 +46,7 @@ class SignalingChannel {
                 const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
                 this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
             });
+            
             // the meat of the websocket server, when messages are received from the client...
             // we will filter through what course of action to take based on data.ACTION_TYPE (see constants/actions.ts)
             socket.on('message', (message) => {
@@ -48,6 +54,7 @@ class SignalingChannel {
                 // importantly, messages sent to the websocket server are passed as Buffer objects encoded in utf-8 format
                 const stringifiedMessage = message.toString('utf-8');
                 const data = JSON.parse(stringifiedMessage);
+                
                 switch (data.ACTION_TYPE) {
                     case OFFER:
                         this.transmit(data);
@@ -75,6 +82,7 @@ class SignalingChannel {
             });
         });
     }
+    
     /**
      * @description Broadcasting from sender to receiver. Accessing the receiver from the data object and if the user exists, the data is sent
      * @param {object} data
@@ -83,6 +91,7 @@ class SignalingChannel {
         var _a;
         (_a = this.users.get(data.receiver)) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify(data));
     }
+    
     /**
      * @description Getting user from Map
      * @function getByValue identifies user and their specific websocket
