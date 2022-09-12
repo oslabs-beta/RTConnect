@@ -21,6 +21,7 @@ interface loginPayObj extends payloadObj {
 interface offerPayObj extends payloadObj {
   payload: RTCSessionDescription | null | undefined
 }
+
 interface answerPayObj extends payloadObj {
   payload: RTCSessionDescription | null | undefined
 }
@@ -294,7 +295,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   */
   function handleNewIceCandidate(data: { payload: RTCIceCandidateInit }): void {
     const candidate = new RTCIceCandidate(data.payload);
-
     peerRef.current
     ?.addIceCandidate(candidate)
     .catch((e) => console.log(e));
@@ -342,8 +342,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-
-
   const buttonStyling = { backgroundColor: '#C2FBD7',
     borderRadius: '50px',
     borderWidth: '0',
@@ -356,7 +354,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     height: '50px',
     padding: '0 25px',
   };
-
 
   /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
   multiple websocket connections will be made and error 
