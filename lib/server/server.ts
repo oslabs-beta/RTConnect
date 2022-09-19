@@ -21,7 +21,7 @@ class SignalingChannel {
    * @param {Server} server - pass in a server (http or https), or pass in port (not the same port (this port can't be the same as the application port and has to listen on the same port in rtconnect!)
    */
   constructor(server: Server | httpsServer | number) { 
-    this.webSocketServer = typeof server === 'number' ? new WebSocket.Server({port: server}) : new WebSocket.Server({server: server});
+    this.webSocketServer = typeof server === 'number' ? new WebSocket.Server({ port: server }) : new WebSocket.Server({ server: server });
     this.users = new Map();
     // this.rooms = new Map(); //focus on later when constructing 2+ video conferencing functionality, SFU topology
   }
@@ -33,6 +33,7 @@ class SignalingChannel {
    * @return a socket that corresponds to the client connecting.
    */
   initializeConnection(): void {
+    // socket: WebSocket
     this.webSocketServer.on('connection', (socket) => {
       console.log('A user has connected to the websocket server.');
 
