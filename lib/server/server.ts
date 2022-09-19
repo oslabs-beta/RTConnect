@@ -30,7 +30,7 @@ class SignalingChannel {
    * @description Upon creation and connection to the websocket server, the websocket server will add these event listeners to their socket to perform key functionality
    * @function initializeConnection Signaling server will listen to client when client has been connected. 
    * when the message event is triggered, it will either send each user list to each user upon login or sending the receiver the data 
-   * @return a socket that corresponds to the client conencting.
+   * @return a socket that corresponds to the client connecting.
    */
   initializeConnection(): void {
     this.webSocketServer.on('connection', (socket) => {
