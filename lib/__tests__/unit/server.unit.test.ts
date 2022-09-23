@@ -21,5 +21,4 @@ describe('Testing the SignalingChannel class', () => {
     sc.webSocketServer.close();
     done();
   });
-
 });
