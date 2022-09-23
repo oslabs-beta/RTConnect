@@ -6,7 +6,7 @@ const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions;
 
 /**
  * @class
- * @classdesc Class representing the SignalingChannel using websockets to allow communication between clients connected to the websocket server
+ * @classdesc The SignalingChannel class which utilizes WebSockets in order to facillitate communication between clients connected to the WebSocket server.
  * @prop { WebsocketServer } websocketServer - a simple websocket server
  * @prop { Map } users - an object of users in the following fashion { username1: socket1, username2: socket2, usernameN: socketN, ... }
  */
@@ -16,7 +16,6 @@ class SignalingChannel {
   users: Map<string, WebSocket>;
 
   /**
-   * 
    * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
    * @param {Server} server - pass in a server (http or https), or pass in port (not the same port (this port can't be the same as the application port and has to listen on the same port in rtconnect!)
    */

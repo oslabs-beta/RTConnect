@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * @desc actions that will be used by SignalingChannel and Socket component for being able to filter and identify data passed through websocket message event
+ * @desc actions used by the SignalingChannel and Socket component to filter and identify the data being passed through the WebSocket message event.
 */
 const actions = {
     CONNECTION: 'CONNECTION',

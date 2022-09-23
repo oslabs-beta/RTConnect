@@ -1,7 +1,7 @@
 {
   "name": "rtconnect",
   "version": "0.0.25",
-  "description": "",
+  "description": "A React component library to set up live, real-time video calls with peers.",
   "main": "./dist/src/index.js",
   "scripts": {
     "test": "jest",
@@ -11,8 +11,8 @@
     "type": "git",
     "url": "git+https://github.com/oslabs-beta/RTConnect.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["React", "React library", "WebRTC", "WebSockets", "video calls", "real time communication", "live video conferencing", "developer library"],
+  "author": "Anthony King, Fariha Raisa Iftekher, Louis Disen, Yoojin Chang",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/oslabs-beta/RTConnect/issues"

@@ -1,4 +1,4 @@
-declare type actionType = {
+declare type ActionType = {
     CONNECTION: string;
     OFFER: string;
     ANSWER: string;
@@ -9,7 +9,7 @@ declare type actionType = {
     JOIN_ROOM: string;
 };
 /**
- * @desc actions that will be used by SignalingChannel and Socket component for being able to filter and identify data passed through websocket message event
+ * @desc actions used by the SignalingChannel and Socket component to filter and identify the data being passed through the WebSocket message event.
 */
-declare const actions: actionType;
+declare const actions: ActionType;
 export default actions;

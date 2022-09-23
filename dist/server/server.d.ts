@@ -5,7 +5,7 @@ import { Server } from 'http';
 import { Server as httpsServer } from 'https';
 /**
  * @class
- * @classdesc Class representing the SignalingChannel using websockets to allow communication between clients connected to the websocket server
+ * @classdesc The SignalingChannel class which utilizes WebSockets in order to facillitate communication between clients connected to the WebSocket server.
  * @prop { WebsocketServer } websocketServer - a simple websocket server
  * @prop { Map } users - an object of users in the following fashion { username1: socket1, username2: socket2, usernameN: socketN, ... }
  */
@@ -13,7 +13,6 @@ declare class SignalingChannel {
     webSocketServer: WebSocketServer;
     users: Map<string, WebSocket>;
     /**
-     *
      * @constructor constructing a websocket server with an https object passed in upon instantiating SignalingChannel
      * @param {Server} server - pass in a server (http or https), or pass in port (not the same port (this port can't be the same as the application port and has to listen on the same port in rtconnect!)
      */
@@ -22,7 +21,7 @@ declare class SignalingChannel {
      * @description Upon creation and connection to the websocket server, the websocket server will add these event listeners to their socket to perform key functionality
      * @function initializeConnection Signaling server will listen to client when client has been connected.
      * when the message event is triggered, it will either send each user list to each user upon login or sending the receiver the data
-     * @return a socket that corresponds to the client conencting.
+     * @return a socket that corresponds to the client connecting.
      */
     initializeConnection(): void;
     /**
