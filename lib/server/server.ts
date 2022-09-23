@@ -6,9 +6,9 @@ const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions;
 
 /**
  * @class
- * @classdesc The SignalingChannel class which utilizes WebSockets in order to facillitate communication between clients connected to the WebSocket server.
- * @prop { WebsocketServer } websocketServer - a simple websocket server
- * @prop { Map } users - an object of users in the following fashion { username1: socket1, username2: socket2, usernameN: socketN, ... }
+ * @classdesc The SignalingChannel class, which utilizes WebSockets in order to facillitate communication between clients connected to the WebSocket server.
+ * @prop { WebsocketServer } websocketServer - a simple WebSocket server
+ * @prop { Map } users - object containing key-value pairs consisting of users' names and their corresponding WebSocket in the following fashion { username1: socket1, username2: socket2, ... , usernameN: socketN }
  */
 
 class SignalingChannel {

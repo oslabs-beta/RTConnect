@@ -30,7 +30,7 @@
           "no-unused-vars": ["off", { "vars": "local" }],
           "no-case-declarations": "warn",
           "prefer-const": "warn",
-          "quotes": ["warn", "single"],
+          "quotes": ["warn", "single", { "allowTemplateLiterals": true }],
           "react/prop-types": "off",
           "semi": ["warn", "always"],
           "space-infix-ops": "warn"
