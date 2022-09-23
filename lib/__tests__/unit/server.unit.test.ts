@@ -1,5 +1,4 @@
 import SignalingChannel from '../../server/server';
-// import { WebSocket } from 'ws';
 
 beforeAll((done) => {
   done();
@@ -21,5 +20,4 @@ describe('Testing the SignalingChannel class', () => {
     sc.webSocketServer.close();
     done();
   });
-
 });
