@@ -82,7 +82,7 @@ SignalChannel.initializeConnection;
 
 5. Import the RTConnect VideoCall component into your desired .jsx file.
 
-6. Finally use the RTConnect VideoCall component as you would any other React component by passing in ‘ws://localhost:<PORT>’ as the URL prop as well as the optional mediaOptions prop
+6. Finally use the RTConnect VideoCall component as you would any other React component by passing in ‘ws://localhost:PORT’ as the URL prop as well as the optional mediaOptions prop
 
 - URL={ ‘ws://localhost:PORT’} (Note: the PORT whatever you specified when you set up your server)
 - mediaOptions={{ controls: true, style: { width: ‘640px’, height: ‘480px’ }}
