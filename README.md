@@ -76,7 +76,7 @@ const server = app.listen(PORT, () => {
 const SignalChannel = new SignalingChannel(server);
 
 // invoke initializeConnection() method
-SignalChannel.initializeConnection;
+SignalChannel.initializeConnection();
 
 ```
 
