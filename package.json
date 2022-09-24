@@ -1,8 +1,9 @@
 {
   "name": "rtconnect",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "A React component library to set up live, real-time video calls with peers.",
   "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "scripts": {
     "test": "jest --config",
     "unit-test": "jest \"--testPathPattern='.+\\.unit\\.test\\.js$'\"",
@@ -29,7 +30,6 @@
     "url": "https://github.com/oslabs-beta/RTConnect/issues"
   },
   "homepage": "https://github.com/oslabs-beta/RTConnect#readme",
-  "types": "./dist",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
