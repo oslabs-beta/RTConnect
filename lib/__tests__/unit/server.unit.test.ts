@@ -33,29 +33,29 @@ describe('Testing the SignalingChannel class', () => {
   });
 });
 
-// describe('Checking WebSocket response', () => {
-//   const sc1 = new SignalingChannel(3032);
+describe('Checking WebSocket response', () => {
+  const sc1 = new SignalingChannel(3032);
 
-//   sc1.webSocketServer.onopen;
-//   // Source: https://stackoverflow.com/questions/55963562/how-to-stop-jest-from-hanging-when-testing-websockets
-//   it('WebSocket closes connection correctly', () => {
-//     let disconnected = false;
-//     sc1.webSocketServer.addListener('close', () => {
-//       disconnected = true;
-//       sc1.webSocketServer.close();
-//     });
+  //   sc1.webSocketServer.onopen;
+  //   // Source: https://stackoverflow.com/questions/55963562/how-to-stop-jest-from-hanging-when-testing-websockets
+  //   it('WebSocket closes connection correctly', () => {
+  //     let disconnected = false;
+  //     sc1.webSocketServer.addListener('close', () => {
+  //       disconnected = true;
+  //       sc1.webSocketServer.close();
+  //     });
 
-//     // let error: ErrorEvent;
-//     // ws.onerror = (e) => {
-//     //     console.log(error)
-//     //     error = e;
-//     // };
-//     // expect(error.origin).toBe(`ws://localhost:${port}`);
-//     expect(disconnected).toBe(true);
-//   });
+  //     // let error: ErrorEvent;
+  //     // ws.onerror = (e) => {
+  //     //     console.log(error)
+  //     //     error = e;
+  //     // };
+  //     // expect(error.origin).toBe(`ws://localhost:${port}`);
+  //     expect(disconnected).toBe(true);
+  //   });
 
-//   afterAll((done) => {
-//     sc1.webSocketServer.close();
-//     done();
-//   });
-// });
+  afterAll((done) => {
+    sc1.webSocketServer.close();
+    done();
+  });
+});
