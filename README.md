@@ -114,6 +114,7 @@ We are currently in the process of:
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
 ## <a name="errors" /> Solutions for Errors When Using Webpack v5.x or npx create-react-app 
+- Install the node-polyfill-webpack-plugin npm package and initialize this plugin in your webpack.config file.
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
