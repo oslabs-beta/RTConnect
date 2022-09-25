@@ -3,15 +3,14 @@
 [![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
 
 # RTConnect
-
-RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. 
-
-RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
-
 <p align="center">
 	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
 	<br>
 </p>
+
+RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. 
+
+RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
 
 
 ## Table of Contents
@@ -20,7 +19,8 @@ RTConnect achieves these features within the functional scope of React component
 - [Getting Started and Using RTConnect](#implementation)
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
-- [The Team ](#team )
+- [The Team](#team)
+- [Try the following if you used Webpack version 5.x or create-react-app to create your React app and are experiencing errors when using RTConnect](#errors)
 
 
 ## <a name="what"/> What is RTConnect?
@@ -76,7 +76,7 @@ const server = app.listen(PORT, () => {
 const SignalChannel = new SignalingChannel(server);
 
 // invoke initializeConnection() method
-SignalChannel.initializeConnection;
+SignalChannel.initializeConnection();
 
 ```
 
@@ -113,6 +113,7 @@ We are currently in the process of:
 - Implementing testing using Jest.
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
+## <a name="errors" /> Solutions for Errors When Using Webpack v5.x or npx create-react-app 
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
