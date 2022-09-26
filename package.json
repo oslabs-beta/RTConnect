@@ -1,6 +1,6 @@
 {
   "name": "rtconnect",
-  "version": "0.0.34",
+  "version": "0.0.36",
   "description": "A React component library to set up live, real-time video calls with peers.",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -50,7 +50,6 @@
     "assert": "^2.0.0",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
-    "crypto-browserify": "^3.12.0",
     "eslint": "^8.19.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",
@@ -72,7 +71,10 @@
   "optionalDependencies": {
     "buffer": "^6.0.3",
     "bufferutil": "^4.0.6",
-    "utf-8-validate": "^5.0.9"
+    "utf-8-validate": "^5.0.9",
+    "stream": "^0.0.2",
+    "net": "1.0.2",
+    "crypto-browserify": "^3.12.0"
   },
   "files": [
     "dist/*"
