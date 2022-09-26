@@ -50,6 +50,7 @@
     "assert": "^2.0.0",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^8.19.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",
@@ -74,7 +75,8 @@
     "utf-8-validate": "^5.0.9",
     "stream": "^0.0.2",
     "net": "1.0.2",
-    "crypto-browserify": "^3.12.0"
+    "crypto-browserify": "^3.12.0",
+    "stream-http": "^3.2.0"
   },
   "files": [
     "dist/*"
