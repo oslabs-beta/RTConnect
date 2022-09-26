@@ -29,9 +29,7 @@ RTConnect is an easy-to-use npm package and React component library that enables
 RTConnect streamlines and simplifies the implementation of WebRTC for developers by providing a React component and signaling server module that operates using Websockets for the backend. 
 
 ## <a name="demo"/> Demo
-<p align="center">
-	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
-</p>
+<p align="center"><img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'></p>
 
 
 ## <a name="install"/> Install RTConnect
