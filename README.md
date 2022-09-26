@@ -140,7 +140,7 @@ module.exports = {
 ### Then install the following npm packages:
 
 ```
-npm install node-polyfill-webpack-plugin buffer utils tls gyp fs
+npm install -D node-polyfill-webpack-plugin buffer utils tls gyp fs
 ```
 
 ## Solutions for Errors When Using npx create-react-app 
