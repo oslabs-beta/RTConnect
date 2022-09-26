@@ -112,8 +112,39 @@ We are currently in the process of:
 - Implementing testing using Jest.
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
-## <a name="errors" /> Solutions for Errors When Using Webpack v5.x or npx create-react-app 
-- Install the node-polyfill-webpack-plugin npm package and initialize this plugin in your webpack.config file.
+## <a name="errors" /> Solutions for Errors When Using Webpack v5.x 
+### Add the following to your webpack.config.json 
+
+```
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+
+module.exports = {
+  resolve: {
+    fallback: {
+    	buffer: require.resolve('buffer/'),
+	utils: require.resolve('utils'),
+	tls: require.resolve('tls'),
+	gyp: require.resolve('gyp'),
+	fs: false,
+      }
+  },
+  
+  target: 'web',
+  
+  plugins: [
+     new NodePolyfillPlugin(),
+  ]
+}
+```
+
+### Then install the following npm packages:
+
+```
+npm install node-polyfill-webpack-plugin buffer utils tls gyp fs
+```
+
+## Solutions for Errors When Using npx create-react-app 
+* Coming soon
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
