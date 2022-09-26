@@ -1,6 +1,6 @@
 {
   "name": "rtconnect",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "A React component library to set up live, real-time video calls with peers.",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
