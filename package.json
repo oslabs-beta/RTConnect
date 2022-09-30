@@ -5,6 +5,7 @@
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "scripts": {
+    "build": "tsc --build",
     "test": "jest --config",
     "unit-test": "jest \"--testPathPattern='.+\\.unit\\.test\\.ts$'\"",
     "integration-test": "jest \"--testPathPattern='.+\\.integration\\.test\\.ts$'\"",

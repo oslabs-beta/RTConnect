@@ -19,7 +19,7 @@ RTConnect achieves these features within the functional scope of React component
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
 - [The Team](#team)
-- [Try the following if you used Webpack version 5.x or create-react-app to create your React app and are experiencing errors when using RTConnect](#errors)
+- [Solutions for Polyfill Errors When Using Webpack v5.x or npx create-react-app with RTConnect](#errors)
 
 
 ## <a name="what"/> What is RTConnect?
@@ -109,7 +109,6 @@ export default App;
 There are many features and improvements that our team is still adding to RTConect but while we are in the process of implementing some of them, you are more than welcome to help out the RTConnect team!
 
 We are currently in the process of: 
-- Implementing testing using Jest.
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
 ## <a name="errors" /> Solutions for Errors When Using Webpack v5.x 
@@ -149,9 +148,9 @@ npm install -D node-polyfill-webpack-plugin buffer utils tls gyp fs
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
 <br>
-F. Raisa Iftekher    | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
+F. Raisa Iftekher | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
 <br>
-Yoojin Chang   | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www.linkedin.com/in/yoojin-chang-32a75892/)
+Yoojin Chang | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www.linkedin.com/in/yoojin-chang-32a75892/)
 <br>
-Louis Disen    | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
+Louis Disen | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
