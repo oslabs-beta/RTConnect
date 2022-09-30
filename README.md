@@ -97,7 +97,7 @@ import VideoCall from 'rtconnect';
 const App = () => {
   return (
     <VideoCall 
-      URL={'ws://localhost:3000>'}
+      URL={'ws://localhost:3000'}
       mediaOptions={{ controls: true, style: { width: '640px',    height: '480px'}}}
     />
   )
