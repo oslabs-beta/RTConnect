@@ -1,4 +1,4 @@
-<center># A big shoutout to all of RTConnect's stargazers! Thank you!</center>
+#<center>A big shoutout to all of RTConnect's stargazers! Thank you!</center>
 
 [![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
 
