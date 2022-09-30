@@ -57,7 +57,7 @@ const app = express();
 const PORT = 3000;
 
 // import the RTConnect Signaling Channel class
-const { SignalingChannel } = require('SignalingChannel');
+const { SignalingChannel } = require('rtconnect');
 
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
