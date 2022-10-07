@@ -19,7 +19,7 @@ RTConnect achieves these features within the functional scope of React component
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
 - [The Team](#team)
-- [Solutions for Polyfill Errors When Using Webpack v5.x or npx create-react-app with RTConnect](#errors)
+- [Using Webpack v5.x or npx create-react-app to Create a React App with RTConnect: Solutions for Polyfill Errors](#errors)
 
 
 ## <a name="what"/> What is RTConnect?
@@ -111,8 +111,28 @@ There are many features and improvements that our team is still adding to RTCone
 We are currently in the process of: 
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
-## <a name="errors" /> Solutions for Errors When Using Webpack v5.x 
-### Add the following to your webpack.config.json 
+## <a name="errors" /> Solutions for Polyfill Errors When Using 
+1. First, install the package using Yarn or npm:
+```
+npm install react-app-polyfill
+```
+or
+
+```
+yarn add react-app-polyfill
+```
+
+2. Then add the following in your src/index.js file.
+
+```
+// These must be the first lines in src/index.js
+import "react-app-polyfill/ie11";
+import "react-app-polyfill/stable";
+// ...
+```
+
+## If you are using Webpack v5.x
+1. Add the following to your webpack.config.json 
 
 ```
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
@@ -136,14 +156,11 @@ module.exports = {
 }
 ```
 
-### Then install the following npm packages:
+2. Then install the following npm packages:
 
 ```
 npm install -D node-polyfill-webpack-plugin buffer utils tls gyp fs
 ```
-
-## Solutions for Errors When Using npx create-react-app 
-* Coming soon
 
 ## <a name="team "/> # The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
