@@ -19,7 +19,7 @@ RTConnect achieves these features within the functional scope of React component
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
 - [The Team](#team)
-- [Solutions for Polyfill Errors Whens Using Webpack v5.x or the npx create-react-app Command with RTConnect](#errors)
+- [Solutions for Polyfill Errors When Using Webpack v5.x or the npx create-react-app Command with RTConnect](#errors)
 
 
 ## <a name="what"/> What is RTConnect?
