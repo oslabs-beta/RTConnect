@@ -115,8 +115,8 @@ We are currently in the process of:
 
 Webpack 4 automatically polyfilled many Node APIs in the browser but Webpack 5 removed this functionality, hence why you might get polyfill errors when using the RTConnect VideoCall component. You can do the following to address polyfill errors related to using Webpack v5.x when using RTConnect.
 
-[Fixing Polyfill Errors if Using the npx create-react-app Command](#npx)
-[Fixing Polyfill Errors When Using Webpack v5.x](#webpack)
+- [Fixing Polyfill Errors if Using the npx create-react-app Command](#npx). 
+- [Fixing Polyfill Errors When Using Webpack v5.x](#webpack). 
 
 ### <a name="npx" /> If You Used npx create-react-app to Create Your React App
 
