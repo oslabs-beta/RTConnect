@@ -19,7 +19,7 @@ RTConnect achieves these features within the functional scope of React component
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
 - [The Team](#team)
-- [Using Webpack v5.x or npx create-react-app to Create a React App with RTConnect: Solutions for Polyfill Errors](#errors)
+- [Using Webpack v5.x or npx create-react-app Command to Create a React App with RTConnect: Solutions for Polyfill Errors](#errors)
 
 
 ## <a name="what"/> What is RTConnect?
@@ -111,7 +111,15 @@ There are many features and improvements that our team is still adding to RTCone
 We are currently in the process of: 
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
-## <a name="errors" /> Solutions for Polyfill Errors When Using 
+## <a name="errors" /> Solutions for Polyfill Errors When Using Webpack v5.x or the npx create-react-app Command
+
+Webpack 4 automatically polyfilled many Node APIs in the browser but Webpack 5 removed this functionality, hence why you might get polyfill errors when using the RTConnect VideoCall component. You can do the following to address polyfill errors related to using Webpack v5.x when using RTConnect.
+
+[Fixing Polyfill Errors if Using the npx create-react-app Command](#npx)
+[Fixing Polyfill Errors When Using Webpack v5.x](#webpack)
+
+### <a name="npx" /> If You Used npx create-react-app to Create Your React App
+
 1. First, install the package using Yarn or npm:
 ```
 npm install react-app-polyfill
@@ -131,7 +139,7 @@ import "react-app-polyfill/stable";
 // ...
 ```
 
-## If you are using Webpack v5.x
+### <a name="webpack" /> If you are using Webpack v5.x
 1. Add the following to your webpack.config.json 
 
 ```
