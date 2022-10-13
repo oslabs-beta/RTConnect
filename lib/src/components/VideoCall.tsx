@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import React, { useState, useRef, useEffect } from 'react';
 import Socket from './Socket';
 import VideoComponent from './VideoComponent';
@@ -37,7 +35,7 @@ interface icePayObj extends payloadObj {
  * @param {string} this.props.URL 
  * @returns A component that renders two VideoComponents (currently not dynamic), a
  */
-//mediaOptions: { controls: boolean, style: { width: string, height: string }
+
 const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { controls: boolean, style: { width: string, height: string }}}): JSX.Element => {
   //username will store a name the client enters and users (see getUsers) will be updated whenever a user logs in or leaves
   const [username, setUsername] = useState<string>('');
@@ -116,21 +114,16 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       ACTION_TYPE: LOGIN, 
       payload: userField,
     };
-
     ws.current.send(JSON.stringify(loginPayload));
     setUsername(userField);
   };
 
-  // const handleChange = (e): void => {
-  //   setMessage(e.target.value)
-  // }
 
   /**
    * @desc When a name is entered and submitted into the input field, this starts the Offer-Answer Model exchange
    */
   const handleOffer = (): void => {
     const inputField:HTMLInputElement | null = document.querySelector('#receiverName');
-
     if (inputField) {
       receiver = inputField.value;
       inputField.value = '';
@@ -160,7 +153,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       if (localVideo.current){
         localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.log('Error in openUserMedia: ', error);
     }
   };
@@ -208,7 +202,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     peer.addEventListener('iceconnectionstatechange ', () => {
       console.log(`ICE connection state change: ${peerRef.current?.iceConnectionState}`);
     });
-
     return peer;
   };
 
@@ -274,6 +267,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     ?.setRemoteDescription(remoteDesc)
     .catch((e) => console.log(e));
   }
+  
   /**
   * @desc As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
   * @param {RTCPeerConnectionIceEvent} e
@@ -307,6 +301,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   function handleTrackEvent(e: RTCTrackEvent) : void{
     remoteVideo.current.srcObject = e.streams[0];
   }
+  
   /**
   * @desc Enables screen sharing using MediaSession.getDisplayMedia()
   */
@@ -328,6 +323,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       };
     });
   }
+  
   /**
   * @desc if any client chooses to end their call then the person who ends the call first closes their WebSocket connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
   * @param {boolean} isEnded 
@@ -374,19 +370,41 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     gap: '10px', 
     justifyContent:'center', 
     marginTop:'10px',
-  }
+  };
+
   const videoContainer = {
     display:'flex', 
     flexDirection:'column', 
     alignContent: 'center', 
     justifyContent: 'center',
+  };
+
+  const mainDiv = {
+    display: 'flex', 
+    justifyContent: 'space-around', 
+    flexDirection:'column', 
+    padding:'10px', 
+    marginTop: '10%',
+  };
+
+  const userList = {
+    fontFamily: 'Arial, 
+    Helvetica, sans-serif', 
+    fontSize: '16px', 
+  }
+  
+  const mainVideoContainer = {
+    display: 'flex', 
+    flexDirection: 'row', 
+    gap: '100px', 
+    justifyContent:'center', 
+    alignItems:'center',
   }
   
   /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
   multiple websocket connections will be made and error 
   every user when one closes their browser
   */
-
   return (
     <>
       { ws.current ?
@@ -400,7 +418,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         /> 
         : '' }
 
-      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'}}>
+      <div className='' style={mainDiv}>
         { username === '' ? <>
           <div className='input-div' 
             style={inputDiv}
@@ -423,13 +441,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             </button>
           </div>
         </> : 
-        <div className='users-list' style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
+        <div className='users-list' style={userList}>
               Users connected: {users}
         </div> }
         <div 
           id="main-video-container" 
           className='' 
-          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}>
+          style= {mainVideoContainer}>
           <div 
             id="local-video-container"
             className='' 
