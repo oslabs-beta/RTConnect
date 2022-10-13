@@ -87,15 +87,15 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * A diagram of the WebRTC Connection logic
-   * Peer A  Stun    Signaling Channel(Websockets)  Peer B   Step
+   * Peer A  Stun    Signaling Channel(Websockets)  Peer B    Step
    *  |------>|                   |                   |       Who Am I? + RTCPeerConnection(configuration) this contains methods to connect to a remote Peer
    *  |<------|                   |                   |       Symmetric NAT (your ip that you can be connected to)
-   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over websockets
+   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over via websockets
    *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
-   *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
+   *  |       |<------------------|-------------------|       Who Am I? Peer B this time!
    *  |       |-------------------|------------------>|       Peer B's NAT
    *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
-   *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
+   *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to Peer A for connectivity.
    *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the earlier candidates sent.
    *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be circumvented.
    *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
@@ -342,7 +342,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-  const buttonStyling = { backgroundColor: '#C2FBD7',
+  const buttonStyling = { 
+    backgroundColor: '#C2FBD7',
     borderRadius: '50px',
     borderWidth: '0',
     boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
@@ -355,6 +356,31 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     padding: '0 25px',
   };
 
+  const inputDiv = {
+    display: 'flex', 
+    flexDirection:'column', 
+    top: '2%', 
+    left: '2%', 
+    margin: '0 auto', 
+    height: '100px', 
+    width: '100px', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+  };
+    
+  const buttonContainer = {
+    display: 'flex', 
+    flexDirection: 'row', 
+    gap: '10px', 
+    justifyContent:'center', 
+    marginTop:'10px',
+  }
+  const videoContainer = {
+    display:'flex', 
+    flexDirection:'column', 
+    alignContent: 'center', 
+    justifyContent: 'center',
+  }
   
   /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
   multiple websocket connections will be made and error 
@@ -377,7 +403,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'}}>
         { username === '' ? <>
           <div className='input-div' 
-            style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+            style={inputDiv}
           >  
             <input
               className=''
@@ -399,7 +425,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         </> : 
         <div className='users-list' style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
               Users connected: {users}
-        </div>}
+        </div> }
         <div 
           id="main-video-container" 
           className='' 
@@ -407,13 +433,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           <div 
             id="local-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={videoContainer}
           >
             <VideoComponent video={localVideo} mediaOptions={mediaOptions}/>
             <div 
               id="local-button-container"
               className='' 
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
+              style= {buttonContainer}>
               <button
                 className='' 
                 onClick={() => shareScreen()}
@@ -434,12 +460,12 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           <div 
             id="remote-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={videoContainer}
           >
             <VideoComponent video={remoteVideo} mediaOptions={mediaOptions} />
             <div id="remote-button-container"
               className=''
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+              style={buttonContainer}
             >
               <button
                 className='' 
