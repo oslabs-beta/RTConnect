@@ -213,7 +213,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-  * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
+  * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer is sent via ws.current.send to the Signaling Channel in the backend.
   * @param {string} userID
   */
   function handleNegotiationNeededEvent(userID: string): void {
@@ -265,7 +265,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-  * @desc The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection.
+  * @desc Creates a new RTCSessionDescription constructor object. The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection. 
   * @param {object} data SDP answer
   */
   function handleAnswer(data: { payload: RTCSessionDescriptionInit } ): void {
@@ -301,8 +301,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
   
   /**
-  * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
-  * @param {RTCTrackEvent} e An Event Object, also contains the stream
+  * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection. Represents the remote peer sending their stream where it will reference the stream displayed on the screen.
+  * @param {RTCTrackEvent} An Event Object, also contains the stream
   */
   function handleTrackEvent(e: RTCTrackEvent) : void{
     remoteVideo.current.srcObject = e.streams[0];
@@ -329,7 +329,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     });
   }
   /**
-  * @desc if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
+  * @desc if any client chooses to end their call then the person who ends the call first closes their WebSocket connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
   * @param {boolean} isEnded 
   */
   function endCall(isEnded: boolean): void {
@@ -355,15 +355,15 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     padding: '0 25px',
   };
 
+  
   /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
   multiple websocket connections will be made and error 
   every user when one closes their browser
   */
 
-  return(
+  return (
     <>
-
-      {ws.current ?
+      { ws.current ?
         <Socket 
           ws={ws.current}
           getUsers={getUsers}
@@ -372,9 +372,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           handleNewIceCandidate={handleNewIceCandidate}
           endCall={endCall}
         /> 
-        : ''}
+        : '' }
 
-      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
+      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'}}>
         { username === '' ? <>
           <div className='input-div' 
             style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
