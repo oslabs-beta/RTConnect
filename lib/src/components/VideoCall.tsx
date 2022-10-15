@@ -342,7 +342,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-  const buttonStyling = { backgroundColor: '#C2FBD7',
+  const buttonStyling = { 
+    backgroundColor: '#C2FBD7',
     borderRadius: '50px',
     borderWidth: '0',
     boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
@@ -362,7 +363,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   return(
     <>
-
       {ws.current ?
         <Socket 
           ws={ws.current}
@@ -397,8 +397,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             </button>
           </div>
         </> : 
-        <div className='users-list' style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
-              Users connected: {users}
+        <div 
+          className='users-list' 
+          style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
+          Users connected: {users}
         </div>}
         <div 
           id="main-video-container" 
@@ -418,8 +420,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='' 
                 onClick={() => shareScreen()}
                 style={buttonStyling}
-              >
-          Share Screen
+              >Share Screen
               </button>
 
               <button
