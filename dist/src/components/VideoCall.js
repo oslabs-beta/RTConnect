@@ -327,7 +327,8 @@ const VideoCall = ({ URL, mediaOptions }) => {
         isEnded ? (_b = peerRef.current) === null || _b === void 0 ? void 0 : _b.close() : (_c = ws.current) === null || _c === void 0 ? void 0 : _c.send(JSON.stringify(LeavePayload));
         remoteVideo.current.srcObject = null;
     }
-    const buttonStyling = { backgroundColor: '#C2FBD7',
+    const buttonStyling = {
+        backgroundColor: '#C2FBD7',
         borderRadius: '50px',
         borderWidth: '0',
         boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
