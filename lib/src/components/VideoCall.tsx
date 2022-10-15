@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import React, { useState, useRef, useEffect } from 'react';
 import Socket from './Socket';
 import VideoComponent from './VideoComponent';
@@ -37,7 +35,7 @@ interface icePayObj extends payloadObj {
  * @param {string} this.props.URL 
  * @returns A component that renders two VideoComponents (currently not dynamic), a
  */
-//mediaOptions: { controls: boolean, style: { width: string, height: string }
+
 const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { controls: boolean, style: { width: string, height: string }}}): JSX.Element => {
   //username will store a name the client enters and users (see getUsers) will be updated whenever a user logs in or leaves
   const [username, setUsername] = useState<string>('');
@@ -87,15 +85,15 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * A diagram of the WebRTC Connection logic
-   * Peer A  Stun    Signaling Channel(Websockets)  Peer B   Step
+   * Peer A  Stun    Signaling Channel(Websockets)  Peer B    Step
    *  |------>|                   |                   |       Who Am I? + RTCPeerConnection(configuration) this contains methods to connect to a remote Peer
    *  |<------|                   |                   |       Symmetric NAT (your ip that you can be connected to)
-   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over websockets
+   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over via websockets
    *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
-   *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
+   *  |       |<------------------|-------------------|       Who Am I? Peer B this time!
    *  |       |-------------------|------------------>|       Peer B's NAT
    *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
-   *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
+   *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to Peer A for connectivity.
    *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the earlier candidates sent.
    *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be circumvented.
    *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
@@ -116,21 +114,16 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       ACTION_TYPE: LOGIN, 
       payload: userField,
     };
-
     ws.current.send(JSON.stringify(loginPayload));
     setUsername(userField);
   };
 
-  // const handleChange = (e): void => {
-  //   setMessage(e.target.value)
-  // }
 
   /**
    * @desc When a name is entered and submitted into the input field, this starts the Offer-Answer Model exchange
    */
   const handleOffer = (): void => {
     const inputField:HTMLInputElement | null = document.querySelector('#receiverName');
-
     if (inputField) {
       receiver = inputField.value;
       inputField.value = '';
@@ -160,7 +153,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       if (localVideo.current){
         localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.log('Error in openUserMedia: ', error);
     }
   };
@@ -208,12 +202,11 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     peer.addEventListener('iceconnectionstatechange ', () => {
       console.log(`ICE connection state change: ${peerRef.current?.iceConnectionState}`);
     });
-
     return peer;
   };
 
   /**
-  * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
+  * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer is sent via ws.current.send to the Signaling Channel in the backend.
   * @param {string} userID
   */
   function handleNegotiationNeededEvent(userID: string): void {
@@ -265,7 +258,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-  * @desc The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection.
+  * @desc Creates a new RTCSessionDescription constructor object. The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection. 
   * @param {object} data SDP answer
   */
   function handleAnswer(data: { payload: RTCSessionDescriptionInit } ): void {
@@ -274,6 +267,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     ?.setRemoteDescription(remoteDesc)
     .catch((e) => console.log(e));
   }
+  
   /**
   * @desc As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
   * @param {RTCPeerConnectionIceEvent} e
@@ -301,12 +295,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
   
   /**
-  * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
-  * @param {RTCTrackEvent} e An Event Object, also contains the stream
+  * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection. Represents the remote peer sending their stream where it will reference the stream displayed on the screen.
+  * @param {RTCTrackEvent} An Event Object, also contains the stream
   */
   function handleTrackEvent(e: RTCTrackEvent) : void{
     remoteVideo.current.srcObject = e.streams[0];
   }
+  
   /**
   * @desc Enables screen sharing using MediaSession.getDisplayMedia()
   */
@@ -328,8 +323,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       };
     });
   }
+  
   /**
-  * @desc if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
+  * @desc if any client chooses to end their call then the person who ends the call first closes their WebSocket connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
   * @param {boolean} isEnded 
   */
   function endCall(isEnded: boolean): void {
@@ -342,7 +338,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-  const buttonStyling = { backgroundColor: '#C2FBD7',
+  const buttonStyling = { 
+    backgroundColor: '#C2FBD7',
     borderRadius: '50px',
     borderWidth: '0',
     boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
@@ -355,15 +352,62 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     padding: '0 25px',
   };
 
+  const inputDiv = {
+    display: 'flex', 
+    flexDirection:'column', 
+    top: '2%', 
+    left: '2%', 
+    margin: '0 auto', 
+    height: '100px', 
+    width: '100px', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+  };
+    
+  const buttonContainer = {
+    display: 'flex', 
+    flexDirection: 'row', 
+    gap: '10px', 
+    justifyContent:'center', 
+    marginTop:'10px',
+  };
+
+  const videoContainer = {
+    display:'flex', 
+    flexDirection:'column', 
+    alignContent: 'center', 
+    justifyContent: 'center',
+  };
+
+  const mainDiv = {
+    display: 'flex', 
+    justifyContent: 'space-around', 
+    flexDirection:'column', 
+    padding:'10px', 
+    marginTop: '10%',
+  };
+
+  const userList = {
+    fontFamily: 'Arial, 
+    Helvetica, sans-serif', 
+    fontSize: '16px', 
+  }
+  
+  const mainVideoContainer = {
+    display: 'flex', 
+    flexDirection: 'row', 
+    gap: '100px', 
+    justifyContent:'center', 
+    alignItems:'center',
+  }
+  
   /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
   multiple websocket connections will be made and error 
   every user when one closes their browser
   */
-
-  return(
+  return (
     <>
-
-      {ws.current ?
+      { ws.current ?
         <Socket 
           ws={ws.current}
           getUsers={getUsers}
@@ -372,12 +416,12 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           handleNewIceCandidate={handleNewIceCandidate}
           endCall={endCall}
         /> 
-        : ''}
+        : '' }
 
-      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
+      <div className='' style={mainDiv}>
         { username === '' ? <>
           <div className='input-div' 
-            style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+            style={inputDiv}
           >  
             <input
               className=''
@@ -397,23 +441,23 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             </button>
           </div>
         </> : 
-        <div className='users-list' style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
+        <div className='users-list' style={userList}>
               Users connected: {users}
-        </div>}
+        </div> }
         <div 
           id="main-video-container" 
           className='' 
-          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}>
+          style= {mainVideoContainer}>
           <div 
             id="local-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={videoContainer}
           >
             <VideoComponent video={localVideo} mediaOptions={mediaOptions}/>
             <div 
               id="local-button-container"
               className='' 
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
+              style= {buttonContainer}>
               <button
                 className='' 
                 onClick={() => shareScreen()}
@@ -434,12 +478,12 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           <div 
             id="remote-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={videoContainer}
           >
             <VideoComponent video={remoteVideo} mediaOptions={mediaOptions} />
             <div id="remote-button-container"
               className=''
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+              style={buttonContainer}
             >
               <button
                 className='' 
