@@ -15,6 +15,8 @@ describe('VideoComponent', () => {
     const options = { controls: true, style: { width: '640px', height: '360px'}};
 
     const { container } = render(<VideoComponent video = {null} mediaOptions = {options}/>);
+    expect(container).toMatchSnapshot();
   });
+
 });
 
