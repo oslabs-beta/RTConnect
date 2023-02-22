@@ -2,10 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * @jest-environment jsdom
- */
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 
@@ -16,9 +12,13 @@ import React from 'react';
 
 describe('VideoComponent', () => {
   it('render video components', () => {
-    const options = { controls: true, style: { width: '640px', height: '360px'}};
-    const { container } = render(<VideoComponent video = {null} mediaOptions = {options}/>);
-    expect(options.controls).toBe(true);
+    const localVideo = null;
+  
+    const options = { controls: true, style: { width: '640px', height: '360px'}}; 
+    const { controls, style } = options;
+
+    const { container } = render(<VideoComponent video = {localVideo} mediaOptions = {options}/>);
+    expect(controls).toBe(true);
   });
 
 });
