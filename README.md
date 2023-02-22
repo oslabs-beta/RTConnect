@@ -186,10 +186,4 @@ Louis Disen | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.l
 
 
 # A big shoutout to all of RTConnect's stargazers! Thank you!
-
-[![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
-
-<p align="center">
-	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
-	<br>
-</p>
+  [![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
