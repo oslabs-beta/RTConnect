@@ -1,16 +1,6 @@
-# A big shoutout to all of RTConnect's stargazers! Thank you!
-
-[![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
-
-<p align="center">
-	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
-	<br>
-</p>
-
 RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. 
 
 RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
-
 
 ## Table of Contents
 - [What is RTConnect?](#what)
@@ -180,3 +170,13 @@ Yoojin Chang | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www
 <br>
 Louis Disen | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
+
+
+# A big shoutout to all of RTConnect's stargazers! Thank you!
+
+[![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
+
+<p align="center">
+	<img src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-logo-transparent.png' alt="logo" width="300">
+	<br>
+</p>
