@@ -1,10 +1,15 @@
-RTConnect is an easy-to-use React component library that enables developers to set up live, real-time video calls, between multiple connected peers on different computers in a React app. 
+<p align="center">
+  <img alt="rtconnect", src="assets/RTConnect-logo-transparent.png" width="50%" height="50%"></br>
+</p>
 
-RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and Websockets to establish low latency, real-time communications for developers.
+RTConnect is a React developer library that enables developers to easily and rapidly set up live, real-time video calls between multiple connected peers. 
+
+RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and WebSockets to establish low latency, real-time communications for developers.
 
 ## Table of Contents
 - [What is RTConnect?](#what)
-- [Install](#install)
+- [Features](#features)
+- [Installing RTConnect](#install)
 - [Getting Started and Using RTConnect](#implementation)
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
@@ -14,12 +19,20 @@ RTConnect achieves these features within the functional scope of React component
 
 ## <a name="what"/> What is RTConnect?
 
-RTConnect is an easy-to-use npm package and React component library that enables developers to establish live, real-time peer to peer video communication in an existing React codebase. 
+RTConnect is an easy-to-use npm package and React component library that enables developers to establish live, real-time peer to peer video communication in their existing React codebase. 
 
-RTConnect streamlines and simplifies the implementation of WebRTC for developers by providing a React component and signaling server module that operates using Websockets for the backend. 
+RTConnect streamlines and simplifies the implementation of WebRTC for developers by providing a React component and signaling server module that operates using WebSockets for the backend. 
+
+## <a name="features"/> Features
+* Supports video, voice, screen sharing, and generic data to be sent between peers.
+* Importable, WebSockets based signaling server module that allows for the rapid exchange of.
+* Rapidly set up live video calls in your React codebase without the hassle of implementing WebRTC.
+
 
 ## <a name="demo"/> Demo
-<img align="center" src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
+<p align="center">
+  <img align="center" src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
+</p>
 
 
 ## <a name="install"/> Install RTConnect
