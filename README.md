@@ -114,7 +114,9 @@ There are many features and improvements that our team is still adding to RTCone
 We are currently in the process of: 
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
-## <a name="errors" /> Solutions for Polyfill Errors When Using Webpack v5.x or the npx create-react-app Command
+## <a name="errors" /> Polyfill Errors
+
+If you are using Webpack v5.x or used the `npx create-react-app` command and are getting polyfill errors, the following are some potential solutions. 
 
 Webpack 4 automatically polyfilled many Node APIs in the browser but Webpack 5 removed this functionality, hence why you might get polyfill errors when using the RTConnect VideoCall component. You can do the following to address polyfill errors related to using Webpack v5.x when using RTConnect.
 
@@ -173,6 +175,9 @@ module.exports = {
 npm install -D node-polyfill-webpack-plugin buffer utils tls gyp fs
 ```
 
+## License
+RTConnect is developed under the MIT license.
+
 
 ## <a name="team "/> The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
@@ -184,8 +189,6 @@ Yoojin Chang | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www
 Louis Disen | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
 
-## License
-RTConnect is developed under the MIT license.
 
 # A big shoutout to all of RTConnect's stargazers! Thank you!
   [![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
