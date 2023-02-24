@@ -12,7 +12,7 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 
 
 ## Table of Contents
-- [What is RTConnect?](#what)
+- [Key Features & Use Cases](#features)
 - [RTConnect Demo](#demo)
 - [Installation](#install)
 - [Getting Started with RTConnect](#implementation)
