@@ -16,6 +16,7 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 - [RTConnect Demo](#demo)
 - [Installation](#install)
 - [Getting Started with RTConnect](#implementation)
+- [Setting Up Public Endpoint/URL](#setting)
 - [Solutions/Fixes for Polyfill Errors](#errors)
 - [Contributing to RTConnect](#contribution)
 - [License](#license)
@@ -112,7 +113,7 @@ const App = () => {
 export default App;
 ```
 
-## Setting Up Public Endpoint/URL Using a Secure Tunnel Service
+## <a name="setting"/> Setting Up Public Endpoint/URL Using a Secure Tunnel Service
 In order to create a publicly accessible URL that will allow you to share access to your localhost server, you have a number of different options but a simple option is to use a secure tunnel service. One such free, secure tunnel service that you can use to create a secure, encrypted, publicly accessible endpoint/URL that other users can access over the Internet is ngrok. 
 
 ngrok Secure Tunnels operate by using a locally installed ngrok agent to establish a private connection to the ngrok service. Your localhost development server is mapped to an ngrok.io sub-domain, which a remote user can then access. Once the connection is established, you get a public endpoint that you or others can use to access your local port. When a user hits the public ngrok endpoint, the ngrok edge figures out where to route the request and forwards the request over an encrypted connection to the locally running ngrok agent.
