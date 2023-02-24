@@ -2,7 +2,7 @@
   <img alt="rtconnect", src="assets/RTConnect-logo-transparent.png" width="50%" height="50%"></br>
 </p>
 
-RTConnect is a React library to easily and rapidly set up live streaming and real-time video calls between multiple connected peers. 
+RTConnect is a React library for implenting live streaming and real-time video calls between multiple connected peers. 
 
 RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC, WebSockets, and signaling to establish low latency, real-time communications. While WebRTC takes care of transcoding, packetizing, networking, and security, it does not take care of signaling and implementing its connection logic is no easy walk in the park for even seasoned developers and front-end developers. 
 
