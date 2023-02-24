@@ -10,11 +10,9 @@ RTConnect achieves these features via our downloadeable npm package, our VideoCa
 
 That is where RTConnect comes in - we take care of signaling and implementing WebRTC connection logic for you so all you have to worry about is building compelling live streaming and video conferencing apps. By using RTConnect and letting us worry about all the technicalities of setting up signaling and WebRTC's connection logic, you can focus all your extra time and energy into what really matters - innovation, creation, maybe even disruption in the world of video conferencing and live streaming apps. Who knows? You might even create the next Zoom or Twitch.
 
----
 
 ## Table of Contents
 - [What is RTConnect?](#what)
-- [Key Features & Use Cases](#features)
 - [RTConnect Demo](#demo)
 - [Installation](#install)
 - [Getting Started with RTConnect](#implementation)
@@ -23,11 +21,6 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 - [License](#license)
 - [The RTConnect Team](#team)
 - [Support RTConnect](#support)
-
-## <a name="features"/> Key Features & Use Cases
-* Supports video, voice, screen sharing, and generic data to be sent between peers.
-* Importable, WebSockets based signaling server module that allows for the rapid exchange of.
-* Rapidly set up live video calls in your React codebase without the hassle of implementing WebRTC.
 
 
 ## <a name="demo"/> Demo
