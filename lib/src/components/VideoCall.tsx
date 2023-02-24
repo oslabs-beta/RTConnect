@@ -363,91 +363,121 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   return(
     <>
-      {ws.current ?
-        <Socket 
-          ws={ws.current}
-          getUsers={getUsers}
-          handleReceiveCall={handleReceiveCall} 
-          handleAnswer={handleAnswer} 
-          handleNewIceCandidate={handleNewIceCandidate}
-          endCall={endCall}
-        /> 
-        : ''}
+      {
+        ws.current ?
+          <Socket 
+            ws={ws.current}
+            getUsers={getUsers}
+            handleReceiveCall={handleReceiveCall} 
+            handleAnswer={handleAnswer} 
+            handleNewIceCandidate={handleNewIceCandidate}
+            endCall={endCall}
+          /> 
+          : ''
+      }
 
-      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }>
-        { username === '' ? <>
-          <div className='input-div' 
-            style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
-          >  
-            <input
-              className=''
-              type='text' 
-              placeholder='username' 
-              id="username-field" 
-              onChange={(e) => userField = e.target.value}
-              style={{paddingBottom:'40px', width:'200px'}}
-            ></input>
-                
-            <button 
-              className=''
-              onClick={() => handleUsername()}
-              style={buttonStyling}
+      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }> 
+      
+        { 
+          username === '' ? 
+            <>
+              <div 
+                className='input-div' 
+                style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+              >
+                <input
+                  className=''
+                  type='text' 
+                  placeholder='username' 
+                  id="username-field" 
+                  onChange={(e) => userField = e.target.value}
+                  style={{paddingBottom:'40px', width:'200px'}}
+                ></input>
+                  
+                <button 
+                  className=''
+                  onClick={() => handleUsername()}
+                  style={buttonStyling}
+                >
+                  Submit Username
+                </button>
+              </div>
+            </> 
+            
+            : 
+
+            <div 
+              className='users-list' 
+              style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}
             >
-              Submit Username
-            </button>
-          </div>
-        </> : 
-        <div 
-          className='users-list' 
-          style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}>
-          Users connected: {users}
-        </div>}
+              Users connected: {users}
+            </div>
+        }
+
         <div 
           id="main-video-container" 
           className='' 
-          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}>
+          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}
+        >
+
           <div 
             id="local-video-container"
             className='' 
             style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
           >
-            <VideoComponent video={localVideo} mediaOptions={mediaOptions}/>
+
+            <VideoComponent 
+              video={localVideo} 
+              mediaOptions={mediaOptions}
+            />
+            
             <div 
               id="local-button-container"
               className='' 
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}>
+              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+            >
+
               <button
-                className='' 
+                className='share-btn' 
                 onClick={() => shareScreen()}
                 style={buttonStyling}
-              >Share Screen
+              >
+                Share Screen
               </button>
 
               <button
-                className='' 
+                className='end-btn' 
                 onClick={() => endCall(false)}
                 style={{ ...buttonStyling, backgroundColor:'#ff6961', color:'#28282B' }}
               >
-          End Call
-              </button> 
+                End Call
+              </button>
+
             </div>
           </div>
+
           <div 
             id="remote-video-container"
             className='' 
             style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
           >
-            <VideoComponent video={remoteVideo} mediaOptions={mediaOptions} />
-            <div id="remote-button-container"
+            <VideoComponent 
+              video={remoteVideo} 
+              mediaOptions={mediaOptions} 
+            />
+
+            <div 
+              id="remote-button-container"
               className=''
               style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
             >
+              
               <button
                 className='' 
                 onClick={handleOffer} 
                 style={buttonStyling}
               >
-          Call
+                Call
               </button>
                 
               <input
@@ -455,6 +485,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 type='text' 
                 id='receiverName'
                 style={{marginLeft:'2%'}}></input>
+
             </div>
           </div>
         </div>
