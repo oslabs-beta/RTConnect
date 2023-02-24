@@ -12,7 +12,7 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 
 
 ## Table of Contents
-- [What is RTConnect?](#what)
+- [Key Features & Use Cases](#features)
 - [RTConnect Demo](#demo)
 - [Installation](#install)
 - [Getting Started with RTConnect](#implementation)
@@ -21,6 +21,12 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 - [License](#license)
 - [The RTConnect Team](#team)
 - [Support RTConnect](#support)
+
+
+## <a name="features"/> Key Features & Use Cases
+* Supports video, voice, screen sharing, and generic data to be sent between peers.
+* Importable, WebSockets based signaling server module that allows for the rapid exchange of .
+* Rapidly set up live video calls in your React codebase without the hassle of implementing WebRTC.
 
 
 ## <a name="demo"/> Demo
