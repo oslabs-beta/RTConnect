@@ -1,7 +1,8 @@
 /** @jest-environment jsdom */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import VideoCall from '../../src/components/VideoCall';
 
 describe('VideoCall', () => {
@@ -13,13 +14,22 @@ describe('VideoCall', () => {
       height: '480px'
     }
   };
-
   const { container } = render(<VideoCall URL={Url} mediaOptions={options}/>);
 
-  it('Check Submit Username button', () => {
+  it('Check buttons in VideoCall.tsx', () => {
 
     const submitBtn = screen.getByTestId('submit-username-btn');
     expect(submitBtn.innerHTML).toBe('Submit Username');
+
+    const shareBtn = screen.getByTestId('share-screen-btn');
+    expect(shareBtn.innerHTML).toBe('Share Screen');
+
+    const endBtn = screen.getByTestId('end-call-btn');
+    expect(endBtn.innerHTML).toBe('End Call');
+
+    const callBtn = screen.getByTestId('call-btn');
+    expect(callBtn.innerHTML).toBe('Call');
+
     // fireEvent.click(submitBtn);
     // expect()
   });

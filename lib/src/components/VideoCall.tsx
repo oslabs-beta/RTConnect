@@ -376,7 +376,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           : ''
       }
 
-      <div className='' style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }> 
+      <div 
+        className='' 
+        style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }
+      > 
       
         { 
           username === '' ? 
@@ -439,7 +442,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             >
 
               <button
-                className='share-btn' 
+                className='share-btn'
+                data-testid='share-screen-btn'
                 onClick={() => shareScreen()}
                 style={buttonStyling}
               >
@@ -447,7 +451,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
               </button>
 
               <button
-                className='end-btn' 
+                className='end-btn'
+                data-testid='end-call-btn'
                 onClick={() => endCall(false)}
                 style={{ ...buttonStyling, backgroundColor:'#ff6961', color:'#28282B' }}
               >
@@ -474,7 +479,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             >
               
               <button
-                className='' 
+                className=''
+                data-testid='call-btn'
                 onClick={handleOffer} 
                 style={buttonStyling}
               >
