@@ -12,7 +12,7 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 ## Table of Contents
 - [What is RTConnect?](#what)
 - [Features](#features)
-- [Installing RTConnect](#install)
+- [Installation](#install)
 - [Getting Started and Using RTConnect](#implementation)
 - [Demo](#demo)
 - [How Can I Contribute](#contribution)
@@ -38,7 +38,7 @@ RTConnect streamlines and simplifies the implementation of WebRTC for developers
 </p>
 
 
-## <a name="install"/> Install RTConnect
+## <a name="install"/> Installing RTConnect
 ```
 npm install rtconnect
 ```
