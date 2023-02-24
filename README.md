@@ -1,8 +1,10 @@
 <p align="center">
-  <img alt="rtconnect", src="assets/RTConnect-logo-transparent.png" width="50%" height="50%"></br>
+  <img alt="rtconnect", src="assets/RTConnect-logo-transparent.png" width="60%" height="60%"></br>
 </p>
 
-Implement live streaming and real-time video calls with RTConnect in your React codebase. An open source, React component library that facilitate live, real-time video/audio communications.
+<h1 align="center">Implement live streaming and real-time video calls with RTConnect</h1>
+
+RTConnect is open source, React component library that facilitates live, real-time video/audio communications.
 
 RTConnect achieves these features via our downloadeable npm package, our VideoCall and LiveStream React components, and by providing developers with an importable signaling server module that simplifies the implementation of WebRTC, WebSockets, and signaling to establish low latency, real-time communications. While WebRTC takes care of transcoding, packetizing, networking, and security, it does not take care of signaling and implementing its connection logic is no easy walk in the park for even seasoned developers and front-end developers. 
 
@@ -11,19 +13,17 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 
 ## Table of Contents
 - [What is RTConnect?](#what)
-- [Features](#features)
+- [Key Features & Use Cases](#features)
+- [RTConnect Demo](#demo)
 - [Installation](#install)
-- [Getting Started and Using RTConnect](#implementation)
-- [Demo](#demo)
-- [How Can I Contribute](#contribution)
-- [The Team](#team)
-- [Solutions for Polyfill Errors When Using Webpack v5.x or the npx create-react-app Command with RTConnect](#errors)
+- [Getting Started with RTConnect](#implementation)
+- [Solutions/Fixes for Polyfill Errors](#errors)
+- [Contributing to RTConnect](#contribution)
+- [License](#license)
+- [The RTConnect Team](#team)
+- [Support RTConnect](#support)
 
-
-## <a name="what"/> What is RTConnect?
-
-
-## <a name="features"/> Features
+## <a name="features"/> Key Features & Use Cases
 * Supports video, voice, screen sharing, and generic data to be sent between peers.
 * Importable, WebSockets based signaling server module that allows for the rapid exchange of.
 * Rapidly set up live video calls in your React codebase without the hassle of implementing WebRTC.
@@ -40,7 +40,7 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 npm install rtconnect
 ```
 
- ## <a name="implementation"/> Implementation
+## <a name="implementation"/> Getting Started with RTConnect
  After installing the rtconnect npm package, import the VideoComponent component in your React file:
  
  2. Create your server — you have the option of using an http server or setting up a more secure connection by implementing an https server in order to set up a WebSocket secure connection.
@@ -108,11 +108,7 @@ const App = () => {
 
 export default App;
 ```
-## <a name="contribution" /> How Can I Contribute? 
-There are many features and improvements that our team is still adding to RTConect but while we are in the process of implementing some of them, you are more than welcome to help out the RTConnect team!
 
-We are currently in the process of: 
-- Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
 ## <a name="errors" /> Polyfill Errors
 
@@ -175,11 +171,18 @@ module.exports = {
 npm install -D node-polyfill-webpack-plugin buffer utils tls gyp fs
 ```
 
-## License
+## <a name="contribution" /> Contributing to RTConnect
+There are many features and improvements that our team is still adding to RTConect but while we are in the process of implementing some of them, feel free to propose any bug fixes or improvements and how to build and test your changes!
+
+We are currently in the process of: 
+- Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
+
+
+## <a name="license"/> License
 RTConnect is developed under the MIT license.
 
 
-## <a name="team "/> The Co-Creators of RTConnect
+## <a name="team"/> The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
 <br>
 F. Raisa Iftekher | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
@@ -189,6 +192,7 @@ Yoojin Chang | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www
 Louis Disen | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
 
+---
 
-# A big shoutout to all of RTConnect's stargazers! Thank you!
+## <a name="support"/> ## A big shoutout to all of RTConnect's stargazers! Thank you!
   [![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
