@@ -2,9 +2,12 @@
   <img alt="rtconnect", src="assets/RTConnect-logo-transparent.png" width="50%" height="50%"></br>
 </p>
 
-RTConnect is a React developer library that enables developers to easily and rapidly set up live, real-time video calls between multiple connected peers. 
+RTConnect is a React library to easily and rapidly set up live streaming and real-time video calls between multiple connected peers. 
 
-RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC and WebSockets to establish low latency, real-time communications for developers.
+RTConnect achieves these features within the functional scope of React components by simplifying the implementation of WebRTC, WebSockets, and signaling to establish low latency, real-time communications. While WebRTC takes care of transcoding, packetizing, networking, and security, it does not take care of signaling and implementing its connection logic is no easy walk in the park for even seasoned developers and front-end developers. 
+
+That is where RTConnect comes in - we take care of signaling and implementing WebRTC connection logic for you so all you have to worry about is building compelling live streaming and video conferencing apps. By using RTConnect and letting us worry about all the technicalities of setting up signaling and WebRTC's connection logic, you can focus all your extra time and energy into what really matters - innovation, creation, maybe even disruption in the world of video conferencing and live streaming apps. Who knows? You might even create the next Zoom or Twitch.
+
 
 ## Table of Contents
 - [What is RTConnect?](#what)
@@ -114,7 +117,9 @@ There are many features and improvements that our team is still adding to RTCone
 We are currently in the process of: 
 - Creating group video calls/video conferences with 2 or more peers by implementing an SFU (Selective Forwarding Unit) video routing service and improving streaming by leveraging WebRTC Simulcast
 
-## <a name="errors" /> Solutions for Polyfill Errors When Using Webpack v5.x or the npx create-react-app Command
+## <a name="errors" /> Polyfill Errors
+
+If you are using Webpack v5.x or used the `npx create-react-app` command and are getting polyfill errors, the following are some potential solutions. 
 
 Webpack 4 automatically polyfilled many Node APIs in the browser but Webpack 5 removed this functionality, hence why you might get polyfill errors when using the RTConnect VideoCall component. You can do the following to address polyfill errors related to using Webpack v5.x when using RTConnect.
 
@@ -173,8 +178,11 @@ module.exports = {
 npm install -D node-polyfill-webpack-plugin buffer utils tls gyp fs
 ```
 
+## License
+RTConnect is developed under the MIT license.
 
-# <a name="team "/> The Co-Creators of RTConnect
+
+## <a name="team "/> The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
 <br>
 F. Raisa Iftekher | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
