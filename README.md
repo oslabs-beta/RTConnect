@@ -23,6 +23,12 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 - [Support RTConnect](#support)
 
 
+## <a name="features"/> Key Features & Use Cases
+* Supports video, voice, screen sharing, and generic data to be sent between peers.
+* Importable, WebSockets based signaling server module that allows for the rapid exchange of .
+* Rapidly set up live video calls in your React codebase without the hassle of implementing WebRTC.
+
+
 ## <a name="demo"/> Demo
 <p align="center">
   <img align="center" src='https://github.com/oslabs-beta/RTConnect/blob/main/assets/RTConnect-demo.gif'>
