@@ -14,9 +14,10 @@ describe('VideoCall', () => {
     }
   };
 
-  it('Check Submit Username button - click event fired', () => {
+  const { container } = render(<VideoCall URL={Url} mediaOptions={options}/>);
 
-    const { container } = render(<VideoCall URL={Url} mediaOptions={options}/>);
+  it('Check Submit Username button', () => {
+
     const submitBtn = screen.getByTestId('submit-username-btn');
     expect(submitBtn.innerHTML).toBe('Submit Username');
     // fireEvent.click(submitBtn);
