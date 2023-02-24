@@ -17,11 +17,16 @@
     "url": "git+https://github.com/oslabs-beta/RTConnect.git"
   },
   "keywords": [
-    "React",
-    "React library",
+    "react",
+    "react library",
+    "react component",
+    "live streaming",
+    "video",
+    "screen sharing",
     "WebRTC",
     "WebSockets",
     "video calls",
+    "video conferencing",
     "real time communication",
     "live video conferencing",
     "developer library"

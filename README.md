@@ -40,7 +40,6 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 RTConnect is available as an [npm package](https://www.npmjs.com/package/rtconnect).
 
 **npm:**
-
 ```
 npm install rtconnect
 ```
@@ -56,46 +55,45 @@ npm install rtconnect
 
 4. Invoke the RTConnect Signaling Channel method, initializeConnection().
 
+**server.js:**
 ```
 // server.js file
 
 const path = require('path');
 const express = require('express');
-const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = 3000;
+const app = express();
+const { SignalingChannel } = require('rtconnect'); // import the RTConnect Signaling Channel class
 
-// import the RTConnect Signaling Channel class
-const { SignalingChannel } = require('rtconnect');
 
 app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+app.use(bodyParser.urlencoded({extended : true}));
 app.use('/build', express.static(path.join(__dirname, '../build')));
 
 app.get('/', (req, res) => {
- res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
+  res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
 });
 
 const server = app.listen(PORT, () => {
- console.log('Listening on port', PORT);
+  console.log('Listening on port', PORT);
 });
 
-// instantiate the RTConnect SignalingChannel
-const SignalChannel = new SignalingChannel(server);
+const SignalChannel = new SignalingChannel(server); // instantiate the RTConnect SignalingChannel
 
-// invoke initializeConnection() method
-SignalChannel.initializeConnection();
-
+SignalChannel.initializeConnection(); // invoke initializeConnection() method
 ```
 
 5. Import the RTConnect VideoCall component into your desired .jsx file.
 
-6. Finally use the RTConnect VideoCall component as you would any other React component by passing in ‘ws://localhost:PORT’ as the URL prop as well as the optional mediaOptions prop
+6. Finally use the RTConnect VideoCall component as you would any other React component by passing in `‘ws://localhost:PORT’` as the URL prop as well as the optional mediaOptions prop
 
-- URL={ ‘ws://localhost:PORT’} (Note: the PORT whatever you specified when you set up your server)
-- mediaOptions={{ controls: true, style: { width: ‘640px’, height: ‘480px’ }}
+- `URL={ ‘ws://localhost:PORT’}` (Note: the PORT whatever you specified when you set up your server so based on the server above, the port is 3000)
+- `mediaOptions={{ controls: true, style: { width: ‘640px’, height: ‘480px’ }}`
 
-(Note: If you are using an https server, then pass in ‘wss://localhost:PORT’ as the URL prop).
+(Note: If you are using an https server, then pass in `‘wss://localhost:PORT’` as the URL prop).
 
+**App.jsx:**
 ```
 // App.jsx file
 
@@ -110,9 +108,92 @@ const App = () => {
     />
   )
 }
-
+  
 export default App;
 ```
+
+## Setting Up Public Endpoint/URL Using a Secure Tunnel Service
+In order to create a publicly accessible URL that will allow you to share access to your localhost server, you have a number of different options but a simple option is to use a secure tunnel service. One such free, secure tunnel service that you can use to create a secure, encrypted, publicly accessible endpoint/URL that other users can access over the Internet is ngrok. 
+
+ngrok Secure Tunnels operate by using a locally installed ngrok agent to establish a private connection to the ngrok service. Your localhost development server is mapped to an ngrok.io sub-domain, which a remote user can then access. Once the connection is established, you get a public endpoint that you or others can use to access your local port. When a user hits the public ngrok endpoint, the ngrok edge figures out where to route the request and forwards the request over an encrypted connection to the locally running ngrok agent.
+
+Thus, you do not need to expose ports, set up forwarding, or make any other network changes. You can simply install [ngrok npm package](https://www.npmjs.com/package/ngrok) and run it.
+
+### Instructions for Using ngrok With RTConnect
+1. Sign up for a free ngrok account, verify your email address, and copy your authorization token.
+
+2. Run the following command and replace with add your own authorization token:
+```
+config authtoken <your authorization token>
+```
+
+3. Install the ngrok npm package globally: 
+```
+npm install ngrok -g
+```
+
+4. Start your app - make sure your server is running before you initiate the ngrok tunnel. 
+
+* The following is a a basic example of what your App.jsx and server.js files might look like at this point if you used `npx create-react-app`. If you're using a proxy server, then the default port when you run `npm start` is 3000 so set your server port to something else such as 8080.
+
+**App.jsx:**
+```
+// App.jsx file
+
+import React from 'react';
+import VideoCall from 'rtconnect';
+
+const App = () => {
+  return (
+    <VideoCall 
+      URL={'ws://localhost:8080'}
+      mediaOptions={controls}
+    />
+  )
+}
+  
+export default App;
+```
+
+**server.js:**
+```
+// server.js
+
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const ngrok = require('ngrok');
+const PORT = 8080;
+const { SignalingChannel } = require('rtconnect'); // import the RTConnect Signaling Channel class
+const app = express();
+
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, '../index.html'));
+});
+
+const server = app.listen(PORT, () => {
+  console.log('Listening on port', PORT);
+});
+
+const SignalChannel = new SignalingChannel(server); // instantiate the RTConnect SignalingChannel
+
+SignalChannel.initializeConnection(); // invoke initializeConnection() method
+```
+
+5. To start your ngrok Secure Tunnel, run the following command in your terminal:
+```
+ngrok http 3000 --host-header="localhost:3000"
+```
+
+* To make the connection more secure, you can enforce basic authorization on a tunnel endpoint - just use the username and password of your choosing:
+```
+ngrok http 3000 --host-header="localhost:3000" --auth='<username>:<a password>`
+```
+
+6. Copy the https forwarding URL from the terminal and paste it into a new browser tab or send the link to a remote user.
 
 
 ## <a name="errors" /> Polyfill Errors
@@ -197,7 +278,6 @@ Yoojin Chang | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www
 Louis Disen | [GitHub](https://github.com/LouisDisen) | [LinkedIn](https://www.linkedin.com/in/louis-disen/)
 <br>
 
----
 
-## <a name="support"/> ## A big shoutout to all of RTConnect's stargazers! Thank you!
-  [![Thanks to all stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
+## <a name="support"/>A big shoutout to all of RTConnect's stargazers! Thank you!
+[![Thank you to all of RTConnect's stargazers](https://git-lister.onrender.com/api/stars/oslabs-beta/RTConnect)](https://github.com/oslabs-beta/RTConnect/stargazers)
