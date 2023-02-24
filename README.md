@@ -30,6 +30,11 @@ That is where RTConnect comes in - we take care of signaling and implementing We
 
 
 ## <a name="install"/> Installing RTConnect
+
+RTConnect is available as an [npm package](https://www.npmjs.com/package/rtconnect).
+
+**npm:**
+
 ```
 npm install rtconnect
 ```
