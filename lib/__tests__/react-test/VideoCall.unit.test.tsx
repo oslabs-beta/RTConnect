@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /** @jest-environment jsdom */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import VideoCall from '../../src/components/VideoCall';
-
-afterAll(cleanup);
 
 describe('VideoCall', () => {
   const Url = 'ws://localhost:3000';
@@ -16,7 +14,6 @@ describe('VideoCall', () => {
       height: '480px'
     }
   };
-
   const { container } = render(<VideoCall URL={Url} mediaOptions={options}/>);
 
   it('Check buttons in VideoCall.tsx', () => {
