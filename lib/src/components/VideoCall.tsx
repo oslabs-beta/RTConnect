@@ -394,8 +394,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                   style={{paddingBottom:'40px', width:'200px'}}
                 ></input>
                   
-                <button 
+                <button
                   className=''
+                  data-testid='submit-username-btn'
                   onClick={() => handleUsername()}
                   style={buttonStyling}
                 >
