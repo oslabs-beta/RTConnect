@@ -6,8 +6,7 @@ import VideoComponent from './VideoComponent';
 import actions from '../constants/actions';
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions;
 
-// Defining interfaces for payloads that will be sent to other socket connections via websockets.
-// These interfaces describe the different events for the websocket message event to filter
+// These interfaces describe the different events that the WebSocket message event to will filter through and the payloads that will be sent to other socket connections via webSocket. 
 interface payloadObj {
   ACTION_TYPE: string, 
   sender?: string,
@@ -31,7 +30,7 @@ interface icePayObj extends payloadObj {
 }
 
 /**
- * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and Websockets. 
+ * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and WebSockets. 
  * Any client can call another thus not all functions are invoked for every user.
  * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection, which we connected in our backend using RTConnect's importable  SignalingChannel
  * @param {string} this.props.URL 
@@ -45,7 +44,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   // const [message, setMessage] = useState<string>();
 
   // useRef allows our variables to be stored in Immutable Objects and do not force page re-renders when its value is changed
-  // The Websocket connection is made later in useEffect once the component mounts then we render <Socket>, an empty component but adds event listeners to the socket
+  // The WebSocket connection is made later in useEffect once the component mounts then we render <Socket>, an empty component but adds event listeners to the socket
   const ws = useRef<WebSocket>(null!);
   const localVideo = useRef<HTMLVideoElement>(null!);
   const remoteVideo = useRef<HTMLVideoElement>(null!);
@@ -79,7 +78,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     audio: true
   };
   
-  // a new one-time websocket connection is made on component mount and a permissions request for the client's video and audio is made
+  // a new one-time WebSocket connection is made on component mount and a permissions request for the client's video and audio is made
   useEffect(() => {
     ws.current = new WebSocket(URL);
     openUserMedia();
@@ -87,10 +86,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * A diagram of the WebRTC Connection logic
-   * Peer A  Stun    Signaling Channel(Websockets)  Peer B   Step
+   * Peer A  Stun    Signaling Channel(WebSockets)  Peer B   Step
    *  |------>|                   |                   |       Who Am I? + RTCPeerConnection(configuration) this contains methods to connect to a remote Peer
    *  |<------|                   |                   |       Symmetric NAT (your ip that you can be connected to)
-   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over websockets
+   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over WebSocket
    *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
    *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
    *  |       |-------------------|------------------>|       Peer B's NAT
@@ -235,7 +234,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-  * @desc When an offer is received from the SignalingChannel, this function is invoked, creating a new RTCPeerConnection with the local client's media attached and an Answer is created that is then sent back to the original caller through the websocket connection.
+  * @desc When an offer is received from the SignalingChannel, this function is invoked, creating a new RTCPeerConnection with the local client's media attached and an Answer is created that is then sent back to the original caller through the WebSocket connection.
   * @param {RTCSessionDescriptionInit} data
   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer 
   */
@@ -356,8 +355,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     padding: '0 25px',
   };
 
-  /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
-  multiple websocket connections will be made and error 
+  /* 'conditionally rendering' if WebSocket has a value otherwise on page re-rendering events 
+  multiple WebSocket connections will be made and error 
   every user when one closes their browser
   */
 

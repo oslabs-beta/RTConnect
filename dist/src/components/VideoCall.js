@@ -42,7 +42,7 @@ const VideoComponent_1 = __importDefault(require("./VideoComponent"));
 const actions_1 = __importDefault(require("../constants/actions"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
- * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and Websockets.
+ * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and WebSockets.
  * Any client can call another thus not all functions are invoked for every user.
  * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection, which we connected in our backend using RTConnect's importable  SignalingChannel
  * @param {string} this.props.URL
@@ -55,7 +55,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
     const [users, setUsers] = (0, react_1.useState)();
     // const [message, setMessage] = useState<string>();
     // useRef allows our variables to be stored in Immutable Objects and do not force page re-renders when its value is changed
-    // The Websocket connection is made later in useEffect once the component mounts then we render <Socket>, an empty component but adds event listeners to the socket
+    // The WebSocket connection is made later in useEffect once the component mounts then we render <Socket>, an empty component but adds event listeners to the socket
     const ws = (0, react_1.useRef)(null);
     const localVideo = (0, react_1.useRef)(null);
     const remoteVideo = (0, react_1.useRef)(null);
@@ -85,17 +85,17 @@ const VideoCall = ({ URL, mediaOptions }) => {
         },
         audio: true
     };
-    // a new one-time websocket connection is made on component mount and a permissions request for the client's video and audio is made
+    // a new one-time WebSocket connection is made on component mount and a permissions request for the client's video and audio is made
     (0, react_1.useEffect)(() => {
         ws.current = new WebSocket(URL);
         openUserMedia();
     }, []);
     /**
      * A diagram of the WebRTC Connection logic
-     * Peer A  Stun    Signaling Channel(Websockets)  Peer B   Step
+     * Peer A  Stun    Signaling Channel(WebSockets)  Peer B   Step
      *  |------>|                   |                   |       Who Am I? + RTCPeerConnection(configuration) this contains methods to connect to a remote Peer
      *  |<------|                   |                   |       Symmetric NAT (your ip that you can be connected to)
-     *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over websockets
+     *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over WebSocket
      *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
      *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
      *  |       |-------------------|------------------>|       Peer B's NAT
@@ -224,7 +224,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
         }).catch(e => console.log(e));
     }
     /**
-    * @desc When an offer is received from the SignalingChannel, this function is invoked, creating a new RTCPeerConnection with the local client's media attached and an Answer is created that is then sent back to the original caller through the websocket connection.
+    * @desc When an offer is received from the SignalingChannel, this function is invoked, creating a new RTCPeerConnection with the local client's media attached and an Answer is created that is then sent back to the original caller through the WebSocket connection.
     * @param {RTCSessionDescriptionInit} data
     * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer
     */
@@ -340,8 +340,8 @@ const VideoCall = ({ URL, mediaOptions }) => {
         height: '50px',
         padding: '0 25px',
     };
-    /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events
-    multiple websocket connections will be made and error
+    /* 'conditionally rendering' if WebSocket has a value otherwise on page re-rendering events
+    multiple WebSocket connections will be made and error
     every user when one closes their browser
     */
     return (react_1.default.createElement(react_1.default.Fragment, null,
