@@ -367,19 +367,19 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-  const buttonStyling = { 
-    backgroundColor: '#C2FBD7',
-    borderRadius: '50px',
-    borderWidth: '0',
-    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
-    color: '#008000',
-    cursor: 'pointer',
-    display: 'inline-block',
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: '1em',
-    height: '50px',
-    padding: '0 25px',
-  };
+  // const buttonStyling = { 
+  //   backgroundColor: '#C2FBD7',
+  //   borderRadius: '50px',
+  //   borderWidth: '0',
+  //   boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+  //   color: '#008000',
+  //   cursor: 'pointer',
+  //   display: 'inline-block',
+  //   fontFamily: 'Arial, Helvetica, sans-serif',
+  //   fontSize: '1em',
+  //   height: '50px',
+  //   padding: '0 25px',
+  // };
 
   /* 'conditionally rendering' if WebSocket has a value otherwise on page re-rendering events 
   multiple WebSocket connections will be made and error 
@@ -544,10 +544,25 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='end-btn'
                 data-testid='end-call-btn'
                 onClick={() => endCall(false)}
+                // style={{ 
+                //   ...buttonStyling, 
+                //   backgroundColor:'#ff6961', 
+                //   color:'#28282B' 
+                // }}
                 style={{ 
-                  ...buttonStyling, 
+                  // backgroundColor: '#C2FBD7',
                   backgroundColor:'#ff6961', 
-                  color:'#28282B' 
+                  borderRadius: '50px',
+                  borderWidth: '0',
+                  boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                  // color: '#008000',
+                  color:'#28282B',
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontSize: '1em',
+                  height: '50px',
+                  padding: '0 25px',
                 }}
               >
                 End Call
@@ -587,7 +602,20 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className=''
                 data-testid='call-btn'
                 onClick={handleOffer} 
-                style={buttonStyling}
+                // style={buttonStyling}
+                style={{ 
+                  backgroundColor: '#C2FBD7',
+                  borderRadius: '50px',
+                  borderWidth: '0',
+                  boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                  color: '#008000',
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontSize: '1em',
+                  height: '50px',
+                  padding: '0 25px',
+                }}
               >
                 Call
               </button>
