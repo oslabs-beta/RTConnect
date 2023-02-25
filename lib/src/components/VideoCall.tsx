@@ -445,7 +445,20 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                   className=''
                   data-testid='submit-username-btn'
                   onClick={() => handleUsername()}
-                  style={buttonStyling}
+                  // style={ buttonStyling }
+                  style={{
+                    backgroundColor: '#C2FBD7',
+                    borderRadius: '50px',
+                    borderWidth: '0',
+                    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                    color: '#008000',
+                    cursor: 'pointer',
+                    display: 'inline-block',
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                    fontSize: '1em',
+                    height: '50px',
+                    padding: '0 25px',
+                  }}
                 >
                   Submit Username
                 </button>
@@ -456,7 +469,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
             <div 
               className='users-list' 
-              style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}
+              style={{ 
+                fontFamily: 'Arial, Helvetica, sans-serif', 
+                fontSize: '16px' 
+              }}
             >
               Users connected: {users}
             </div>
@@ -506,7 +522,20 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='share-btn'
                 data-testid='share-screen-btn'
                 onClick={() => shareScreen()}
-                style={buttonStyling}
+                // style={buttonStyling}
+                style={{
+                  backgroundColor: '#C2FBD7',
+                  borderRadius: '50px',
+                  borderWidth: '0',
+                  boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                  color: '#008000',
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontSize: '1em',
+                  height: '50px',
+                  padding: '0 25px',
+                }}
               >
                 Share Screen
               </button>
