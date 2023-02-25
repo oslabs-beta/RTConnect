@@ -403,7 +403,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
       <div 
         className='' 
-        style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }
+        style={{
+          display: 'flex',
+          flexDirection:'column',
+          justifyContent: 'space-around',
+          marginTop: '10%', 
+          padding:'10px', 
+        } }
       > 
       
         { 
@@ -411,7 +417,17 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <>
               <div 
                 className='input-div' 
-                style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+                style={{
+                  alignItems: 'center',
+                  display: 'flex', 
+                  flexDirection:'column',
+                  height: '100px',
+                  justifyContent: 'center',
+                  left: '2%',
+                  margin: '0 auto', 
+                  top: '2%', 
+                  width: '100px'
+                }}
               >
                 <input
                   className=''
@@ -419,7 +435,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                   placeholder='username' 
                   id="username-field" 
                   onChange={(e) => userField = e.target.value}
-                  style={{paddingBottom:'40px', width:'200px'}}
+                  style={{
+                    paddingBottom:'40px', 
+                    width:'200px'
+                  }}
                 ></input>
                   
                 <button
@@ -446,13 +465,24 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         <div 
           id="main-video-container" 
           className='' 
-          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}
+          style= {{
+            alignItems:'center',
+            display: 'flex', 
+            flexDirection: 'row', 
+            gap: '100px', 
+            justifyContent:'center'
+          }}
         >
 
           <div 
             id="local-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={{
+              alignContent: 'center', 
+              display:'flex', 
+              flexDirection:'column', 
+              justifyContent: 'center' 
+            }}
           >
 
             <VideoComponent 
@@ -463,7 +493,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <div 
               id="local-button-container"
               className='' 
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+              style= {{
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: '10px', 
+                justifyContent:'center', 
+                marginTop:'10px'
+              }}
             >
 
               <button
@@ -479,7 +515,11 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='end-btn'
                 data-testid='end-call-btn'
                 onClick={() => endCall(false)}
-                style={{ ...buttonStyling, backgroundColor:'#ff6961', color:'#28282B' }}
+                style={{ 
+                  ...buttonStyling, 
+                  backgroundColor:'#ff6961', 
+                  color:'#28282B' 
+                }}
               >
                 End Call
               </button>
@@ -490,7 +530,12 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           <div 
             id="remote-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={{
+              alignContent: 'center',
+              display:'flex', 
+              flexDirection:'column', 
+              justifyContent: 'center' 
+            }}
           >
             <VideoComponent 
               video={remoteVideo} 
@@ -500,7 +545,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <div 
               id="remote-button-container"
               className=''
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+              style= {{
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: '10px', 
+                justifyContent:'center', 
+                marginTop:'10px'
+              }}
             >
               
               <button
@@ -516,7 +567,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='' 
                 type='text' 
                 id='receiverName'
-                style={{marginLeft:'2%'}}></input>
+                style={{
+                  marginLeft:'2%'
+                }}></input>
 
             </div>
           </div>
