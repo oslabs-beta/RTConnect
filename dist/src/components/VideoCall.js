@@ -40,6 +40,7 @@ const react_1 = __importStar(require("react"));
 const Socket_1 = __importDefault(require("./Socket"));
 const VideoComponent_1 = __importDefault(require("./VideoComponent"));
 const actions_1 = __importDefault(require("../constants/actions"));
+const styles_1 = require("../utils/styles/styles");
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
  * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and Websockets.
@@ -327,19 +328,6 @@ const VideoCall = ({ URL, mediaOptions }) => {
         isEnded ? (_b = peerRef.current) === null || _b === void 0 ? void 0 : _b.close() : (_c = ws.current) === null || _c === void 0 ? void 0 : _c.send(JSON.stringify(LeavePayload));
         remoteVideo.current.srcObject = null;
     }
-    const buttonStyling = {
-        backgroundColor: '#C2FBD7',
-        borderRadius: '50px',
-        borderWidth: '0',
-        boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
-        color: '#008000',
-        cursor: 'pointer',
-        display: 'inline-block',
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontSize: '1em',
-        height: '50px',
-        padding: '0 25px',
-    };
     /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events
     multiple websocket connections will be made and error
     every user when one closes their browser
@@ -349,23 +337,25 @@ const VideoCall = ({ URL, mediaOptions }) => {
             react_1.default.createElement(Socket_1.default, { ws: ws.current, getUsers: getUsers, handleReceiveCall: handleReceiveCall, handleAnswer: handleAnswer, handleNewIceCandidate: handleNewIceCandidate, endCall: endCall })
             : '',
         react_1.default.createElement("div", { className: '', style: { display: 'flex', justifyContent: 'space-around', flexDirection: 'column', padding: '10px', marginTop: '10%' } },
-            username === '' ? react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement("div", { className: 'input-div', style: { display: 'flex', flexDirection: 'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center' } },
-                    react_1.default.createElement("input", { className: '', type: 'text', placeholder: 'username', id: "username-field", onChange: (e) => userField = e.target.value, style: { paddingBottom: '40px', width: '200px' } }),
-                    react_1.default.createElement("button", { className: '', onClick: () => handleUsername(), style: buttonStyling }, "Submit Username"))) :
-                react_1.default.createElement("div", { className: 'users-list', style: { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' } },
-                    "Users connected: ",
-                    users),
+            username === '' ?
+                react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("div", { className: 'input-div', style: Object.assign(Object.assign({}, styles_1.inputDivStyling), { flexDirection: 'column' }) },
+                        react_1.default.createElement("input", { className: '', type: 'text', placeholder: 'username', id: "username-field", onChange: (e) => userField = e.target.value, style: { paddingBottom: '40px', width: '200px' } }),
+                        react_1.default.createElement("button", { className: '', "data-testid": 'submit-username-btn', onClick: () => handleUsername(), style: styles_1.buttonStyling }, "Submit Username")))
+                :
+                    react_1.default.createElement("div", { className: 'users-list', style: { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px', justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingBottom: '1%' } },
+                        "Connected Users: ",
+                        users),
             react_1.default.createElement("div", { id: "main-video-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '100px', justifyContent: 'center', alignItems: 'center' } },
                 react_1.default.createElement("div", { id: "local-video-container", className: '', style: { display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center' } },
                     react_1.default.createElement(VideoComponent_1.default, { video: localVideo, mediaOptions: mediaOptions }),
                     react_1.default.createElement("div", { id: "local-button-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'center', marginTop: '10px' } },
-                        react_1.default.createElement("button", { className: '', onClick: () => shareScreen(), style: buttonStyling }, "Share Screen"),
-                        react_1.default.createElement("button", { className: '', onClick: () => endCall(false), style: Object.assign(Object.assign({}, buttonStyling), { backgroundColor: '#ff6961', color: '#28282B' }) }, "End Call"))),
+                        react_1.default.createElement("button", { className: 'share-btn', "data-testid": 'share-screen-btn', onClick: () => shareScreen(), style: styles_1.buttonStyling }, "Share Screen"),
+                        react_1.default.createElement("button", { className: 'end-btn', "data-testid": 'end-call-btn', onClick: () => endCall(false), style: Object.assign(Object.assign({}, styles_1.buttonStyling), { backgroundColor: '#ff6961', color: '#28282B' }) }, "End Call"))),
                 react_1.default.createElement("div", { id: "remote-video-container", className: '', style: { display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center' } },
                     react_1.default.createElement(VideoComponent_1.default, { video: remoteVideo, mediaOptions: mediaOptions }),
                     react_1.default.createElement("div", { id: "remote-button-container", className: '', style: { display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'center', marginTop: '10px' } },
-                        react_1.default.createElement("button", { className: '', onClick: handleOffer, style: buttonStyling }, "Call"),
+                        react_1.default.createElement("button", { className: '', "data-testid": 'call-btn', onClick: handleOffer, style: styles_1.buttonStyling }, "Call"),
                         react_1.default.createElement("input", { className: '', type: 'text', id: 'receiverName', style: { marginLeft: '2%' } })))))));
 };
 exports.default = VideoCall;
