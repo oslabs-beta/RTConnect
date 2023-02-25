@@ -8,9 +8,10 @@ const actions_1 = __importDefault(require("../constants/actions"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
  * @desc Using the initial WebSocket connection, this functional component provides the event listeners for each client's socket connection to allow bilateral communication.
- * @param {Object} props
- * @param {string} props.ws - the socket that will initiate the connection with the WebSocket server
- * @param props.getUsers - the functions that are executed upon on each switch case event.
+ * @param {string} props.ws - the ws or wss socket url that will initiate the connection with the WebSocket server
+ * @param {function} props.getUser - When data (the list of connected users) is received from the WebSocketServer/backend, getUser
+ * function is invoked and it updates the userList state so that the list of currently connected users
+ * can be displayed on the frontend.
  * @param props.handleReceiveCall
  * @param props.handleAnswer
  * @param props.handleNewIceCandidate
@@ -53,7 +54,7 @@ const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCan
             }
         });
     })();
-    // an empty jsx element is rendered because this component is only meant to initalize and load the client's socket connection with event listeners
+    // should return an empty JSX fragment
     return (react_1.default.createElement(react_1.default.Fragment, null));
 };
 exports.default = Socket;
