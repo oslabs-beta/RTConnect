@@ -8,7 +8,13 @@ const actions_1 = __importDefault(require("../constants/actions"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
  * @desc Using the initial WebSocket connection, this functional component provides the event listeners for each client's socket connection to allow bilateral communication.
- * @param props ws is the socket that will initiate the connection with the WebSocket server and getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidate, endCall are the functions that are executed upon on each switch case event.
+ * @param {object} props
+ * @param {string} props.ws the socket that will initiate the connection with the WebSocket server
+ * @param props.getUsers the functions that are executed upon on each switch case event.
+ * @param props.handleReceiveCall
+ * @param props.handleAnswer
+ * @param props.handleNewIceCandidate
+ * @param props.endCall
  * @returns an empty element when rendered and populates the client's socket connection with event listeners that can handle the offer-answer model and SDP objects being exchanged between peers.
  */
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidate, endCall }) => {

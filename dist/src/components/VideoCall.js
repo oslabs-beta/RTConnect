@@ -40,22 +40,26 @@ const react_1 = __importStar(require("react"));
 const Socket_1 = __importDefault(require("./Socket"));
 const VideoComponent_1 = __importDefault(require("./VideoComponent"));
 const actions_1 = __importDefault(require("../constants/actions"));
+const mediaStreamConstraints_1 = __importDefault(require("../constants/mediaStreamConstraints"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
- * @desc Wrapper component containing logic necessary for P2P connections using WebRTC (RTCPeerConnect API + MediaSession API) and WebSockets.
- * Any client can call another thus not all functions are invoked for every user.
- * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection, which we connected in our backend using RTConnect's importable  SignalingChannel
- * @param {string} this.props.URL
- * @returns A component that renders two VideoComponents (currently not dynamic), a
+ * @desc Wrapper component containing the logic necessary for P2P connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets.
+ *
+ * Any client can call another client and thus not all functions are invoked for every user.
+ *
+ * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
+ *
+ * @param {object} props
+ * @param {string} props.URL string ws or wss link
+ * @param {object} props.mediaOptions video embed attributes
+ * @returns A component that renders two VideoComponents
  */
-//mediaOptions: { controls: boolean, style: { width: string, height: string }
 const VideoCall = ({ URL, mediaOptions }) => {
-    //username will store a name the client enters and users (see getUsers) will be updated whenever a user logs in or leaves
+    // The username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
     const [username, setUsername] = (0, react_1.useState)('');
     const [users, setUsers] = (0, react_1.useState)();
-    // const [message, setMessage] = useState<string>();
-    // useRef allows our variables to be stored in Immutable Objects and do not force page re-renders when its value is changed
-    // The WebSocket connection is made later in useEffect once the component mounts then we render <Socket>, an empty component but adds event listeners to the socket
+    // The useRef hook allows our variables to be stored as Immutable Objects and thus they do not force page re-renders when their values are changed.
+    // The WebSocket connection is established using the useEffect hook - once the component mounts we then render the Socket component, which adds event listeners that can handle the offer-answer model and SDP objects being exchanged between peers to the socket.
     const ws = (0, react_1.useRef)(null);
     const localVideo = (0, react_1.useRef)(null);
     const remoteVideo = (0, react_1.useRef)(null);
@@ -63,7 +67,6 @@ const VideoCall = ({ URL, mediaOptions }) => {
     const otherUser = (0, react_1.useRef)();
     const localStream = (0, react_1.useRef)(null);
     const senders = (0, react_1.useRef)([]);
-    //maybe try to use context/reference hooks here for html input elements
     let userField = '';
     let receiver = '';
     // this configuration defines the parameters for how an RTCPeerConnection should be created, also ice trickling is enabled with iceCandidatePoolSize set to a value
@@ -77,14 +80,26 @@ const VideoCall = ({ URL, mediaOptions }) => {
         ],
         iceCandidatePoolSize: 10,
     };
-    // These constraints will be used for our webcam video stream quality
-    const constraints = {
-        video: {
-            width: { min: 640, ideal: 1920, max: 1920 },
-            height: { min: 480, ideal: 1080, max: 1080 },
-        },
-        audio: true
-    };
+    // /**
+    //  * @type {object}
+    //  * 
+    //  * A MediaStreamConstraints object is used when calling getUserMedia() to specify what kinds of tracks 
+    //  * should be included in the returned MediaStream and to establish video and audio constraints for 
+    //  * these tracks' settings. 
+    //  * 
+    //  * @type {Boolean} The audio constraint indicates whether or not an audio track is requested. 
+    //  * 
+    //  * @type {object} The video constraint provides the constraints that must be met by the video track that is 
+    //  * included in the returned MediaStream (essentially it gives constraints for the quality of the video
+    //  * streams returned by the users's webcams)
+    //  */
+    // const constraints: MediaStreamConstraints = {
+    //   video: {
+    //     width: { min:640, ideal:1920, max:1920 },
+    //     height: { min:480, ideal:1080, max:1080 },
+    //   },
+    //   audio: true
+    // };
     // a new one-time WebSocket connection is made on component mount and a permissions request for the client's video and audio is made
     (0, react_1.useEffect)(() => {
         ws.current = new WebSocket(URL);
@@ -154,7 +169,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
     const openUserMedia = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             if (localVideo.current) {
-                localStream.current = localVideo.current.srcObject = yield navigator.mediaDevices.getUserMedia(constraints);
+                localStream.current = localVideo.current.srcObject = yield navigator.mediaDevices.getUserMedia(mediaStreamConstraints_1.default);
             }
         }
         catch (error) {
