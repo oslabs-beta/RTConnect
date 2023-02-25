@@ -1,6 +1,6 @@
 {
   "name": "rtc-test-run",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "description": "A lightweight React library to set up live streaming and real-time video calls with peers.",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
