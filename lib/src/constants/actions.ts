@@ -10,6 +10,7 @@ type ActionType = {
 }
 
 /**
+ * @constant {object} actions
  * @desc actions used by the SignalingChannel and Socket component to filter and identify the data being passed through the WebSocket message event.
 */
 const actions: ActionType = {

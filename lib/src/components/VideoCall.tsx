@@ -8,7 +8,7 @@ import constraints from '../constants/mediaStreamConstraints';
 import configuration from '../constants/rtcConfiguration';
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions;
 
-// These interfaces describe the different events that the WebSocket message event to will filter through and the payloads that will be sent to other socket connections via webSocket. 
+// These interfaces describe the different events that the WebSocket message event will filter through and the payloads that will be sent to other socket connections via webSocket. 
 interface payloadObj {
   ACTION_TYPE: string, 
   sender?: string,
@@ -32,37 +32,81 @@ interface icePayObj extends payloadObj {
 }
 
 /**
- * @desc Wrapper component containing the logic necessary for P2P connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets. 
+ * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets. 
  * 
- * Any client can call another client and thus not all functions are invoked for every user.
+ * ws, localVideo, remoteVideo, peerRef, localStream, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
  * 
+ * The WebSocket connection (ws.current) is established using the useEffect hook and once the component mounts, the Socket component is rendered. The Socket component adds event listeners that handle the offer-answer model and the exchange of SDP objects between peers and the socket.
+ * 
+ * The WebSocket message event will filter through various events to determine the payloads that will be sent to other serverside socket connection via WebSocket.
+ * 
+ * @type {object} ws is the mutable ref object that contains the WebSocket object (ws.current). The ws.current WebSocket object will be created using the useEffect hook and it will establish the WebSocket connection to the server.
  * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
+ * @type {state} username - username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
+ * @type {state} users - users state is the list of connected users that is rendered on the frontend.
  * 
- * @param {object} props
- * @param {string} props.URL ws or wss link
+ * @param {Object} props
+ * @param {String} props.URL - ws or wss link
  * @param {object} props.mediaOptions video embed attributes
- * @returns A component that renders two VideoComponents
+ * @returns A component that renders two VideoComponents, 
  */
 const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { controls: boolean, style: { width: string, height: string }}}): JSX.Element => {
-
-  // The username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
+ 
   const [username, setUsername] = useState<string>('');
+
   const [users, setUsers] = useState<JSX.Element[]>();
 
-  // The useRef hook allows our variables to be stored as Immutable Objects and thus they do not force page re-renders when their values are changed.
-  // The WebSocket connection is established using the useEffect hook - once the component mounts we then render the Socket component, which adds event listeners that can handle the offer-answer model and SDP objects being exchanged between peers to the socket.
+  /**
+   * @type {mutable ref WebSocket object} ws contains the WebSocket object (ws.current). It cannot be null or undefined.
+   * 
+   * The ws.current WebSocket object will be created using the useEffect hook and it will establish the WebSocket connection to the server.
+   */
   const ws = useRef<WebSocket>(null!);
+
+  /**
+   * @type {mutable ref object} localVideo - video stream of the local user. It will not be null or undefined.
+   */
   const localVideo = useRef<HTMLVideoElement>(null!);
+
+  /** 
+   * @type {mutable ref object} remoteVideo - video stream of the remote user. It cannot be null or undefined.
+   */
   const remoteVideo = useRef<HTMLVideoElement>(null!);
-  const peerRef = useRef<RTCPeerConnection>(null!); 
-  const otherUser = useRef<string>(); 
+
+  /**
+   * @type {mutable ref object} peerRef - It cannot be null or undefined.
+   */
+  const peerRef = useRef<RTCPeerConnection>(null!);
+
+  /**
+   * @type {mutable ref string} otherUser - 
+   */
+  const otherUser = useRef<string>();
+
+  /**
+   * @type {mutable ref object} localStream - It cannot be null or undefined.
+   */
   const localStream = useRef<MediaStream>(null!);
+
+  /**
+   * @type {mutable ref array} senders - 
+   */
   const senders = useRef<RTCRtpSender[]>([]);
 
+  /** 
+   * @type {string} userField - the username that is entered in the input field when the Submit Username
+   * button is clicked.
+  */
   let userField = '';
   let receiver: string | null = '';
   
-  // a new one-time WebSocket connection is made on component mount and a permissions request for the client's video and audio is made
+  /**
+   * @desc 
+   * A WebSocket connection is made on component mount and the function openUserMedia is invoked, which
+   * makes a permissions request for the client's video and audio is made
+   * @prop {object} ws.current
+
+   */
   useEffect(() => {
     ws.current = new WebSocket(URL);
     openUserMedia();
@@ -91,8 +135,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
   * @desc An event triggered on a button click.
-  * Once the client enters and submits a name in the username field, this name is set stored in the WebSocketServer along with the socket 
-  * that sent the name to later send messages to the right client using this socket.
+  * Once the client enters and submits a name in the username field, this name is set stored in the
+  * WebSocketServer along with the socket that sent the name to later send messages to the right client
+  * using this socket.
   */
   const handleUsername = (): void => {
     const loginPayload: loginPayObj = {
@@ -123,10 +168,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-  * @desc When data is received from the WebSocketServer, this function is invoked.
-  * Based off of the users connected, each user is displayed in a div.
-  * @param {Array<string>} parsedData
-  * @returns Re-renders the page with the new User List
+   * @function getUser
+   * @desc When data (the list of connected users) is received from the WebSocketServer/backend, getUser
+   * function is invoked and it updates the userList state so that the list of currently connected users
+   * can be displayed on the frontend. 
+   * @param {Array<string>} parsedData - data (the array of usernames that are connected) that is
+   * returned from backend/WebSocketServer.
+   * @returns Re-renders the page with the new User List
   */
   const getUsers = (parsedData: { payload: string[] }): void => {
     const userList = parsedData.payload.map((name: string, idx:number) => (
@@ -136,8 +184,11 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-  * @desc Asks for the client's permissions to open their webcam and microphone.
-  */
+   * @async
+   * @function openUserMedia
+   * @param
+   * @desc Asks for the client's permissions to open their webcam and microphone.
+   */
   const openUserMedia = async (): Promise<void> => {
     try {
       if (localVideo.current){
@@ -196,8 +247,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-  * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
-  * @param {string} userID
+   * @function handleNegotiationNeededEvent
+   * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
+   * @param {string} userID
   */
   function handleNegotiationNeededEvent(userID: string): void {
     peerRef.current
@@ -355,8 +407,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             handleAnswer={handleAnswer} 
             handleNewIceCandidate={handleNewIceCandidate}
             endCall={endCall}
-          /> 
-          : ''
+          /> : 
+          ''
       }
 
       <div 

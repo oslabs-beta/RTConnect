@@ -1,4 +1,7 @@
 /// <reference types="react" />
+/**
+ *  @file Socket.tsx is the component that initalizes and loads the client's socket connection with event listeners.
+ */
 declare type SocketType = {
     ws: WebSocket;
     getUsers: (parsedData: {
@@ -18,9 +21,10 @@ declare type SocketType = {
 };
 /**
  * @desc Using the initial WebSocket connection, this functional component provides the event listeners for each client's socket connection to allow bilateral communication.
- * @param {Object} props
- * @param {string} props.ws - the socket that will initiate the connection with the WebSocket server
- * @param props.getUsers - the functions that are executed upon on each switch case event.
+ * @param {string} props.ws - the ws or wss socket url that will initiate the connection with the WebSocket server
+ * @param {function} props.getUser - When data (the list of connected users) is received from the WebSocketServer/backend, getUser
+ * function is invoked and it updates the userList state so that the list of currently connected users
+ * can be displayed on the frontend.
  * @param props.handleReceiveCall
  * @param props.handleAnswer
  * @param props.handleNewIceCandidate

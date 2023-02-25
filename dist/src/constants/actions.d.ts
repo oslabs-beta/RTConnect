@@ -9,6 +9,7 @@ declare type ActionType = {
     JOIN_ROOM: string;
 };
 /**
+ * @constant {object} actions
  * @desc actions used by the SignalingChannel and Socket component to filter and identify the data being passed through the WebSocket message event.
 */
 declare const actions: ActionType;
