@@ -41,6 +41,7 @@ const Socket_1 = __importDefault(require("./Socket"));
 const VideoComponent_1 = __importDefault(require("./VideoComponent"));
 const actions_1 = __importDefault(require("../constants/actions"));
 const mediaStreamConstraints_1 = __importDefault(require("../constants/mediaStreamConstraints"));
+const rtcConfiguration_1 = __importDefault(require("../constants/rtcConfiguration"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
  * @desc Wrapper component containing the logic necessary for P2P connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets.
@@ -50,7 +51,7 @@ const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
  * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
  *
  * @param {object} props
- * @param {string} props.URL string ws or wss link
+ * @param {string} props.URL ws or wss link
  * @param {object} props.mediaOptions video embed attributes
  * @returns A component that renders two VideoComponents
  */
@@ -69,37 +70,6 @@ const VideoCall = ({ URL, mediaOptions }) => {
     const senders = (0, react_1.useRef)([]);
     let userField = '';
     let receiver = '';
-    // this configuration defines the parameters for how an RTCPeerConnection should be created, also ice trickling is enabled with iceCandidatePoolSize set to a value
-    // stun servers are used to identify users so that peers can connect to eachother directly without the use of a middleman server (which would create latency)
-    //'stun:stun2.l.google.com:19302', an additional ice server
-    const configuration = {
-        iceServers: [
-            {
-                urls: 'stun:stun1.l.google.com:19302',
-            },
-        ],
-        iceCandidatePoolSize: 10,
-    };
-    // /**
-    //  * @type {object}
-    //  * 
-    //  * A MediaStreamConstraints object is used when calling getUserMedia() to specify what kinds of tracks 
-    //  * should be included in the returned MediaStream and to establish video and audio constraints for 
-    //  * these tracks' settings. 
-    //  * 
-    //  * @type {Boolean} The audio constraint indicates whether or not an audio track is requested. 
-    //  * 
-    //  * @type {object} The video constraint provides the constraints that must be met by the video track that is 
-    //  * included in the returned MediaStream (essentially it gives constraints for the quality of the video
-    //  * streams returned by the users's webcams)
-    //  */
-    // const constraints: MediaStreamConstraints = {
-    //   video: {
-    //     width: { min:640, ideal:1920, max:1920 },
-    //     height: { min:480, ideal:1080, max:1080 },
-    //   },
-    //   audio: true
-    // };
     // a new one-time WebSocket connection is made on component mount and a permissions request for the client's video and audio is made
     (0, react_1.useEffect)(() => {
         ws.current = new WebSocket(URL);
@@ -191,7 +161,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
     * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
     */
     const createPeer = (userID) => {
-        const peer = new RTCPeerConnection(configuration);
+        const peer = new RTCPeerConnection(rtcConfiguration_1.default);
         peer.onicecandidate = handleIceCandidateEvent;
         peer.ontrack = handleTrackEvent;
         peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID);
