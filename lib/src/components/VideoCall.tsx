@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Socket from './Socket';
 import VideoComponent from './VideoComponent';
 import actions from '../constants/actions';
+import { buttonStyling, inputDivStyling } from '../utils/styles/styles';
+
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions;
 
 // Defining interfaces for payloads that will be sent to other socket connections via websockets.
@@ -342,20 +344,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-  const buttonStyling = { 
-    backgroundColor: '#C2FBD7',
-    borderRadius: '50px',
-    borderWidth: '0',
-    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
-    color: '#008000',
-    cursor: 'pointer',
-    display: 'inline-block',
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: '1em',
-    height: '50px',
-    padding: '0 25px',
-  };
-
   /* 'conditionally rendering' if websocket has a value otherwise on page re-rendering events 
   multiple websocket connections will be made and error 
   every user when one closes their browser
@@ -386,7 +374,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <>
               <div 
                 className='input-div' 
-                style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+                style={{...inputDivStyling, flexDirection:'column'}}
               >
                 <input
                   className=''
@@ -412,9 +400,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
             <div 
               className='users-list' 
-              style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}
+              style={{fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px', justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingBottom: '1%'}}
             >
-              Users connected: {users}
+              Connected Users: {users}
             </div>
         }
 

@@ -1,6 +1,6 @@
 {
-  "name": "rtconnect",
-  "version": "0.0.53",
+  "name": "rtc-test-run",
+  "version": "0.0.55",
   "description": "A lightweight React library to set up live streaming and real-time video calls with peers.",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -38,9 +38,11 @@
   },
   "homepage": "https://github.com/oslabs-beta/RTConnect#readme",
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "ws": "^8.9.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
