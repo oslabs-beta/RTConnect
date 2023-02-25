@@ -5,8 +5,6 @@ type videoComponent = {
   mediaOptions: { controls: boolean, style: { width: string, height: string }}
 }
 
-//{controls: true, style: {width: '', height: ''}}
-
 /**
  * @param {HTMLVideoElement} video 
  * @returns a video component that is either the local or remote video stream

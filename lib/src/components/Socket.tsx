@@ -12,9 +12,9 @@ type SocketType = {
 }
 
 /**
- * @desc Using the initial websocket connection, this functional component provides the event listeners for each client socket to allow bi-lateral communication.
- * @param props containing the socket starting the connection with the websocket server and functions to be performed on each switch case event
- * @returns an empty element when rendered but populates the client's socket connection with event listeners to be able to handle the offer-answer model and SDP objects being communicated between both peers.
+ * @desc Using the initial WebSocket connection, this functional component provides the event listeners for each client's socket connection to allow bilateral communication.
+ * @param props ws is the socket that will initiate the connection with the WebSocket server and getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidate, endCall are the functions that are executed upon on each switch case event.
+ * @returns an empty element when rendered and populates the client's socket connection with event listeners that can handle the offer-answer model and SDP objects being exchanged between peers.
  */
 const Socket = ({ ws, getUsers, handleReceiveCall, handleAnswer, handleNewIceCandidate, endCall }: SocketType): JSX.Element => {
 
