@@ -7,7 +7,7 @@
  * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
  *
  * @param {object} props
- * @param {string} props.URL string ws or wss link
+ * @param {string} props.URL ws or wss link
  * @param {object} props.mediaOptions video embed attributes
  * @returns A component that renders two VideoComponents
  */

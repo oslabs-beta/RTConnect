@@ -13,9 +13,9 @@ type SocketType = {
 
 /**
  * @desc Using the initial WebSocket connection, this functional component provides the event listeners for each client's socket connection to allow bilateral communication.
- * @param {object} props 
- * @param {string} props.ws the socket that will initiate the connection with the WebSocket server
- * @param props.getUsers the functions that are executed upon on each switch case event.
+ * @param {Object} props 
+ * @param {string} props.ws - the socket that will initiate the connection with the WebSocket server
+ * @param props.getUsers - the functions that are executed upon on each switch case event.
  * @param props.handleReceiveCall
  * @param props.handleAnswer
  * @param props.handleNewIceCandidate
