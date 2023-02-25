@@ -40,8 +40,6 @@ interface icePayObj extends payloadObj {
  * 
  * The WebSocket message event will filter through various events to determine the payloads that will be sent to other serverside socket connection via WebSocket.
  * 
- * @type {object} ws is the mutable ref object that contains the WebSocket object (ws.current). The ws.current WebSocket object will be created using the useEffect hook and it will establish the WebSocket connection to the server.
- * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
  * @type {state} username - username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
  * @type {state} users - users state is the list of connected users that is rendered on the frontend.
  * 
@@ -57,9 +55,11 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const [users, setUsers] = useState<JSX.Element[]>();
 
   /**
-   * @type {mutable ref WebSocket object} ws contains the WebSocket object (ws.current). It cannot be null or undefined.
+   * @type {mutable ref WebSocket object} ws is the mutable ref object that contains the WebSocket object (ws.current). It cannot be null or undefined.
    * 
-   * The ws.current WebSocket object will be created using the useEffect hook and it will establish the WebSocket connection to the server.
+   * @desc The ws.current WebSocket object is created using the useEffect hook and it will establish the WebSocket connection to the server. This WebSocket connection is made on component mount and the function openUserMedia is invoked, which makes a permissions request for the client's video and audio.
+   * 
+   * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
    */
   const ws = useRef<WebSocket>(null!);
 
@@ -94,19 +94,15 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const senders = useRef<RTCRtpSender[]>([]);
 
   /** 
-   * @type {string} userField - the username that is entered in the input field when the Submit Username
-   * button is clicked.
+   * @type {string} userField - the username that is entered in the input field when the Submit Username button is clicked.
   */
   let userField = '';
-  let receiver: string | null = '';
-  
-  /**
-   * @desc 
-   * A WebSocket connection is made on component mount and the function openUserMedia is invoked, which
-   * makes a permissions request for the client's video and audio is made
-   * @prop {object} ws.current
 
-   */
+  /** 
+   * @type {string} receiver - .
+  */
+  let receiver: string | null = '';
+
   useEffect(() => {
     ws.current = new WebSocket(URL);
     openUserMedia();
@@ -134,10 +130,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    */
 
   /**
-  * @desc An event triggered on a button click.
-  * Once the client enters and submits a name in the username field, this name is set stored in the
-  * WebSocketServer along with the socket that sent the name to later send messages to the right client
-  * using this socket.
+   * @func handleUsername
+   * @desc When the client enters a username and clicks the Submit Username button, a LOGIN event is triggered and the loginPayload is sent via the WebSocketServer (ws.current.send(loginPayload)) to the backend/server. 
+   * 
+   * Then, username state is updated with the string stored in the userField variable (the username entered by the client when they clicked the Submit Username).
   */
   const handleUsername = (): void => {
     const loginPayload: loginPayObj = {
@@ -149,12 +145,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     setUsername(userField);
   };
 
-  // const handleChange = (e): void => {
-  //   setMessage(e.target.value)
-  // }
-
   /**
-   * @desc When a name is entered and submitted into the input field, this starts the Offer-Answer Model exchange
+   * @func handleOffer
+   * @desc When a username is entered that the client wants to "Call" and the client clicks the Call button,  into the input field, this starts the Offer-Answer Model exchange
    */
   const handleOffer = (): void => {
     const inputField:HTMLInputElement | null = document.querySelector('#receiverName');
@@ -169,11 +162,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @function getUser
-   * @desc When data (the list of connected users) is received from the WebSocketServer/backend, getUser
-   * function is invoked and it updates the userList state so that the list of currently connected users
-   * can be displayed on the frontend. 
-   * @param {Array<string>} parsedData - data (the array of usernames that are connected) that is
-   * returned from backend/WebSocketServer.
+   * @desc When data (the list of connected users) is received from the WebSocketServer/backend, getUser function is invoked and it updates the userList state so that the list of currently connected users can be displayed on the frontend. 
+   * @param {Array<string>} parsedData - data (the array of usernames that are connected) that is returned from backend/WebSocketServer.
    * @returns Re-renders the page with the new User List
   */
   const getUsers = (parsedData: { payload: string[] }): void => {

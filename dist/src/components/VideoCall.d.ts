@@ -8,8 +8,6 @@
  *
  * The WebSocket message event will filter through various events to determine the payloads that will be sent to other serverside socket connection via WebSocket.
  *
- * @type {object} ws is the mutable ref object that contains the WebSocket object (ws.current). The ws.current WebSocket object will be created using the useEffect hook and it will establish the WebSocket connection to the server.
- * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
  * @type {state} username - username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
  * @type {state} users - users state is the list of connected users that is rendered on the frontend.
  *
