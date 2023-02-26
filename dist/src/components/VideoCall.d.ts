@@ -1,5 +1,9 @@
 /// <reference types="react" />
 /**
+ * @func VideoCall
+ * @param {String} props.URL - ws or wss link
+ * @param {object} props.mediaOptions video embed attributes
+ 
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets.
  *
  * ws, localVideo, remoteVideo, peerRef, localStream, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
@@ -11,9 +15,6 @@
  * @type {state} username - username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
  * @type {state} users - users state is the list of connected users that is rendered on the frontend.
  *
- * @param {Object} props
- * @param {String} props.URL - ws or wss link
- * @param {object} props.mediaOptions video embed attributes
  * @returns A component that renders two VideoComponents,
  */
 declare const VideoCall: ({ URL, mediaOptions }: {

@@ -44,6 +44,10 @@ const mediaStreamConstraints_1 = __importDefault(require("../constants/mediaStre
 const rtcConfiguration_1 = __importDefault(require("../constants/rtcConfiguration"));
 const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
 /**
+ * @func VideoCall
+ * @param {String} props.URL - ws or wss link
+ * @param {object} props.mediaOptions video embed attributes
+ 
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets.
  *
  * ws, localVideo, remoteVideo, peerRef, localStream, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
@@ -55,24 +59,21 @@ const { LOGIN, ICECANDIDATE, OFFER, ANSWER, LEAVE } = actions_1.default;
  * @type {state} username - username state stores the name the client enters. All users (see getUsers) will be able to see an updated list of all other users whenever a new user logs in or leaves.
  * @type {state} users - users state is the list of connected users that is rendered on the frontend.
  *
- * @param {Object} props
- * @param {String} props.URL - ws or wss link
- * @param {object} props.mediaOptions video embed attributes
  * @returns A component that renders two VideoComponents,
  */
 const VideoCall = ({ URL, mediaOptions }) => {
     const [username, setUsername] = (0, react_1.useState)('');
     const [users, setUsers] = (0, react_1.useState)();
     /**
-     * @type {mutable ref WebSocket object} ws is the mutable ref object that contains the WebSocket object (ws.current). It cannot be null or undefined.
+     * @type {mutable ref WebSocket object} ws is the mutable ref object that contains the WebSocket object in its .current property (ws.current). It cannot be null or undefined.
      *
-     * @desc The ws.current WebSocket object is created using the useEffect hook and it will establish the WebSocket connection to the server. This WebSocket connection is made on component mount and the function openUserMedia is invoked, which makes a permissions request for the client's video and audio.
+     * @desc ws.current property contains the WebSocket object, which is created using the useEffect hook and it establishes the WebSocket connection to the server. The useEffect Hook creates the WebSocket object using the URL parameter when the component mounts and the function openUserMedia() is invoked, which makes a permissions request for the client's video and audio.
      *
      * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
      */
     const ws = (0, react_1.useRef)(null);
     /**
-     * @type {mutable ref object} localVideo - video stream of the local user. It will not be null or undefined.
+     * @type {mutable ref object} localVideo - video element of the local user. It will not be null or undefined.
      */
     const localVideo = (0, react_1.useRef)(null);
     /**
@@ -125,13 +126,18 @@ const VideoCall = ({ URL, mediaOptions }) => {
      * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> ^send Offer SDP^ --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
      * If Peer B receives a call then we invoke... ^Receive Offer SDP^ --> handleReceiveCall --> createPeer --> ^send Answer SDP^ --> handleIceCandidateMsg --> handleIceCandidateEvent --> once connected, handleTrackEvent
      *
-     * Note: Media is attached to the Peer Connection and sent along with the offers/answers to describe what media each client has. (see RTCPeerConnection.addTrack() MDN)
+     * Note: Media is attached to the Peer Connection and sent along with the offers/answers to describe what media each client has.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTrack
      */
     /**
      * @func handleUsername
-     * @desc When the client enters a username and clicks the Submit Username button, a LOGIN event is triggered and the loginPayload is sent via the WebSocketServer (ws.current.send(loginPayload)) to the backend/server.
      *
-     * Then, username state is updated with the string stored in the userField variable (the username entered by the client when they clicked the Submit Username).
+     * @desc Invoked when clients click the Submit Username button. A loginPayload object is initiated - it contains the LOGIN event and its payload contains the client's username.
+     *
+     * The loginPayload object is sent via the WebSocketServer (ws.current.send(loginPayload)) to the backend/SignalingChannel.
+     *
+     * Then, the username state is updated with the userField string (the username entered by the client when they clicked the Submit Username). setUsername(userField)
     */
     const handleUsername = () => {
         const loginPayload = {
@@ -166,9 +172,9 @@ const VideoCall = ({ URL, mediaOptions }) => {
     };
     /**
      * @async
-     * @function openUserMedia
-     * @param
-     * @desc Asks for the client's permissions to open their webcam and microphone.
+     * @function openUserMedia: Invoked in useEffect Hook. openUserMedia uses the constraints provided Requests the clients' browser permissions to open their webcam and microphone.
+     * @param {void}
+     * @desc  If the localVideo.current property exists, the MediaStream from the local camera is assigned to the local video element.
      */
     const openUserMedia = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
