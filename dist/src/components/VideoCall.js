@@ -181,17 +181,15 @@ const VideoCall = ({ URL, mediaOptions }) => {
         }
     });
     /**
-     * @function callUser
-      * @desc Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
-      * @param {string} userID
+     * @function callUser - Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
+     * @param {string} userID
     */
     const callUser = (userID) => {
         peerRef.current = createPeer(userID);
         localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
     };
     /**
-     * @function createPeer
-     * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
+     * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
      * @param {string} userID
      * @returns {RTCPeerConnection} RTCPeerConnection object
      * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
@@ -304,14 +302,14 @@ const VideoCall = ({ URL, mediaOptions }) => {
                 ACTION_TYPE: ANSWER,
                 receiver: data.sender,
                 sender: username,
-                payload: (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.localDescription
+                payload: (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.localDescription // localDescription is an RTCSessionDescription describing the session for the local end of the connection
             };
             ws.current.send(JSON.stringify(answerPayload));
         });
     }
     /**
-    * @desc The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection.
-    * @param {object} data SDP answer
+     * @function handleAnswer - The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection.
+     * @param {object} data SDP answer
     */
     function handleAnswer(data) {
         var _a;
@@ -319,8 +317,8 @@ const VideoCall = ({ URL, mediaOptions }) => {
         (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.setRemoteDescription(remoteDesc).catch((e) => console.log(e));
     }
     /**
-    * @desc As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
-    * @param {RTCPeerConnectionIceEvent} e
+     * @function handleIceCandidateEvent As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
+     * @param {RTCPeerConnectionIceEvent} e
     */
     function handleIceCandidateEvent(e) {
         if (e.candidate) { // Contains the RTCIceCandidate containing the candidate associated with the event,
@@ -333,8 +331,8 @@ const VideoCall = ({ URL, mediaOptions }) => {
         }
     }
     /**
-    * @desc ICE Candidates being sent from each end of the connection are added to a list of potential connection methods until both ends have a way of connecting to eachother
-    * @param {Object} data containing a property payload with an incoming ICE Candidate
+     * @function handleNewIceCandidate ICE Candidates being sent from each end of the connection are added to a list of potential connection methods until both ends have a way of connecting to eachother
+     * @param {Object} data containing a property payload with an incoming ICE Candidate
     */
     function handleNewIceCandidate(data) {
         var _a;
@@ -342,14 +340,14 @@ const VideoCall = ({ URL, mediaOptions }) => {
         (_a = peerRef.current) === null || _a === void 0 ? void 0 : _a.addIceCandidate(candidate).catch((e) => console.log(e));
     }
     /**
-    * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
-    * @param {RTCTrackEvent} e An Event Object, also contains the stream
+     * @function handleTrackEvent - Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
+     * @param {RTCTrackEvent} e An Event Object, also contains the stream
     */
     function handleTrackEvent(e) {
         remoteVideo.current.srcObject = e.streams[0];
     }
     /**
-    * @desc Enables screen sharing using MediaSession.getDisplayMedia()
+     * @function shareScreen - Enables screen sharing using MediaSession.getDisplayMedia()
     */
     function shareScreen() {
         //TODOS: On a new connection the local and streamed screen bugs producing: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
@@ -367,8 +365,8 @@ const VideoCall = ({ URL, mediaOptions }) => {
         });
     }
     /**
-    * @desc if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
-    * @param {boolean} isEnded
+     * @function endCall - if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
+     * @param {boolean} isEnded
     */
     function endCall(isEnded) {
         var _a, _b, _c;
@@ -401,7 +399,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
         ws.current ?
             react_1.default.createElement(Socket_1.default, { ws: ws.current, getUsers: getUsers, handleReceiveCall: handleReceiveCall, handleAnswer: handleAnswer, handleNewIceCandidate: handleNewIceCandidate, endCall: endCall }) :
             '',
-        react_1.default.createElement("div", { className: '', style: {
+        react_1.default.createElement("div", { className: 'div1', style: {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-around',
@@ -421,11 +419,11 @@ const VideoCall = ({ URL, mediaOptions }) => {
                             top: '2%',
                             width: '100px'
                         } },
-                        react_1.default.createElement("input", { className: '', type: 'text', placeholder: 'username', id: "username-field", onChange: (e) => userField = e.target.value, style: {
+                        react_1.default.createElement("input", { className: 'input-username', type: 'text', placeholder: 'username', id: "username-field", onChange: (e) => userField = e.target.value, style: {
                                 paddingBottom: '40px',
                                 width: '200px'
                             } }),
-                        react_1.default.createElement("button", { className: '', "data-testid": 'submit-username-btn', onClick: () => handleUsername(), 
+                        react_1.default.createElement("button", { className: 'submit-username-btn', "data-testid": 'submit-username-btn', onClick: () => handleUsername(), 
                             // style={ buttonStyling }
                             style: {
                                 backgroundColor: '#C2FBD7',
@@ -445,7 +443,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
                             fontFamily: 'Arial, Helvetica, sans-serif',
                             fontSize: '16px'
                         } },
-                        "Users connected: ",
+                        "Connected Users: ",
                         users),
             react_1.default.createElement("div", { id: "main-video-container", className: '', style: {
                     alignItems: 'center',
@@ -518,7 +516,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
                             justifyContent: 'center',
                             marginTop: '10px'
                         } },
-                        react_1.default.createElement("button", { className: '', "data-testid": 'call-btn', onClick: handleOffer, 
+                        react_1.default.createElement("button", { className: 'call-btn', "data-testid": 'call-btn', onClick: handleOffer, 
                             // style={buttonStyling}
                             style: {
                                 backgroundColor: '#C2FBD7',
@@ -533,7 +531,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
                                 height: '50px',
                                 padding: '0 25px',
                             } }, "Call"),
-                        react_1.default.createElement("input", { className: '', type: 'text', id: 'receiverName', style: {
+                        react_1.default.createElement("input", { className: 'input-receiver-name', type: 'text', id: 'receiverName', style: {
                                 marginLeft: '2%'
                             } })))))));
 };

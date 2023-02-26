@@ -190,9 +190,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-   * @function callUser
-    * @desc Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
-    * @param {string} userID
+   * @function callUser - Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
+   * @param {string} userID
   */
   const callUser = (userID: string): void => {
     peerRef.current = createPeer(userID);
@@ -200,8 +199,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-   * @function createPeer
-   * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
+   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
    * @param {string} userID
    * @returns {RTCPeerConnection} RTCPeerConnection object 
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
@@ -325,8 +323,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-  * @desc The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection.
-  * @param {object} data SDP answer
+   * @function handleAnswer - The local client's remote description is set as the incoming Answer SDP to define who we are trying to connect to on the other end of the connection.
+   * @param {object} data SDP answer
   */
   function handleAnswer(data: { payload: RTCSessionDescriptionInit } ): void {
     const remoteDesc = new RTCSessionDescription(data.payload);
@@ -334,9 +332,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     ?.setRemoteDescription(remoteDesc)
     .catch((e) => console.log(e));
   }
+
   /**
-  * @desc As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
-  * @param {RTCPeerConnectionIceEvent} e
+   * @function handleIceCandidateEvent As the local client's ICE Candidates are being generated, they are being sent to the remote client to complete the connection
+   * @param {RTCPeerConnectionIceEvent} e
   */
   function handleIceCandidateEvent(e: RTCPeerConnectionIceEvent) {
     if (e.candidate) { // Contains the RTCIceCandidate containing the candidate associated with the event,
@@ -350,8 +349,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-  * @desc ICE Candidates being sent from each end of the connection are added to a list of potential connection methods until both ends have a way of connecting to eachother
-  * @param {Object} data containing a property payload with an incoming ICE Candidate
+   * @function handleNewIceCandidate ICE Candidates being sent from each end of the connection are added to a list of potential connection methods until both ends have a way of connecting to eachother
+   * @param {Object} data containing a property payload with an incoming ICE Candidate
   */
   function handleNewIceCandidate(data: { payload: RTCIceCandidateInit }): void {
     const candidate = new RTCIceCandidate(data.payload);
@@ -361,14 +360,15 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
   
   /**
-  * @desc Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
-  * @param {RTCTrackEvent} e An Event Object, also contains the stream
+   * @function handleTrackEvent - Once the connection is made, the RTCRtpReceiver interface is exposed and this function is then able to extract the MediaStreamTrack from the sender's RTCPeerConnection.
+   * @param {RTCTrackEvent} e An Event Object, also contains the stream
   */
   function handleTrackEvent(e: RTCTrackEvent) : void{
     remoteVideo.current.srcObject = e.streams[0];
   }
+
   /**
-  * @desc Enables screen sharing using MediaSession.getDisplayMedia()
+   * @function shareScreen - Enables screen sharing using MediaSession.getDisplayMedia()
   */
   function shareScreen(): void {
     //TODOS: On a new connection the local and streamed screen bugs producing: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
@@ -388,9 +388,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       };
     });
   }
+
   /**
-  * @desc if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
-  * @param {boolean} isEnded 
+   * @function endCall - if any client chooses to end their call then the person who ends the call first closes their connection and resets the remote video component while also sending a message to the remote peer to also go through the same process.
+   * @param {boolean} isEnded 
   */
   function endCall(isEnded: boolean): void {
     const LeavePayload: payloadObj = {
@@ -437,14 +438,14 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       }
 
       <div 
-        className='' 
+        className='div1' 
         style={{
           display: 'flex',
           flexDirection:'column',
           justifyContent: 'space-around',
           marginTop: '10%', 
           padding:'10px', 
-        } }
+        }}
       > 
       
         { 
@@ -465,7 +466,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 }}
               >
                 <input
-                  className=''
+                  className='input-username'
                   type='text' 
                   placeholder='username' 
                   id="username-field" 
@@ -477,7 +478,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 ></input>
                   
                 <button
-                  className=''
+                  className='submit-username-btn'
                   data-testid='submit-username-btn'
                   onClick={() => handleUsername()}
                   // style={ buttonStyling }
@@ -509,7 +510,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 fontSize: '16px' 
               }}
             >
-              Users connected: {users}
+              Connected Users: {users}
             </div>
         }
 
@@ -634,7 +635,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             >
               
               <button
-                className=''
+                className='call-btn'
                 data-testid='call-btn'
                 onClick={handleOffer} 
                 // style={buttonStyling}
@@ -656,7 +657,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
               </button>
                 
               <input
-                className='' 
+                className='input-receiver-name' 
                 type='text' 
                 id='receiverName'
                 style={{
