@@ -33,7 +33,7 @@ interface icePayObj extends payloadObj {
 
 /**
  * @func VideoCall
- * @param {String} props.URL - ws or wss link
+ * @param {String} props.URL - ws or wss link that establishes a connection between the WebSocket object and the server
  * @param {object} props.mediaOptions video embed attributes
  
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets. 
@@ -58,7 +58,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   /**
    * @type {mutable ref WebSocket object} ws is the mutable ref object that contains the WebSocket object in its .current property (ws.current). It cannot be null or undefined.
    * 
-   * @desc ws.current property contains the WebSocket object, which is created using the useEffect hook and it establishes the WebSocket connection to the server. The useEffect Hook creates the WebSocket object using the URL parameter when the component mounts and the function openUserMedia() is invoked, which makes a permissions request for the client's video and audio.
+   * @desc ws.current property contains the WebSocket object, which is created using the useEffect hook and it establishes the WebSocket connection to the server. The useEffect Hook creates the WebSocket object using the URL parameter when the component mounts.
    * 
    * ws.current.send enqueues the specified messages that need to be transmitted to the server over the WebSocket connection and this WebSocket connection is connected to the server by using RTConnect's importable SignalingChannel module.
    */
@@ -66,6 +66,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @type {mutable ref object} localVideo - video element of the local user. It will not be null or undefined.
+   * @property {HTMLVideoElement} localVideo.current 
    */
   const localVideo = useRef<HTMLVideoElement>(null!);
 
@@ -168,9 +169,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @function getUser
-   * @desc When data (the list of connected users) is received from the WebSocketServer/backend, getUser function is invoked and it updates the userList state so that the list of currently connected users can be displayed on the frontend. 
-   * @param {Array<string>} parsedData - data (the array of usernames that are connected) that is returned from backend/WebSocketServer.
-   * @returns Re-renders the page with the new User List
+   * @desc When data (the list of connected users) is received from the WebSocketServer, getUser is invoked and it creates div tags to render the names of each of the connected users on the front end. 
+   * @param {Object} parsedData - The object (containing the payload with the array of connected usernames) that is returned from backend/WebSocketServer. parsedData.payload contains the array with the strings of connected usernames
+   * @returns Re-renders the page with the new list of connected users
   */
   const getUsers = (parsedData: { payload: string[] }): void => {
     const userList = parsedData.payload.map((name: string, idx:number) => (
@@ -181,9 +182,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @async
-   * @function openUserMedia: Invoked in useEffect Hook. openUserMedia uses the constraints provided Requests the clients' browser permissions to open their webcam and microphone.
+   * @function openUserMedia is invoked in the useEffect Hook after WebSocket connection is established.
+   * @desc If the localVideo.current property exists, openUserMedia invokes the MediaDevices interface getUserMedia() method to prompt the clients for audio and video permission. 
+   * 
+   * If clients grant permissions, getUserMedia() uses the video and audio constraints to assign the local MediaStream from the clients' cameras/microphones to the local <video> element.
+   * 
    * @param {void}
-   * @desc  If the localVideo.current property exists, the MediaStream from the local camera is assigned to the local video element.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
    */
   const openUserMedia = async (): Promise<void> => {
     try {
@@ -267,28 +272,34 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @namespace handleReceiveCall
-   * @function handleReceiveCall - When Peer A (caller) calls Peer B (callee), Peer B receives an Offer from the SignalingChannel and this function is invoked. It creates a new RTCPeerConnection with the Peer A's media attached and an Answer is created. The Answer is then sent back to Peer A through the SignalingChannel.
+   * @function handleReceiveCall
+   * @desc When Peer A (caller) calls Peer B (callee), Peer B receives an Offer from the SignalingChannel and this function is invoked. It creates a new RTCPeerConnection with the Peer A's media attached and an Answer is created. The Answer is then sent back to Peer A through the SignalingChannel.
    * @returns answerPayload object with ANSWER action type and the local description as the payload is sent via WebSocket.
    * @param {Object} data payload object
    * @property {string} data.sender is the person making the call
    * @property { RTCSessionDescriptionInit object } data.payload object providing the session description and it consists of a string containing a SDP message indicating an Offer from Peer A. This value is an empty string ("") by default and may not be null.
    * 
-   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
+   * @function createPeer
+   * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
    * @memberof handleReceiveCall
    * 
-   * @function RTCSessionDescription - initializes a RTCSessionDescription object, which consists of a description type indicating which part of the offer/answer negotiation process it describes and of the SDP descriptor of the session.
+   * @function RTCSessionDescription
+   * @desc initializes a RTCSessionDescription object, which consists of a description type indicating which part of the offer/answer negotiation process it describes and of the SDP descriptor of the session.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCSessionDescription
    * @memberof handleReceiveCall
    * 
-   * @function setRemoteDescription - If Peer B wants to accept the offer, setRemoteDescription() is called to set the RTCSessionDescriptionInit object's remote description to the incoming offer from Peer A. The description specifies the properties of the remote end of the connection, including the media format.
+   * @function setRemoteDescription
+   * @desc If Peer B wants to accept the offer, setRemoteDescription() is called to set the RTCSessionDescriptionInit object's remote description to the incoming offer from Peer A. The description specifies the properties of the remote end of the connection, including the media format.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setRemoteDescription
    * @memberof handleReceiveCall
    * 
-   * @function createAnswer - Creates an Answer to the Offer received from Peer A during the offer/answer negotiation of a WebRTC connection. The Answer contains information about any media already attached to the session, codecs and options supported by the browser, and any ICE candidates already gathered. 
+   * @function createAnswer
+   * @desc Creates an Answer to the Offer received from Peer A during the offer/answer negotiation of a WebRTC connection. The Answer contains information about any media already attached to the session, codecs and options supported by the browser, and any ICE candidates already gathered. 
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer
    * @memberof handleReceiveCall
    * 
-   * @function setLocalDescription - WebRTC selects an appropriate local configuration by invoking setLocalDescription(), which automatically generates an appropriate Answer in response to the received Offer from Peer A. Then we send the Answer through the signaling channel back to Peer A.
+   * @function setLocalDescription
+   * @desc WebRTC selects an appropriate local configuration by invoking setLocalDescription(), which automatically generates an appropriate Answer in response to the received Offer from Peer A. Then we send the Answer through the signaling channel back to Peer A.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setLocalDescription
    * @memberof handleReceiveCall
    * 
@@ -301,8 +312,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
     /**
      * @type {RTCSessionDescriptionInit object} desc - consists of a description type indicating which part of the answer negotiation process it describes and the SDP descriptor of the session.
-     * @params {string} desc.type - description type with incoming offer
-     * @params {string} desc.sdp - string containing a SDP message, the format for describing multimedia communication sessions. SDP contains the codec, source address, and timing information of audio and video
+     * @property {string} desc.type - description type with incoming offer
+     * @property {string} desc.sdp - string containing a SDP message, the format for describing multimedia communication sessions. SDP contains the codec, source address, and timing information of audio and video
      * @see https://developer.mozilla.org/en-US/docs/Glossary/SDP
      */
     const desc = new RTCSessionDescription(data.payload);
@@ -374,17 +385,29 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-   * @function shareScreen - Enables screen sharing using MediaSession.getDisplayMedia()
+   * @function shareScreen
+   * @desc Enables screen sharing using MediaSession.getDisplayMedia()
+   * 
+   * @method getDisplayMedia - getDisplayMedia() method of the MediaStream interface prompts the user to select and grant permission to capture the contents or portion (such as a window) of their screen as a MediaStream.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia
+   * 
+   * @method getTracks - getTracks() method of the MediaStream interface returns an array of all the MediaStreamTrack objects
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getTracks
+   * 
+   * @method replaceTrack - The RTCRtpSender method replaceTrack() replaces the track currently being used as the sender's source with a new MediaStreamTrack.
+   * 
   */
   function shareScreen(): void {
     //TODOS: On a new connection the local and streamed screen bugs producing: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
     navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
-      const screenTrack = stream.getTracks()[0];
+
+      const screenTrack = stream.getTracks()[0]; // 
+
       senders.current
       ?.find(sender => sender.track?.kind === 'video')
       ?.replaceTrack(screenTrack);
-      localVideo.current.srcObject = stream; // changing local video to reflect what we're sharing to the other end of the connection
+      localVideo.current.srcObject = stream; // changing local video to display is being screen shared to the other peer
 
       screenTrack.onended = function() {
         senders.current

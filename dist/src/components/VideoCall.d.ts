@@ -1,7 +1,7 @@
 /// <reference types="react" />
 /**
  * @func VideoCall
- * @param {String} props.URL - ws or wss link
+ * @param {String} props.URL - ws or wss link that establishes a connection between the WebSocket object and the server
  * @param {object} props.mediaOptions video embed attributes
  
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets.
