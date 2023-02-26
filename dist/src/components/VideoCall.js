@@ -364,16 +364,26 @@ const VideoCall = ({ URL, mediaOptions }) => {
         remoteVideo.current.srcObject = e.streams[0];
     }
     /**
-     * @function shareScreen - Enables screen sharing using MediaSession.getDisplayMedia()
+     * @function shareScreen
+     * @desc Enables screen sharing using MediaSession.getDisplayMedia()
+     *
+     * @method getDisplayMedia - getDisplayMedia() method of the MediaStream interface prompts the user to select and grant permission to capture the contents or portion (such as a window) of their screen as a MediaStream.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia
+     *
+     * @method getTracks - getTracks() method of the MediaStream interface returns an array of all the MediaStreamTrack objects
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getTracks
+     *
+     * @method replaceTrack - The RTCRtpSender method replaceTrack() replaces the track currently being used as the sender's source with a new MediaStreamTrack.
+     *
     */
     function shareScreen() {
         //TODOS: On a new connection the local and streamed screen bugs producing: Rtconnect.jsx:273 Uncaught (in promise) DOMException: The peer connection is closed.
         navigator.mediaDevices.getDisplayMedia()
             .then(stream => {
             var _a, _b;
-            const screenTrack = stream.getTracks()[0];
+            const screenTrack = stream.getTracks()[0]; // 
             (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(screenTrack);
-            localVideo.current.srcObject = stream; // changing local video to reflect what we're sharing to the other end of the connection
+            localVideo.current.srcObject = stream; // changing local video to display is being screen shared to the other peer
             screenTrack.onended = function () {
                 var _a, _b;
                 (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(localStream.current.getTracks()[1]);
