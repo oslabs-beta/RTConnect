@@ -190,8 +190,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-  * @desc Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
-  * @param {string} userID
+   * @function callUser
+    * @desc Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
+    * @param {string} userID
   */
   const callUser = (userID: string): void => {
     peerRef.current = createPeer(userID);
@@ -199,10 +200,11 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-  * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
-  * @param {string} userID
-  * @returns {RTCPeerConnection} RTCPeerConnection object 
-  * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
+   * @function createPeer
+   * @desc Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
+   * @param {string} userID
+   * @returns {RTCPeerConnection} RTCPeerConnection object 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
   */
   const createPeer = (userID: string): RTCPeerConnection => {
     const peer:RTCPeerConnection = new RTCPeerConnection(configuration);
@@ -260,14 +262,47 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   }
 
   /**
-  * @desc When an offer is received from the SignalingChannel, this function is invoked, creating a new RTCPeerConnection with the local client's media attached and an Answer is created that is then sent back to the original caller through the WebSocket connection.
-  * @param {RTCSessionDescriptionInit} data
-  * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer 
+   * @namespace handleReceiveCall
+   * @function handleReceiveCall - When Peer A (caller) calls Peer B (callee), Peer B receives an Offer from the SignalingChannel and this function is invoked. It creates a new RTCPeerConnection with the Peer A's media attached and an Answer is created. The Answer is then sent back to Peer A through the SignalingChannel.
+   * @returns answerPayload object with ANSWER action type and the local description as the payload is sent via WebSocket.
+   * @param {Object} data payload object
+   * @property {string} data.sender is the person making the call
+   * @property { RTCSessionDescriptionInit object } data.payload object providing the session description and it consists of a string containing a SDP message indicating an Offer from Peer A. This value is an empty string ("") by default and may not be null.
+   * 
+   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
+   * @memberof handleReceiveCall
+   * 
+   * @function RTCSessionDescription - initializes a RTCSessionDescription object, which consists of a description type indicating which part of the offer/answer negotiation process it describes and of the SDP descriptor of the session.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCSessionDescription
+   * @memberof handleReceiveCall
+   * 
+   * @function setRemoteDescription - If Peer B wants to accept the offer, setRemoteDescription() is called to set the RTCSessionDescriptionInit object's remote description to the incoming offer from Peer A. The description specifies the properties of the remote end of the connection, including the media format.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setRemoteDescription
+   * @memberof handleReceiveCall
+   * 
+   * @function createAnswer - Creates an Answer to the Offer received from Peer A during the offer/answer negotiation of a WebRTC connection. The Answer contains information about any media already attached to the session, codecs and options supported by the browser, and any ICE candidates already gathered. 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer
+   * @memberof handleReceiveCall
+   * 
+   * @function setLocalDescription - WebRTC selects an appropriate local configuration by invoking setLocalDescription(), which automatically generates an appropriate Answer in response to the received Offer from Peer A. Then we send the Answer through the signaling channel back to Peer A.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/setLocalDescription
+   * @memberof handleReceiveCall
+   * 
+   * @returns {Promise} A Promise whose fulfillment handler is called with an RTCSessionDescriptionInit object containing the SDP Answer to be delivered to Peer A.
+   * 
   */
   function handleReceiveCall(data: { sender: string, payload: RTCSessionDescriptionInit }): void {
     otherUser.current = data.sender;
     peerRef.current = createPeer(data.sender);
+
+    /**
+     * @type {RTCSessionDescriptionInit object} desc - consists of a description type indicating which part of the answer negotiation process it describes and the SDP descriptor of the session.
+     * @params {string} desc.type - description type with incoming offer
+     * @params {string} desc.sdp - string containing a SDP message, the format for describing multimedia communication sessions. SDP contains the codec, source address, and timing information of audio and video
+     * @see https://developer.mozilla.org/en-US/docs/Glossary/SDP
+     */
     const desc = new RTCSessionDescription(data.payload);
+
     peerRef.current.setRemoteDescription(desc)
     .then(() => {
       localStream.current?.getTracks().forEach((track) => peerRef.current?.addTrack(track, localStream.current));
@@ -367,19 +402,19 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     remoteVideo.current.srcObject = null;
   }
 
-  const buttonStyling = { 
-    backgroundColor: '#C2FBD7',
-    borderRadius: '50px',
-    borderWidth: '0',
-    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
-    color: '#008000',
-    cursor: 'pointer',
-    display: 'inline-block',
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: '1em',
-    height: '50px',
-    padding: '0 25px',
-  };
+  // const buttonStyling = { 
+  //   backgroundColor: '#C2FBD7',
+  //   borderRadius: '50px',
+  //   borderWidth: '0',
+  //   boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+  //   color: '#008000',
+  //   cursor: 'pointer',
+  //   display: 'inline-block',
+  //   fontFamily: 'Arial, Helvetica, sans-serif',
+  //   fontSize: '1em',
+  //   height: '50px',
+  //   padding: '0 25px',
+  // };
 
   /* 'conditionally rendering' if WebSocket has a value otherwise on page re-rendering events 
   multiple WebSocket connections will be made and error 
@@ -403,7 +438,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
       <div 
         className='' 
-        style={{display: 'flex', justifyContent: 'space-around', flexDirection:'column', padding:'10px', marginTop: '10%'} }
+        style={{
+          display: 'flex',
+          flexDirection:'column',
+          justifyContent: 'space-around',
+          marginTop: '10%', 
+          padding:'10px', 
+        } }
       > 
       
         { 
@@ -411,7 +452,17 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <>
               <div 
                 className='input-div' 
-                style={{display: 'flex', flexDirection:'column', top: '2%', left: '2%', margin: '0 auto', height: '100px', width: '100px', justifyContent: 'center', alignItems: 'center'}}
+                style={{
+                  alignItems: 'center',
+                  display: 'flex', 
+                  flexDirection:'column',
+                  height: '100px',
+                  justifyContent: 'center',
+                  left: '2%',
+                  margin: '0 auto', 
+                  top: '2%', 
+                  width: '100px'
+                }}
               >
                 <input
                   className=''
@@ -419,14 +470,30 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                   placeholder='username' 
                   id="username-field" 
                   onChange={(e) => userField = e.target.value}
-                  style={{paddingBottom:'40px', width:'200px'}}
+                  style={{
+                    paddingBottom:'40px', 
+                    width:'200px'
+                  }}
                 ></input>
                   
                 <button
                   className=''
                   data-testid='submit-username-btn'
                   onClick={() => handleUsername()}
-                  style={buttonStyling}
+                  // style={ buttonStyling }
+                  style={{
+                    backgroundColor: '#C2FBD7',
+                    borderRadius: '50px',
+                    borderWidth: '0',
+                    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                    color: '#008000',
+                    cursor: 'pointer',
+                    display: 'inline-block',
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                    fontSize: '1em',
+                    height: '50px',
+                    padding: '0 25px',
+                  }}
                 >
                   Submit Username
                 </button>
@@ -437,7 +504,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
             <div 
               className='users-list' 
-              style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '16px' }}
+              style={{ 
+                fontFamily: 'Arial, Helvetica, sans-serif', 
+                fontSize: '16px' 
+              }}
             >
               Users connected: {users}
             </div>
@@ -446,13 +516,24 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         <div 
           id="main-video-container" 
           className='' 
-          style= {{display: 'flex', flexDirection: 'row', gap: '100px', justifyContent:'center', alignItems:'center'}}
+          style= {{
+            alignItems:'center',
+            display: 'flex', 
+            flexDirection: 'row', 
+            gap: '100px', 
+            justifyContent:'center'
+          }}
         >
 
           <div 
             id="local-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={{
+              alignContent: 'center', 
+              display:'flex', 
+              flexDirection:'column', 
+              justifyContent: 'center' 
+            }}
           >
 
             <VideoComponent 
@@ -463,14 +544,33 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <div 
               id="local-button-container"
               className='' 
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+              style= {{
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: '10px', 
+                justifyContent:'center', 
+                marginTop:'10px'
+              }}
             >
 
               <button
                 className='share-btn'
                 data-testid='share-screen-btn'
                 onClick={() => shareScreen()}
-                style={buttonStyling}
+                // style={buttonStyling}
+                style={{
+                  backgroundColor: '#C2FBD7',
+                  borderRadius: '50px',
+                  borderWidth: '0',
+                  boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                  color: '#008000',
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontSize: '1em',
+                  height: '50px',
+                  padding: '0 25px',
+                }}
               >
                 Share Screen
               </button>
@@ -479,7 +579,26 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='end-btn'
                 data-testid='end-call-btn'
                 onClick={() => endCall(false)}
-                style={{ ...buttonStyling, backgroundColor:'#ff6961', color:'#28282B' }}
+                // style={{ 
+                //   ...buttonStyling, 
+                //   backgroundColor:'#ff6961', 
+                //   color:'#28282B' 
+                // }}
+                style={{ 
+                  // backgroundColor: '#C2FBD7',
+                  backgroundColor:'#ff6961', 
+                  borderRadius: '50px',
+                  borderWidth: '0',
+                  boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                  // color: '#008000',
+                  color:'#28282B',
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontSize: '1em',
+                  height: '50px',
+                  padding: '0 25px',
+                }}
               >
                 End Call
               </button>
@@ -490,7 +609,12 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           <div 
             id="remote-video-container"
             className='' 
-            style={{display:'flex', flexDirection:'column', alignContent: 'center', justifyContent: 'center' }}
+            style={{
+              alignContent: 'center',
+              display:'flex', 
+              flexDirection:'column', 
+              justifyContent: 'center' 
+            }}
           >
             <VideoComponent 
               video={remoteVideo} 
@@ -500,14 +624,33 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             <div 
               id="remote-button-container"
               className=''
-              style= {{display: 'flex', flexDirection: 'row', gap: '10px', justifyContent:'center', marginTop:'10px'}}
+              style= {{
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: '10px', 
+                justifyContent:'center', 
+                marginTop:'10px'
+              }}
             >
               
               <button
                 className=''
                 data-testid='call-btn'
                 onClick={handleOffer} 
-                style={buttonStyling}
+                // style={buttonStyling}
+                style={{ 
+                  backgroundColor: '#C2FBD7',
+                  borderRadius: '50px',
+                  borderWidth: '0',
+                  boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
+                  color: '#008000',
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontSize: '1em',
+                  height: '50px',
+                  padding: '0 25px',
+                }}
               >
                 Call
               </button>
@@ -516,7 +659,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='' 
                 type='text' 
                 id='receiverName'
-                style={{marginLeft:'2%'}}></input>
+                style={{
+                  marginLeft:'2%'
+                }}></input>
 
             </div>
           </div>
