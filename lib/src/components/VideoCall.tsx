@@ -318,7 +318,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         ACTION_TYPE: ANSWER,
         receiver: data.sender,
         sender: username,
-        payload: peerRef.current?.localDescription
+        payload: peerRef.current?.localDescription // localDescription is an RTCSessionDescription describing the session for the local end of the connection
       };
       ws.current.send(JSON.stringify(answerPayload));
     });
