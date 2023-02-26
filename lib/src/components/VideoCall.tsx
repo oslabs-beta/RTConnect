@@ -391,7 +391,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    * @method getDisplayMedia - getDisplayMedia() method of the MediaStream interface prompts the user to select and grant permission to capture the contents or portion (such as a window) of their screen as a MediaStream.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia
    * 
-   * @method getTracks - getTracks() method of the MediaStream interface returns an array of all the MediaStreamTrack objects
+   * @method getTracks - getTracks() method of the MediaStream interface returns an array of all the MediaStreamTrack objects in the stream
    * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getTracks
    * 
    * @method replaceTrack - The RTCRtpSender method replaceTrack() replaces the track currently being used as the sender's source with a new MediaStreamTrack.
@@ -402,17 +402,17 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
 
-      const screenTrack = stream.getTracks()[0]; // 
+      const screenTrack = stream.getTracks()[0]; // local video stream 
 
       senders.current
       ?.find(sender => sender.track?.kind === 'video')
       ?.replaceTrack(screenTrack);
-      localVideo.current.srcObject = stream; // changing local video to display is being screen shared to the other peer
+      localVideo.current.srcObject = stream; // changing local video to display what is being screen shared to the other peer
 
-      screenTrack.onended = function() {
+      screenTrack.onended = function() { // ended event is fired when playback or streaming has stopped because the end of the media was reached or because no further data is available
         senders.current
         ?.find(sender => sender.track?.kind === 'video')
-        ?.replaceTrack(localStream.current.getTracks()[1]);
+        ?.replaceTrack(localStream.current.getTracks()[1]); // 
         localVideo.current.srcObject = localStream.current;  // changing local video displayed back to webcam
       };
     });
