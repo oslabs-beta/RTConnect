@@ -15,7 +15,10 @@ const constraints: MediaStreamConstraints = {
     width: { min:640, ideal:1920, max:1920 },
     height: { min:480, ideal:1080, max:1080 },
   },
-  audio: true
+  // audio: true
+  audio: {
+    echoCancellation: true
+  }
 };
 
 export default constraints;
