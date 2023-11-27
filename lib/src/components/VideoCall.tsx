@@ -587,7 +587,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='share-btn'
                 data-testid='share-screen-btn'
                 onClick={() => shareScreen()}
-                // style={buttonStyling}
                 style={{
                   backgroundColor: '#C2FBD7',
                   borderRadius: '50px',
@@ -609,18 +608,11 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 className='end-btn'
                 data-testid='end-call-btn'
                 onClick={() => endCall(false)}
-                // style={{ 
-                //   ...buttonStyling, 
-                //   backgroundColor:'#ff6961', 
-                //   color:'#28282B' 
-                // }}
                 style={{ 
-                  // backgroundColor: '#C2FBD7',
                   backgroundColor:'#ff6961', 
                   borderRadius: '50px',
                   borderWidth: '0',
                   boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
-                  // color: '#008000',
                   color:'#28282B',
                   cursor: 'pointer',
                   display: 'inline-block',
