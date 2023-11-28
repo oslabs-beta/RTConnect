@@ -3,17 +3,20 @@ name: Slack Notification of CI Status
 on: 
     push:
         branches: ["feature/raisa-cicd"]
+    pull_request:
+        branches: ["feature/raisa-cicd"]
             
 jobs:
     slackNotification:
         name: Slack CI status message
         runs-on: ubuntu-latest
+        if: 'faiure'
         steps:            
             - name: Slack Notify on Failure
               id: slack
               uses: slackapi/slack-github-action@v1.24.0
               with:
-                status: ${{ job.status }}
+                slack-message: "Github CI result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
               env:
                 SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
