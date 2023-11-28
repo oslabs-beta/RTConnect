@@ -12,7 +12,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:            
             - name: Slack Notify on Failure
-              if: ${{ failure() }}
+              if: ${{ failure() || success() }}
               id: slack
               uses: slackapi/slack-github-action@v1.24.0
               with:
