@@ -370,7 +370,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
      * @method getDisplayMedia - getDisplayMedia() method of the MediaStream interface prompts the user to select and grant permission to capture the contents or portion (such as a window) of their screen as a MediaStream.
      * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia
      *
-     * @method getTracks - getTracks() method of the MediaStream interface returns an array of all the MediaStreamTrack objects
+     * @method getTracks - getTracks() method of the MediaStream interface returns an array of all the MediaStreamTrack objects in the stream
      * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaStream/getTracks
      *
      * @method replaceTrack - The RTCRtpSender method replaceTrack() replaces the track currently being used as the sender's source with a new MediaStreamTrack.
@@ -381,12 +381,12 @@ const VideoCall = ({ URL, mediaOptions }) => {
         navigator.mediaDevices.getDisplayMedia()
             .then(stream => {
             var _a, _b;
-            const screenTrack = stream.getTracks()[0]; // 
+            const screenTrack = stream.getTracks()[0]; // local video stream 
             (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(screenTrack);
-            localVideo.current.srcObject = stream; // changing local video to display is being screen shared to the other peer
+            localVideo.current.srcObject = stream; // changing local video to display what is being screen shared to the other peer
             screenTrack.onended = function () {
                 var _a, _b;
-                (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(localStream.current.getTracks()[1]);
+                (_b = (_a = senders.current) === null || _a === void 0 ? void 0 : _a.find(sender => { var _a; return ((_a = sender.track) === null || _a === void 0 ? void 0 : _a.kind) === 'video'; })) === null || _b === void 0 ? void 0 : _b.replaceTrack(localStream.current.getTracks()[1]); // 
                 localVideo.current.srcObject = localStream.current; // changing local video displayed back to webcam
             };
         });
@@ -493,9 +493,7 @@ const VideoCall = ({ URL, mediaOptions }) => {
                             justifyContent: 'center',
                             marginTop: '10px'
                         } },
-                        react_1.default.createElement("button", { className: 'share-btn', "data-testid": 'share-screen-btn', onClick: () => shareScreen(), 
-                            // style={buttonStyling}
-                            style: {
+                        react_1.default.createElement("button", { className: 'share-btn', "data-testid": 'share-screen-btn', onClick: () => shareScreen(), style: {
                                 backgroundColor: '#C2FBD7',
                                 borderRadius: '50px',
                                 borderWidth: '0',
@@ -508,19 +506,11 @@ const VideoCall = ({ URL, mediaOptions }) => {
                                 height: '50px',
                                 padding: '0 25px',
                             } }, "Share Screen"),
-                        react_1.default.createElement("button", { className: 'end-btn', "data-testid": 'end-call-btn', onClick: () => endCall(false), 
-                            // style={{ 
-                            //   ...buttonStyling, 
-                            //   backgroundColor:'#ff6961', 
-                            //   color:'#28282B' 
-                            // }}
-                            style: {
-                                // backgroundColor: '#C2FBD7',
+                        react_1.default.createElement("button", { className: 'end-btn', "data-testid": 'end-call-btn', onClick: () => endCall(false), style: {
                                 backgroundColor: '#ff6961',
                                 borderRadius: '50px',
                                 borderWidth: '0',
                                 boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 8px',
-                                // color: '#008000',
                                 color: '#28282B',
                                 cursor: 'pointer',
                                 display: 'inline-block',
