@@ -10,7 +10,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:            
             - name: Slack Notify on Failure
+              id: slack
               uses: slackapi/slack-github-action@v1.24.0
+              with:
+                status: ${{ job.status }}
               env:
                 SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
