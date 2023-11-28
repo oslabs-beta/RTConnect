@@ -12,11 +12,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:            
             - name: Slack Notify on Failure
-              if: ${{ failure() || success() }}
+              if: ${{ success() }}
               id: slack
               uses: slackapi/slack-github-action@v1.24.0
               with:
+                channel-id: 'cicd'
                 slack-message: "Github CI result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
               env:
-                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-                SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+                SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                # SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
