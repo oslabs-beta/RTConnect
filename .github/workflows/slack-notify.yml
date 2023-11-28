@@ -10,7 +10,7 @@ jobs:
     slackNotification:
         name: Slack CI status message
         runs-on: ubuntu-latest
-        if: 'faiure'
+        if: 'failure'
         steps:            
             - name: Slack Notify on Failure
               id: slack
