@@ -10,9 +10,9 @@ jobs:
     slackNotification:
         name: Slack CI status message
         runs-on: ubuntu-latest
-        if: 'failure'
         steps:            
             - name: Slack Notify on Failure
+              if: ${{ failure() }}
               id: slack
               uses: slackapi/slack-github-action@v1.24.0
               with:
