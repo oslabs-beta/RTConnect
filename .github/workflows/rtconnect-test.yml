@@ -5,7 +5,7 @@ name: RTConnect CI
 
 on:
   push:
-    branches: [ "main",  "feature/raisa-cicd"]
+    branches: [ "main"]
   pull_request:
     branches: [ "main" ]
 

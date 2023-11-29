@@ -1,6 +1,8 @@
+name: Automate NPM Package Publish
+
 on:
     push:
-        branches: ["main", "feature/raisa-cicd", "npm-latest-publish"]
+        branches: ["main", "npm-latest-publish"]
     pull_request:
         branches: ["main", "npm-latest-publish"]
 
@@ -18,3 +20,6 @@ jobs:
             with:
               token: ${{ secrets.NPM_TOKEN }}
               strategy: upgrade
+
+
+# https://github.com/JS-DevTools/npm-publish
