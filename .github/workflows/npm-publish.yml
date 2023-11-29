@@ -1,0 +1,25 @@
+name: Automate NPM Package Publish
+
+on:
+    push:
+        branches: ["main", "npm-latest-publish"]
+    pull_request:
+        branches: ["main", "npm-latest-publish"]
+
+jobs:
+    npmPublish:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v3
+            with:
+                node-version: "20"
+          - run: npm ci
+          - name: Publish npm package when version is updated
+            uses: JS-DevTools/npm-publish@v3
+            with:
+              token: ${{ secrets.NPM_TOKEN }}
+              strategy: upgrade
+
+
+# https://github.com/JS-DevTools/npm-publish

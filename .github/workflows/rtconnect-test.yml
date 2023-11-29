@@ -5,21 +5,19 @@ name: RTConnect CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main"]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  build_test_lint:
     strategy:
       fail-fast: false
       matrix:
-        node-version:  [15.x, 16.x, 17.x, 18.x]
+        node-version:  [17.x, 18.x, 19.x, 20.x]
+        os: [windows-latest, ubuntu-latest]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    runs-on: ${{ matrix.os}}
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
