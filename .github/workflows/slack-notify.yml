@@ -2,7 +2,7 @@ name: Slack Notification of CI Status
 
 on: 
     push:
-        branches: ["main"]
+        branches: ["main", "feature/raisa-cicd"]
     pull_request:
         branches: ["main"]
             
