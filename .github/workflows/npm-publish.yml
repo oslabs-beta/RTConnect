@@ -1,0 +1,14 @@
+on:
+    push:
+        branches: ["main", "npm-latest-publish"]
+    pull-request:
+        branches: ["main", "npm-latest-publish"]
+
+jobs:
+    npmPublish:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Publish npm package when version is updated
+          uses: actions/checkout@v4
+          with:
+            node_version: "20"
