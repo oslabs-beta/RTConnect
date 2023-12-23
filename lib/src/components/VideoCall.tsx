@@ -121,8 +121,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    *  |       |-------------------|------------------>|       Peer B's NAT
    *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
    *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
-   *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the earlier candidates sent.
-   *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be circumvented.
+   *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the 
+   *  |       |                   |                   |         earlier candidates sent.
+   *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be 
+   *  |       |                   |                   |         circumvented.
    *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
    * 
    * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> ^send Offer SDP^ --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
@@ -154,7 +156,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @func handleOffer
-   * @desc When a username is entered that the client wants to "Call" and the client clicks the Call button,  into the input field, this starts the Offer-Answer Model exchange
+   * @desc When a username is entered into the input field that the client wants to "Call" and the client clicks the Call button, this starts the SDP Offer-Answer  exchange
    */
   const handleOffer = (): void => {
     const inputField:HTMLInputElement | null = document.querySelector('#receiverName');
@@ -201,7 +203,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-   * @function callUser - Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
+   * @function callUser - Constructs a new RTCPeerConnection object using the createPeer function and then adds the local client's (Peer A/caller) media tracks to peer connection ref object.
    * @param {string} userID
   */
   const callUser = (userID: string): void => {
@@ -216,7 +218,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
   */
   const createPeer = (userID: string): RTCPeerConnection => {
-    const peer:RTCPeerConnection = new RTCPeerConnection(configuration);
+    const peer: RTCPeerConnection = new RTCPeerConnection(configuration);
     peer.onicecandidate = handleIceCandidateEvent;
     peer.ontrack = handleTrackEvent;
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID);
@@ -253,8 +255,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    * @param {string} userID
   */
   function handleNegotiationNeededEvent(userID: string): void {
-    peerRef.current
-    ?.createOffer()
+    peerRef.current?.createOffer()
     .then((offer) => {
       return peerRef.current?.setLocalDescription(offer);
     })
