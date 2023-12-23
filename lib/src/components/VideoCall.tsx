@@ -229,6 +229,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     });
 
     peer.addEventListener('icegatheringstatechange', () => {
+      // const stateOfIceGathering = peer.iceGatheringState; // returns a string that describes the connection's ICE gathering state (new, gathering, or complete)
+      // console.log(`ICE gathering state: ${stateOfIceGathering}`);
       console.log(`ICE gathering state changed: ${peerRef.current?.iceGatheringState}`);
     });
       
