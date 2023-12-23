@@ -204,7 +204,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @function callUser - Constructs a new RTCPeerConnection object using the createPeer function and then adds the local client's (Peer A/caller) media tracks to peer connection ref object.
-   * @param {string} userID
+   * @param {string} userID the remote client's (Peer B/callee) username
   */
   const callUser = (userID: string): void => {
     peerRef.current = createPeer(userID);
@@ -212,8 +212,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
-   * @param {string} userID
+   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners (handleIceCandidateEvent, handleTrackEvent, handleNegotiationNeededEvent) to it
+   * @param {string} userID the remote client's (Peer B/callee) username
    * @returns {RTCPeerConnection} RTCPeerConnection object 
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
@@ -252,8 +252,12 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @function handleNegotiationNeededEvent
-   * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
-   * @param {string} userID
+   * @desc creates an SDP offer and sends it through the signaling channel to the remote peer: invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. After creating the offer, the local end is configured by calling RTCPeerConnection.setLocalDescription().
+   *  
+   * Then a signaling message is created and sent to the remote peer through the signaling server, to share the offer with the other peer. The other peer should recognize this message and follow up by creating its own RTCPeerConnection, setting the remote description with setRemoteDescription(), and then creating an answer to send back to the offering peer. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
+   * 
+   * @param {string} userID the remote client's (Peer B/callee) username
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/negotiationneeded_event
   */
   function handleNegotiationNeededEvent(userID: string): void {
     peerRef.current?.createOffer()
@@ -263,7 +267,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     .then(() => {
       const offerPayload: offerPayObj = {
         ACTION_TYPE: OFFER,
-        sender: username,
+        sender: username, // local peer
         receiver: userID,
         payload: peerRef.current?.localDescription
       };
@@ -498,14 +502,14 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
               >
                 <input
                   className='input-username'
-                  type='text' 
-                  placeholder='username' 
                   id="username-field" 
-                  onChange={(e) => userField = e.target.value}
+                  onChange={(e) => userField = e.target.value} 
+                  placeholder='username' 
                   style={{
                     paddingBottom:'40px', 
                     width:'200px'
-                  }}
+                  }} 
+                  type='text'
                 ></input>
                   
                 <button
@@ -546,8 +550,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         }
 
         <div 
-          id="main-video-container" 
           className='' 
+          id="main-video-container" 
           style= {{
             alignItems:'center',
             display: 'flex', 
@@ -558,8 +562,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         >
 
           <div 
-            id="local-video-container"
             className='' 
+            id="local-video-container"
             style={{
               alignContent: 'center', 
               display:'flex', 
@@ -574,8 +578,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             />
             
             <div 
-              id="local-button-container"
               className='' 
+              id="local-button-container"
               style= {{
                 display: 'flex', 
                 flexDirection: 'row', 
@@ -631,8 +635,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           </div>
 
           <div 
-            id="remote-video-container"
             className='' 
+            id="remote-video-container"
             style={{
               alignContent: 'center',
               display:'flex', 
@@ -646,8 +650,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             />
 
             <div 
+              className='' 
               id="remote-button-container"
-              className=''
               style= {{
                 display: 'flex', 
                 flexDirection: 'row', 
@@ -681,8 +685,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 
               <input
                 className='input-receiver-name' 
-                type='text' 
                 id='receiverName'
+                type='text' 
                 style={{
                   marginLeft:'2%'
                 }}></input>
