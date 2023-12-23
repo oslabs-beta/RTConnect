@@ -38,7 +38,7 @@ interface icePayObj extends payloadObj {
  
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets. 
  * 
- * ws, localVideo, remoteVideo, peerRef, localStream, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
+ * ws, localVideo, remoteVideo, peerRef, localStreamRef, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
  * 
  * The WebSocket connection (ws.current) is established using the useEffect hook and once the component mounts, the Socket component is rendered. The Socket component adds event listeners that handle the offer-answer model and the exchange of SDP objects between peers and the socket.
  * 
@@ -86,9 +86,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const otherUser = useRef<string>();
 
   /**
-   * @type {mutable ref object} localStream - It cannot be null or undefined.
+   * @type {mutable ref object} localStreamRef - It cannot be null or undefined.
    */
-  const localStream = useRef<MediaStream>(null!);
+  const localStreamRef = useRef<MediaStream>(null!);
 
   /**
    * @type {mutable ref array} senders - 
@@ -195,7 +195,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const openUserMedia = async (): Promise<void> => {
     try {
       if (localVideo.current){
-        localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
+        localStreamRef.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
       }
     } catch (error) {
       console.log('Error in openUserMedia: ', error);
@@ -208,7 +208,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   */
   const callUser = (userID: string): void => {
     peerRef.current = createPeer(userID);
-    localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
+    localStreamRef.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStreamRef.current)));
   };
 
   /**
@@ -216,14 +216,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    * @param {string} userID
    * @returns {RTCPeerConnection} RTCPeerConnection object 
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
   */
   const createPeer = (userID: string): RTCPeerConnection => {
     const peer: RTCPeerConnection = new RTCPeerConnection(configuration);
     peer.onicecandidate = handleIceCandidateEvent;
     peer.ontrack = handleTrackEvent;
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID);
-
-    console.log('registerPeerConnectionListners has activated');
 
     peer.addEventListener('negotiationneeded', () => {
       console.log('negotiationneeded event has fired');
@@ -321,7 +320,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
     peerRef.current.setRemoteDescription(desc)
     .then(() => {
-      localStream.current?.getTracks().forEach((track) => peerRef.current?.addTrack(track, localStream.current));
+      localStreamRef.current?.getTracks().forEach((track) => peerRef.current?.addTrack(track, localStreamRef.current));
     })
     .then(() => {
       return peerRef.current?.createAnswer();
@@ -413,8 +412,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       screenTrack.onended = function() { // ended event is fired when playback or streaming has stopped because the end of the media was reached or because no further data is available
         senders.current
         ?.find(sender => sender.track?.kind === 'video')
-        ?.replaceTrack(localStream.current.getTracks()[1]); // 
-        localVideo.current.srcObject = localStream.current;  // changing local video displayed back to webcam
+        ?.replaceTrack(localStreamRef.current.getTracks()[1]); // 
+        localVideo.current.srcObject = localStreamRef.current;  // changing local video displayed back to webcam
       };
     });
   }

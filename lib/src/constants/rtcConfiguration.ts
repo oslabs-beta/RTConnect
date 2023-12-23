@@ -1,5 +1,5 @@
 /** 
-   * @type {Object} configuration - The RTCConfiguration object is used to provide configuration options for how an RTCPeerConnection should be created.
+   * @type {RTCConfiguration} configuration - The RTCConfiguration object is used to provide configuration options for how an RTCPeerConnection should be created.
    * 
    * @property {array} iceServers - An array of RTCIceServer objects, each describing one server which
    * may be used by the ICE agent. These servers are typically STUN and/or TURN servers. If this
