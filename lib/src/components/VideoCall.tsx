@@ -38,7 +38,7 @@ interface icePayObj extends payloadObj {
  
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets. 
  * 
- * ws, localVideo, remoteVideo, peerRef, localStream, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
+ * ws, localVideo, remoteVideo, peerRef, localStreamRef, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
  * 
  * The WebSocket connection (ws.current) is established using the useEffect hook and once the component mounts, the Socket component is rendered. The Socket component adds event listeners that handle the offer-answer model and the exchange of SDP objects between peers and the socket.
  * 
@@ -86,9 +86,9 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const otherUser = useRef<string>();
 
   /**
-   * @type {mutable ref object} localStream - It cannot be null or undefined.
+   * @type {mutable ref object} localStreamRef - It cannot be null or undefined.
    */
-  const localStream = useRef<MediaStream>(null!);
+  const localStreamRef = useRef<MediaStream>(null!);
 
   /**
    * @type {mutable ref array} senders - 
@@ -121,8 +121,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
    *  |       |-------------------|------------------>|       Peer B's NAT
    *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
    *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
-   *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the earlier candidates sent.
-   *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be circumvented.
+   *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the 
+   *  |       |                   |                   |         earlier candidates sent.
+   *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be 
+   *  |       |                   |                   |         circumvented.
    *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
    * 
    * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> ^send Offer SDP^ --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
@@ -154,7 +156,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @func handleOffer
-   * @desc When a username is entered that the client wants to "Call" and the client clicks the Call button,  into the input field, this starts the Offer-Answer Model exchange
+   * @desc When a username is entered into the input field that the client wants to "Call" and the client clicks the Call button, this starts the SDP Offer-Answer  exchange
    */
   const handleOffer = (): void => {
     const inputField:HTMLInputElement | null = document.querySelector('#receiverName');
@@ -193,7 +195,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const openUserMedia = async (): Promise<void> => {
     try {
       if (localVideo.current){
-        localStream.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
+        localStreamRef.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
       }
     } catch (error) {
       console.log('Error in openUserMedia: ', error);
@@ -201,33 +203,34 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   };
 
   /**
-   * @function callUser - Constructs a new RTCPeerConnection object that also adds the local client's media tracks to this object.
-   * @param {string} userID
+   * @function callUser - Constructs a new RTCPeerConnection object using the createPeer function and then adds the local client's (Peer A/caller) media tracks to peer connection ref object.
+   * @param {string} userID the remote client's (Peer B/callee) username
   */
   const callUser = (userID: string): void => {
     peerRef.current = createPeer(userID);
-    localStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStream.current)));
+    localStreamRef.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, localStreamRef.current)));
   };
 
   /**
-   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners to it
-   * @param {string} userID
+   * @function createPeer - Creates a new RTCPeerConnection object, which represents a WebRTC connection between the local device and a remote peer and adds event listeners (handleIceCandidateEvent, handleTrackEvent, handleNegotiationNeededEvent) to it
+   * @param {string} userID the remote client's (Peer B/callee) username
    * @returns {RTCPeerConnection} RTCPeerConnection object 
    * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionstatechange_event and other events
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection
   */
   const createPeer = (userID: string): RTCPeerConnection => {
-    const peer:RTCPeerConnection = new RTCPeerConnection(configuration);
+    const peer: RTCPeerConnection = new RTCPeerConnection(configuration);
     peer.onicecandidate = handleIceCandidateEvent;
     peer.ontrack = handleTrackEvent;
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(userID);
-
-    console.log('registerPeerConnectionListners has activated');
 
     peer.addEventListener('negotiationneeded', () => {
       console.log('negotiationneeded event has fired');
     });
 
     peer.addEventListener('icegatheringstatechange', () => {
+      // const stateOfIceGathering = peer.iceGatheringState; // returns a string that describes the connection's ICE gathering state (new, gathering, or complete)
+      // console.log(`ICE gathering state: ${stateOfIceGathering}`);
       console.log(`ICE gathering state changed: ${peerRef.current?.iceGatheringState}`);
     });
       
@@ -249,19 +252,22 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
   /**
    * @function handleNegotiationNeededEvent
-   * @desc invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. This offer is then set as the local description using WebRTC's built-in setLocalDescription() function. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
-   * @param {string} userID
+   * @desc creates an SDP offer and sends it through the signaling channel to the remote peer: invokes WebRTC's built-in createOffer() function to create an SDP offer, which is an RTCSessionDescription object. After creating the offer, the local end is configured by calling RTCPeerConnection.setLocalDescription().
+   *  
+   * Then a signaling message is created and sent to the remote peer through the signaling server, to share the offer with the other peer. The other peer should recognize this message and follow up by creating its own RTCPeerConnection, setting the remote description with setRemoteDescription(), and then creating an answer to send back to the offering peer. Finally, the offer, sender and receiver is sent via ws.current.send to the Signaling Channel in the backend
+   * 
+   * @param {string} userID the remote client's (Peer B/callee) username
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/negotiationneeded_event
   */
   function handleNegotiationNeededEvent(userID: string): void {
-    peerRef.current
-    ?.createOffer()
+    peerRef.current?.createOffer()
     .then((offer) => {
       return peerRef.current?.setLocalDescription(offer);
     })
     .then(() => {
       const offerPayload: offerPayObj = {
         ACTION_TYPE: OFFER,
-        sender: username,
+        sender: username, // local peer
         receiver: userID,
         payload: peerRef.current?.localDescription
       };
@@ -320,7 +326,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
     peerRef.current.setRemoteDescription(desc)
     .then(() => {
-      localStream.current?.getTracks().forEach((track) => peerRef.current?.addTrack(track, localStream.current));
+      localStreamRef.current?.getTracks().forEach((track) => peerRef.current?.addTrack(track, localStreamRef.current));
     })
     .then(() => {
       return peerRef.current?.createAnswer();
@@ -412,8 +418,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       screenTrack.onended = function() { // ended event is fired when playback or streaming has stopped because the end of the media was reached or because no further data is available
         senders.current
         ?.find(sender => sender.track?.kind === 'video')
-        ?.replaceTrack(localStream.current.getTracks()[1]); // 
-        localVideo.current.srcObject = localStream.current;  // changing local video displayed back to webcam
+        ?.replaceTrack(localStreamRef.current.getTracks()[1]); // 
+        localVideo.current.srcObject = localStreamRef.current;  // changing local video displayed back to webcam
       };
     });
   }
@@ -496,14 +502,14 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
               >
                 <input
                   className='input-username'
-                  type='text' 
-                  placeholder='username' 
                   id="username-field" 
-                  onChange={(e) => userField = e.target.value}
+                  onChange={(e) => userField = e.target.value} 
+                  placeholder='username' 
                   style={{
                     paddingBottom:'40px', 
                     width:'200px'
-                  }}
+                  }} 
+                  type='text'
                 ></input>
                   
                 <button
@@ -544,8 +550,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         }
 
         <div 
-          id="main-video-container" 
           className='' 
+          id="main-video-container" 
           style= {{
             alignItems:'center',
             display: 'flex', 
@@ -556,8 +562,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
         >
 
           <div 
-            id="local-video-container"
             className='' 
+            id="local-video-container"
             style={{
               alignContent: 'center', 
               display:'flex', 
@@ -572,8 +578,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             />
             
             <div 
-              id="local-button-container"
               className='' 
+              id="local-button-container"
               style= {{
                 display: 'flex', 
                 flexDirection: 'row', 
@@ -629,8 +635,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           </div>
 
           <div 
-            id="remote-video-container"
             className='' 
+            id="remote-video-container"
             style={{
               alignContent: 'center',
               display:'flex', 
@@ -644,8 +650,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
             />
 
             <div 
+              className='' 
               id="remote-button-container"
-              className=''
               style= {{
                 display: 'flex', 
                 flexDirection: 'row', 
@@ -679,8 +685,8 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
                 
               <input
                 className='input-receiver-name' 
-                type='text' 
                 id='receiverName'
+                type='text' 
                 style={{
                   marginLeft:'2%'
                 }}></input>

@@ -19,9 +19,8 @@ jobs:
                 channel-id: 'C067F896WG5'
                 slack-message: "Github CI Result: ${{ job.status }}\nGithub PR/Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
               env:
-                SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # This works BUT it shows up as problem for some unknown reason ("Context access might be invalid: NPM_TOKEN") and there should not be any errors
                 # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-                # SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
 
 # https://github.com/slackapi/slack-github-action

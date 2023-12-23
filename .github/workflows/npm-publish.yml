@@ -18,8 +18,7 @@ jobs:
           - name: Publish npm package when version is updated
             uses: JS-DevTools/npm-publish@v3
             with:
-              token: ${{ secrets.NPM_TOKEN }}
-              strategy: upgrade
+              token: ${{ secrets.NPM_TOKEN }} # This works BUT it shows up as problem for some unknown reason ("Context access might be invalid: NPM_TOKEN") and there should not be any errors
 
 
 # https://github.com/JS-DevTools/npm-publish
