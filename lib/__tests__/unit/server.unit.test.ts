@@ -22,7 +22,7 @@ describe('Testing the SignalingChannel class', () => {
     });
 
     it('Empty hashmap of users is initialized', () => {
-      expect(sc.users.size).toBe(0);
+      expect(sc.peers.size).toBe(0);
     });
   });
 

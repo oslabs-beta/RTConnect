@@ -38,7 +38,7 @@ interface icePayObj extends payloadObj {
  
  * @desc Wrapper component containing the logic necessary for peer connections using WebRTC APIs (RTCPeerConnect API + MediaSession API) and WebSockets. 
  * 
- * ws, localVideo, remoteVideo, peerRef, localStreamRef, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
+ * ws, localVideoRef, remoteVideo, peerRef, localStreamRef, otherUser, senders are all mutable ref objects that are created using the useRef hook. The useRef hook allows you to persist values between renders and it is used to store a mutable value that does NOT cause a re-render when updated.
  * 
  * The WebSocket connection (ws.current) is established using the useEffect hook and once the component mounts, the Socket component is rendered. The Socket component adds event listeners that handle the offer-answer model and the exchange of SDP objects between peers and the socket.
  * 
@@ -49,6 +49,32 @@ interface icePayObj extends payloadObj {
  * 
  * @returns A component that renders two VideoComponents, 
  */
+
+/**
+   * A diagram of the WebRTC Connection logic
+   * Peer A  Stun    Signaling Channel(WebSockets)  Peer B   Step
+   *  |------>|                   |                   |       Who Am I? + RTCPeerConnection(configuration) this contains methods to connect to a remote Peer
+   *  |<------|                   |                   |       Symmetric NAT (your ip that you can be connected to)
+   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over WebSocket
+   *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
+   *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
+   *  |       |-------------------|------------------>|       Peer B's NAT
+   *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
+   *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
+   *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the 
+   *  |       |                   |                   |         earlier candidates sent.
+   *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be 
+   *  |       |                   |                   |         circumvented.
+   *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
+   * 
+   * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> ^send Offer SDP^ --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
+   * If Peer B receives a call then we invoke... ^Receive Offer SDP^ --> handleReceiveCall --> createPeer --> ^send Answer SDP^ --> handleIceCandidateMsg --> handleIceCandidateEvent --> once connected, handleTrackEvent
+   * 
+   * Note: Media is attached to the Peer Connection and sent along with the offers/answers to describe what media each client has.
+   * 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTrack
+*/
+
 const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { controls: boolean, style: { width: string, height: string }}}): JSX.Element => {
  
   const [username, setUsername] = useState<string>('');
@@ -65,10 +91,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
   const ws = useRef<WebSocket>(null!);
 
   /**
-   * @type {mutable ref object} localVideo - video element of the local user. It will not be null or undefined.
-   * @property {HTMLVideoElement} localVideo.current 
+   * @type {mutable ref object} localVideoRef - video element of the local user. It will not be null or undefined.
+   * @property {HTMLVideoElement} localVideoRef.current 
    */
-  const localVideo = useRef<HTMLVideoElement>(null!);
+  const localVideoRef = useRef<HTMLVideoElement>(null!);
 
   /** 
    * @type {mutable ref object} remoteVideo - video stream of the remote user. It cannot be null or undefined.
@@ -110,30 +136,27 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
     openUserMedia();
   },[]);
 
+
   /**
-   * A diagram of the WebRTC Connection logic
-   * Peer A  Stun    Signaling Channel(WebSockets)  Peer B   Step
-   *  |------>|                   |                   |       Who Am I? + RTCPeerConnection(configuration) this contains methods to connect to a remote Peer
-   *  |<------|                   |                   |       Symmetric NAT (your ip that you can be connected to)
-   *  |-------------------------->|------------------>|       Calling Peer B, Offer SDP is generated and sent over WebSocket
-   *  |-------------------------->|------------------>|       ICE Candidates are also being trickled in, where and what IP:PORT can Peer B connect to Peer A
-   *  |       |<------------------|-------------------|       Who Am I? PeerB this time!
-   *  |       |-------------------|------------------>|       Peer B's NAT
-   *  |<--------------------------|-------------------|       Accepting Peer A's call, sending Answer SDP
-   *  |<--------------------------|-------------------|       Peer B's ICE Candidates are now being trickled in to peer A for connectivity.
-   *  |-------------------------->|------------------>|       ICE Candidates from Peer A, these steps repeat and are only necessary if Peer B can't connect to the 
-   *  |       |                   |                   |         earlier candidates sent.
-   *  |<--------------------------|-------------------|       ICE Candidate trickling from Peer B, could also take a second if there's a firewall to be 
-   *  |       |                   |                   |         circumvented.
-   *  |       |                   |                   |       Connected! Peer to Peer connection is made and now both users are streaming data to eachother!
+   * @async
+   * @function openUserMedia is invoked in the useEffect Hook after WebSocket connection is established.
+   * @desc If the localVideoRef.current property exists, openUserMedia invokes the MediaDevices interface getUserMedia() method to prompt the clients for audio and video permission. 
    * 
-   * If Peer A starts a call their order of functions being invoked is... handleOffer --> callUser --> createPeer --> peerRef.current.negotiationNeeded event (handleNegotiationNeededEvent) --> ^send Offer SDP^ --> start ICE trickle, handleIceCandidateEvent --> ^receive Answer^ SDP --> handleIceCandidateMsg --> once connected, handleTrackEvent
-   * If Peer B receives a call then we invoke... ^Receive Offer SDP^ --> handleReceiveCall --> createPeer --> ^send Answer SDP^ --> handleIceCandidateMsg --> handleIceCandidateEvent --> once connected, handleTrackEvent
+   * If clients grant permissions, getUserMedia() uses the video and audio constraints to assign the local MediaStream from the clients' cameras/microphones to the local <video> element.
    * 
-   * Note: Media is attached to the Peer Connection and sent along with the offers/answers to describe what media each client has.
-   * 
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addTrack
+   * @param {void}
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
    */
+  const openUserMedia = async (): Promise<void> => {
+    try {
+      if (localVideoRef.current){
+        localStreamRef.current = localVideoRef.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
+      }
+    } catch (error) {
+      console.log('Error in openUserMedia: ', error);
+    }
+  };
+  
 
   /**
    * @func handleUsername 
@@ -180,26 +203,6 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       <div key={idx}>{name}</div>
     ));
     setUsers(userList);
-  };
-
-  /**
-   * @async
-   * @function openUserMedia is invoked in the useEffect Hook after WebSocket connection is established.
-   * @desc If the localVideo.current property exists, openUserMedia invokes the MediaDevices interface getUserMedia() method to prompt the clients for audio and video permission. 
-   * 
-   * If clients grant permissions, getUserMedia() uses the video and audio constraints to assign the local MediaStream from the clients' cameras/microphones to the local <video> element.
-   * 
-   * @param {void}
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-   */
-  const openUserMedia = async (): Promise<void> => {
-    try {
-      if (localVideo.current){
-        localStreamRef.current = localVideo.current.srcObject = await navigator.mediaDevices.getUserMedia(constraints); 
-      }
-    } catch (error) {
-      console.log('Error in openUserMedia: ', error);
-    }
   };
 
   /**
@@ -413,13 +416,13 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
       senders.current
       ?.find(sender => sender.track?.kind === 'video')
       ?.replaceTrack(screenTrack);
-      localVideo.current.srcObject = stream; // changing local video to display what is being screen shared to the other peer
+      localVideoRef.current.srcObject = stream; // changing local video to display what is being screen shared to the other peer
 
       screenTrack.onended = function() { // ended event is fired when playback or streaming has stopped because the end of the media was reached or because no further data is available
         senders.current
         ?.find(sender => sender.track?.kind === 'video')
         ?.replaceTrack(localStreamRef.current.getTracks()[1]); // 
-        localVideo.current.srcObject = localStreamRef.current;  // changing local video displayed back to webcam
+        localVideoRef.current.srcObject = localStreamRef.current;  // changing local video displayed back to webcam
       };
     });
   }
@@ -573,7 +576,7 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
           >
 
             <VideoComponent 
-              video={localVideo} 
+              video={localVideoRef} 
               mediaOptions={mediaOptions}
             />
             

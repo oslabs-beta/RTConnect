@@ -8,12 +8,11 @@ const { OFFER, ANSWER, ICECANDIDATE, LOGIN, LEAVE } = actions;
  * @class
  * @classdesc The SignalingChannel class, which utilizes WebSockets in order to facillitate communication between clients connected to the WebSocket server.
  * @prop { WebsocketServer } websocketServer - a simple WebSocket server
- * @prop { Map } users - object containing key-value pairs consisting of users' names and their corresponding WebSocket in the following fashion { username1: socket1, username2: socket2, ... , usernameN: socketN }
+ * @prop { Map } peers - object containing key-value pairs consisting of peers' names and their corresponding WebSocket in the following fashion { username1: socket1, username2: socket2, ... , usernameN: socketN }
  */
-
 class SignalingChannel {
   webSocketServer: WebSocketServer;
-  users: Map<string, WebSocket>;
+  peers: Map<string, WebSocket>;
 
   /**
    * @constructor constructing a websocket server with an http/https object or port passed in upon instantiating SignalingChannel
@@ -21,7 +20,7 @@ class SignalingChannel {
    */
   constructor(server: Server | httpsServer | number) { 
     this.webSocketServer = typeof server === 'number' ? new WebSocket.Server({ port: server }) : new WebSocket.Server({ server: server });
-    this.users = new Map();
+    this.peers = new Map();
     // this.rooms = new Map(); //focus on later when constructing 2+ video conferencing functionality, SFU topology
   }
     
@@ -36,14 +35,14 @@ class SignalingChannel {
     this.webSocketServer.on('connection', (socket) => {
       console.log('A user has connected to the websocket server.');
 
-      // when a client closes their browser or connection to the websocket server (onclose), their socket gets terminated and they are removed from the map of users
+      // when a client closes their browser or connection to the websocket server (onclose), their socket gets terminated and they are removed from the map of peers
       // lastly a new user list is sent out to all clients connected to the websocket server. 
       socket.on('close', () => {
-        const userToDelete = this.getByValue(this.users, socket);
-        this.users.delete(userToDelete);
+        const userToDelete = this.getByValue(this.peers, socket);
+        this.peers.delete(userToDelete);
         socket.terminate();
 
-        const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.users.keys()) };
+        const userList = { ACTION_TYPE: LOGIN, payload: Array.from(this.peers.keys()) };
         this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(userList)));
       });
 
@@ -67,11 +66,11 @@ class SignalingChannel {
             this.transmit(data);
             break;
           case LOGIN:
-            this.users.set(data.payload, socket);
+            this.peers.set(data.payload, socket);
             this.webSocketServer.clients.forEach(client => client.send(JSON.stringify(
               { 
                 ACTION_TYPE: LOGIN, 
-                payload: Array.from(this.users.keys()) 
+                payload: Array.from(this.peers.keys()) 
               })));
             break;
           case LEAVE:
@@ -90,7 +89,7 @@ class SignalingChannel {
    * @param {object} data 
    */
   transmit(data: { ACTION_TYPE: string, receiver: string }): void {
-    this.users.get(data.receiver)?.send(JSON.stringify(data));
+    this.peers.get(data.receiver)?.send(JSON.stringify(data));
   }
   
   /**

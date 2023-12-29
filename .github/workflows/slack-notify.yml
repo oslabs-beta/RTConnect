@@ -1,26 +1,24 @@
 name: Slack Notification of CI Status
 
 on: 
-    push:
-        branches: ["main", "feature/raisa-cicd"]
-    pull_request:
-        branches: ["main"]
-            
+  push:
+    branches: ["main", "feature/raisa-cicd"]
+  pull_request:
+    branches: ["main"]
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # This works BUT it shows up as problem for some unknown reason ("Context access might be invalid: NPM_TOKEN") and there should not be any errors
+  # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 jobs:
-    slackNotification:
-        name: Slack CI status - notify on failure
-        runs-on: ubuntu-latest
-        steps:            
-            - name: Slack Notify on Failure
-              if: ${{ failure() }}
-              id: slack
-              uses: slackapi/slack-github-action@v1.24.0
-              with:
-                channel-id: 'C067F896WG5'
-                slack-message: "Github CI Result: ${{ job.status }}\nGithub PR/Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-              env:
-                SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # This works BUT it shows up as problem for some unknown reason ("Context access might be invalid: NPM_TOKEN") and there should not be any errors
-                # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-
+  slackNotification:
+    runs-on: ubuntu-latest
+    name: Slack CI status - notify on failure
+    steps:            
+      - name: Slack Notify on Failure
+        if: ${{ failure() }}
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C067F896WG5'
+          slack-message: "Github CI Result: ${{ job.status }}\nGithub PR/Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 
 # https://github.com/slackapi/slack-github-action

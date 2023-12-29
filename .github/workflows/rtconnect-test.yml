@@ -1,4 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node and various OS (Windows, Ubuntu)
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: RTConnect CI
@@ -30,20 +30,3 @@ jobs:
     - run: npm test
     # env:
     #   CI: true
-
-  
-  # slackNotification:
-  #   name: Slack CI status - notify on failure
-  #   runs-on: ubuntu-latest
-  #   steps:            
-  #       - name: Slack Notify on Failure
-  #         if: ${{ failure() }}
-  #         id: slack
-  #         uses: slackapi/slack-github-action@v1.24.0
-  #         with:
-  #           channel-id: 'C067F896WG5'
-  #           slack-message: "Github CI Result: ${{ job.status }}\nGithub PR/Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-  #         env:
-  #           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  #           # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-  #           # SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
