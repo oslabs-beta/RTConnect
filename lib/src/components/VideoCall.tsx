@@ -543,9 +543,10 @@ const VideoCall = ({ URL, mediaOptions }: { URL: string, mediaOptions: { control
 
             <div 
               className='users-list' 
-              style={{ 
+              style={{
                 fontFamily: 'Arial, Helvetica, sans-serif', 
-                fontSize: '16px' 
+                fontSize: '16px',
+                margin: '0 auto',
               }}
             >
               Connected Users: {users}
