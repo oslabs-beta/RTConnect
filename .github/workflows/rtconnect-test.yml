@@ -5,9 +5,9 @@ name: RTConnect CI
 
 on:
   push:
-    branches: [ "main"]
+    branches: [ "main", "dev", "feature/**"]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build_test_lint:
@@ -27,6 +27,7 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: npm run lint
-    - run: npm test
+    # - run: npm test
+    - run: npm run unit-test
     # env:
-    #   CI: true
+    #   CI: true 
