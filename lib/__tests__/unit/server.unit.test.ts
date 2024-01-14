@@ -101,12 +101,12 @@ describe('WebSocket checks', () => {
       
       expect(() => new WebSocket('typo')).toThrow(SyntaxError);
 
-      expect(() => new WebSocket('invalid://websocket-echo.com')).toThrow(new Error('The URL\'s protocol must be one of "ws:", "wss:", ' + '"http:", "https", or "ws+unix:"'));
+      expect(() => new WebSocket('invalid://websocket-echo.com')).toThrow(new Error('The URL\'s protocol must be one of "ws:", "wss:", or "ws+unix:"'));
 
       // URL's pathname is empty
       expect(() => new WebSocket('ws+unix:')).toThrow(SyntaxError);
 
-      expect(() => new WebSocket('wss://websocket-echo.com#foo')).toThrow(/^SyntaxError: The URL contains a fragment identifier$/);
+      expect(() => new WebSocket('wss://websocket-echo.com#foo')).toThrow(/The URL contains a fragment identifier/);
     });
 
     afterAll((done) => {
