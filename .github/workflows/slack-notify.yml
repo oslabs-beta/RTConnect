@@ -2,7 +2,7 @@ name: Slack Notification of CI Status
 
 on: 
   push:
-    branches: ["main", "feature/raisa-cicd"]
+    branches: ["main", "feature/**"]
   pull_request:
     branches: ["main"]
 env:
@@ -18,7 +18,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: 'C067F896WG5'
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
           slack-message: "Github CI Result: ${{ job.status }}\nGithub PR/Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 
 # https://github.com/slackapi/slack-github-action

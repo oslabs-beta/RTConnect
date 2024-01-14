@@ -9,9 +9,9 @@ on:
 env:
     AWS_REGION: 'us-east-1'
     AWS_S3_BUCKET_NAME: 'rtconnect-s3'
-    AWS_CLOUDFRONT_DISTRIBUTION_ID: ''
+    AWS_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CDN_ID }} # context is correct - problem is a github actions glitch - see: https://github.com/github/vscode-github-actions/issues/222
     S3_BUILD_FILE_PATH: './build'
-    ROLE_NAME: ''
+    # ROLE_NAME: ''
 
 jobs:
     deploy-s3:
@@ -43,7 +43,7 @@ jobs:
           uses: aws-actions/configure-aws-credentials@v4
           with:
             # role-to-assume: ${{ env.ROLE_NAME }}
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # context is correct - problem is a github actions glitch - see: https://github.com/github/vscode-github-actions/issues/222
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: ${{ env.AWS_REGION }}
             
