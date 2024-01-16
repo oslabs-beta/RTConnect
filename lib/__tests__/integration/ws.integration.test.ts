@@ -1,5 +1,34 @@
 'use strict';
 import { WebSocket } from 'ws';
+// const assert = require('assert');
+// const crypto = require('crypto');
+// const https = require('https');
+// const path = require('path');
+// const net = require('net');
+// const tls = require('tls');
+// const os = require('os');
+// const fs = require('fs');
+// const { getDefaultHighWaterMark } = require('stream');
+// const { URL } = require('url');
+
+// const Sender = require('../lib/sender');
+// const WebSocket = require('..');
+// const {
+//   CloseEvent,
+//   ErrorEvent,
+//   Event,
+//   MessageEvent
+// } = require('../lib/event-target');
+// const { EMPTY_BUFFER, GUID, kListener, NOOP } = require('../lib/constants');
+
+// const highWaterMark = getDefaultHighWaterMark
+//   ? getDefaultHighWaterMark(false)
+//   : 16 * 1024;
+
+// class CustomAgent extends http.Agent {
+//   addRequest() {}
+// }
+
 
 WebSocket.EventEmitter;
 beforeAll((done) => {
@@ -4233,34 +4262,4 @@ describe('WebSocket checks', () => {
 });
 
 
-
-
-// const assert = require('assert');
-// const crypto = require('crypto');
-// const https = require('https');
-// const path = require('path');
-// const net = require('net');
-// const tls = require('tls');
-// const os = require('os');
-// const fs = require('fs');
-// const { getDefaultHighWaterMark } = require('stream');
-// const { URL } = require('url');
-
-// const Sender = require('../lib/sender');
-// const WebSocket = require('..');
-// const {
-//   CloseEvent,
-//   ErrorEvent,
-//   Event,
-//   MessageEvent
-// } = require('../lib/event-target');
-// const { EMPTY_BUFFER, GUID, kListener, NOOP } = require('../lib/constants');
-
-// const highWaterMark = getDefaultHighWaterMark
-//   ? getDefaultHighWaterMark(false)
-//   : 16 * 1024;
-
-// class CustomAgent extends http.Agent {
-//   addRequest() {}
-// }
 
