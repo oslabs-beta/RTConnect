@@ -1,6 +1,7 @@
-const express = require('express');
+/* eslint-disable no-undef */
+import express from 'express';
+import path from 'path';
 const app = express();
-const path = require('path');
 
 // statically serve everything in the build folder on the route '/build'
 app.use('/build', express.static(path.join(__dirname, './build')));
@@ -9,5 +10,5 @@ app.get('/', (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, './index.html'));
 });
 
-app.listen(3000, () => {console.log('listening on port 3000')}); //listens on port 3000 -> http://localhost:3000/
+app.listen(3000, () => {console.log('listening on port 3000');}); //listens on port 3000 -> http://localhost:3000/
 
