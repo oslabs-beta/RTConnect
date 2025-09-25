@@ -272,7 +272,7 @@ RTConnect is developed under the MIT license.
 ## <a name="team"/> The Co-Creators of RTConnect
 Anthony King  | [GitHub](https://github.com/thecapedcrusader) | [LinkedIn](https://www.linkedin.com/in/aking97)
 <br>
-F. Raisa Iftekher | [GitHub](https://github.com/fraisai) | [LinkedIn](https://www.linkedin.com/in/fraisa/)
+Raisa I | [GitHub](https://github.com/fraisai)
 <br>
 Yoojin Chang | [GitHub](https://github.com/ychang49265) | [LinkedIn](https://www.linkedin.com/in/yoojin-chang-32a75892/)
 <br>
